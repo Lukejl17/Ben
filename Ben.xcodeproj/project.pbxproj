@@ -16,6 +16,9 @@
 		6EBF5D2863D4F4ECC3FBD993 /* BenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FE0778C4F862592E060A1C /* BenUITests.swift */; };
 		7AB87A651FE75B1B423E4F0E /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E711747696076530D8DDE297 /* AnalyticsTests.swift */; };
 		7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A884086B3F417CFBD382BA0 /* ContentView.swift */; };
+		84F36372710AD65AE4F81D66 /* VisionBillParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2841117AF82C3AB361A867C2 /* VisionBillParser.swift */; };
+		DAFCADDE714E9897DD707429 /* BillParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9769B6A1AEB1C0DEBF878E71 /* BillParsing.swift */; };
+		F1A82F76A2224F6A757539AB /* BillHeuristicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B26863D9E8B7D3C9F88DA /* BillHeuristicsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		10FE0778C4F862592E060A1C /* BenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenUITests.swift; sourceTree = "<group>"; };
+		2841117AF82C3AB361A867C2 /* VisionBillParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBillParser.swift; sourceTree = "<group>"; };
 		3BA6AFC020BECE9B79402CCC /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		483D07784F323ACB8F0F4838 /* BenTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D4F001318AA2CE3A5FE684 /* BenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenTheme.swift; sourceTree = "<group>"; };
@@ -44,6 +48,8 @@
 		7A884086B3F417CFBD382BA0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7E4C98855D95537CDA714CA2 /* BenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenTests.swift; sourceTree = "<group>"; };
 		7EBCD7F4F8044A5C00421325 /* BenUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A3B26863D9E8B7D3C9F88DA /* BillHeuristicsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillHeuristicsTests.swift; sourceTree = "<group>"; };
+		9769B6A1AEB1C0DEBF878E71 /* BillParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillParsing.swift; sourceTree = "<group>"; };
 		9EBE7D358CE9DD7567DEE507 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillStatusTests.swift; sourceTree = "<group>"; };
 		D1FEB6A681D22FBFC5617414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -104,6 +110,7 @@
 			children = (
 				E711747696076530D8DDE297 /* AnalyticsTests.swift */,
 				7E4C98855D95537CDA714CA2 /* BenTests.swift */,
+				8A3B26863D9E8B7D3C9F88DA /* BillHeuristicsTests.swift */,
 				ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */,
 			);
 			path = BenTests;
@@ -113,6 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				9EBE7D358CE9DD7567DEE507 /* Analytics.swift */,
+				9769B6A1AEB1C0DEBF878E71 /* BillParsing.swift */,
+				2841117AF82C3AB361A867C2 /* VisionBillParser.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -234,7 +243,9 @@
 				5A9F0D122828DFCFB76B4CED /* BenApp.swift in Sources */,
 				46861AD8B860C5160C3B7264 /* BenTheme.swift in Sources */,
 				4AC6D2F813D314B4FD139596 /* Bill.swift in Sources */,
+				DAFCADDE714E9897DD707429 /* BillParsing.swift in Sources */,
 				7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */,
+				84F36372710AD65AE4F81D66 /* VisionBillParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +263,7 @@
 			files = (
 				7AB87A651FE75B1B423E4F0E /* AnalyticsTests.swift in Sources */,
 				3306C19B21C87B4D1CB6B5BA /* BenTests.swift in Sources */,
+				F1A82F76A2224F6A757539AB /* BillHeuristicsTests.swift in Sources */,
 				29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
