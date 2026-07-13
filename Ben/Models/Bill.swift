@@ -5,6 +5,8 @@ import SwiftData
 /// so it can't go stale overnight.
 @Model
 final class Bill {
+    /// Stable identifier used in notification payloads.
+    var uuid: String = UUID().uuidString
     var issuer: String
     var amount: Decimal
     var dueDate: Date
