@@ -1,0 +1,46 @@
+name: Ben
+options:
+  bundleIdPrefix: com.lukelongworth
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    DEVELOPMENT_TEAM: ""   # HUMAN: set team ID for device builds; simulator works without
+targets:
+  Ben:
+    type: application
+    platform: iOS
+    sources: [Ben]
+    info:
+      path: Ben/Info.plist
+      properties:
+        UILaunchScreen: {}
+        CFBundleDisplayName: Ben
+        NSCameraUsageDescription: "Ben uses the camera to read your bill so you don't have to type it."
+        NSPhotoLibraryUsageDescription: "Ben reads bill photos you choose so you don't have to type them."
+        UIBackgroundModes: []
+    settings:
+      base:
+        INFOPLIST_KEY_UIUserInterfaceStyle: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+  BenTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [BenTests]
+    dependencies:
+      - target: Ben
+  BenUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [BenUITests]
+    dependencies:
+      - target: Ben
+schemes:
+  Ben:
+    build:
+      targets:
+        Ben: all
+    test:
+      targets: [BenTests, BenUITests]
