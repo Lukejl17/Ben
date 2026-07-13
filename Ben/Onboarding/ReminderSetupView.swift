@@ -62,7 +62,7 @@ struct ReminderSetupView: View {
 
             BenPrimaryButton(title: denied ? "Continue" : "Sounds right — set it up") {
                 if denied || permissionResolved {
-                    coordinator.advance(to: .setState)
+                    coordinator.advance(to: nextStep)
                 } else {
                     showPrePermissionSheet = true
                 }
@@ -81,6 +81,10 @@ struct ReminderSetupView: View {
             )
             .presentationDetents([.medium])
         }
+    }
+
+    private var nextStep: OnboardingCoordinator.Step {
+        coordinator.isAddingSubsequentBill ? .done : .setState
     }
 
     private var benLine: String {
@@ -124,7 +128,7 @@ struct ReminderSetupView: View {
 
     private func scheduleAndAdvance() async {
         guard let bill else {
-            coordinator.advance(to: .setState)
+            coordinator.advance(to: nextStep)
             return
         }
         coordinator.reminderStyle = style
@@ -138,7 +142,7 @@ struct ReminderSetupView: View {
         bill.hasNotification = !identifiers.isEmpty
         bill.notificationIDs = identifiers
         services.analytics.track(.notificationSet)
-        coordinator.advance(to: .setState)
+        coordinator.advance(to: nextStep)
     }
 }
 

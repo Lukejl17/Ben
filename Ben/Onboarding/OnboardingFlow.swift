@@ -19,6 +19,7 @@ struct OnboardingFlow: View {
             case .setState: SetStateView()
             case .paywall: PaywallView()
             case .secondBill: SecondBillView()
+            case .done: Color.benCanvas
             }
         }
         .animation(.easeInOut(duration: 0.25), value: coordinator.step)

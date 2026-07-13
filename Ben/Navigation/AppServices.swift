@@ -6,9 +6,15 @@ struct AppServices {
     var analytics: any AnalyticsService
     var parser: any BillParsing
     var scheduler: ReminderScheduler
+    var subscriptions: any SubscriptionService
 
     static func live() -> AppServices {
-        AppServices(analytics: LocalAnalytics(), parser: VisionBillParser(), scheduler: ReminderScheduler())
+        AppServices(
+            analytics: LocalAnalytics(),
+            parser: VisionBillParser(),
+            scheduler: ReminderScheduler(),
+            subscriptions: StubSubscriptionService()
+        )
     }
 
     static func fromLaunchArguments(_ arguments: [String] = ProcessInfo.processInfo.arguments) -> AppServices {
@@ -22,6 +28,11 @@ struct AppServices {
         if arguments.contains("-nullAnalytics") {
             services.analytics = NullAnalytics()
         }
+        if arguments.contains("-freshTrial") {
+            let suite = UserDefaults(suiteName: "ui-test-trial")!
+            suite.removePersistentDomain(forName: "ui-test-trial")
+            services.subscriptions = StubSubscriptionService(defaults: suite)
+        }
         return services
     }
 }
@@ -30,7 +41,8 @@ private struct AppServicesKey: EnvironmentKey {
     static let defaultValue = AppServices(
         analytics: NullAnalytics(),
         parser: MockBillParser(),
-        scheduler: ReminderScheduler()
+        scheduler: ReminderScheduler(),
+        subscriptions: StubSubscriptionService()
     )
 }
 

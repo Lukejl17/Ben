@@ -22,13 +22,6 @@ struct ContentView: View {
     }
 }
 
-/// Placeholder — Phase 4 builds the real home screen.
-struct HomeView: View {
-    var body: some View {
-        BenVoiceText(text: "Nothing needs your attention.")
-    }
-}
-
 #Preview {
     ContentView()
         .environment(OnboardingCoordinator())

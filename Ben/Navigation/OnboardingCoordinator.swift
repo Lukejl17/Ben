@@ -16,6 +16,8 @@ final class OnboardingCoordinator {
         case setState         // S8
         case paywall          // S9
         case secondBill       // S10
+        /// Terminal for the add-a-bill flow launched from home.
+        case done
     }
 
     var step: Step = .welcome
