@@ -1,15 +1,29 @@
 import SwiftData
 import SwiftUI
+import UserNotifications
 
 @main
 struct BenApp: App {
     @State private var coordinator = OnboardingCoordinator()
-    private let services = AppServices.fromLaunchArguments()
+    @State private var router: NotificationRouter
+    private let services: AppServices
+    private let notificationDelegate: NotificationDelegate
+
+    init() {
+        let services = AppServices.fromLaunchArguments()
+        let router = NotificationRouter()
+        let delegate = NotificationDelegate(router: router, analytics: services.analytics)
+        UNUserNotificationCenter.current().delegate = delegate
+        self.services = services
+        self._router = State(initialValue: router)
+        self.notificationDelegate = delegate
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(coordinator)
+                .environment(router)
                 .environment(\.services, services)
                 .tint(.benAccent)
                 .background(Color.benCanvas)

@@ -4,9 +4,11 @@ import SwiftUI
 /// Home — the system of record. Status-sorted bills, one designed empty state.
 struct HomeView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
+    @Environment(NotificationRouter.self) private var notificationRouter
     @Environment(\.services) private var services
     @Query(sort: \Bill.dueDate) private var bills: [Bill]
     @State private var showAddBill = false
+    @State private var detailBill: Bill?
 
     private var sortedBills: [Bill] {
         let rank: [BillStatus: Int] = [.overdue: 0, .dueSoon: 1, .upcoming: 2, .paid: 3]
@@ -58,6 +60,26 @@ struct HomeView: View {
             if coordinator.isAddingSubsequentBill && coordinator.step == .upload {
                 showAddBill = true
             }
+            handleDeepLinks()
+        }
+        .sheet(item: $detailBill) { bill in
+            BillDetailView(bill: bill)
+        }
+        .onChange(of: notificationRouter.openBillID) { _, _ in handleDeepLinks() }
+        .onChange(of: notificationRouter.addBillRequested) { _, _ in handleDeepLinks() }
+    }
+
+    /// A tapped reminder opens the relevant bill; a nudge opens the add flow.
+    private func handleDeepLinks() {
+        if let billID = notificationRouter.openBillID {
+            notificationRouter.openBillID = nil
+            if let bill = bills.first(where: { $0.uuid == billID }) {
+                detailBill = bill
+            }
+        }
+        if notificationRouter.addBillRequested {
+            notificationRouter.addBillRequested = false
+            startAddBill()
         }
     }
 
