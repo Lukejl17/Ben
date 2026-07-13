@@ -1,0 +1,12 @@
+included:
+  - Ben
+  - BenTests
+  - BenUITests
+line_length:
+  warning: 140
+  error: 200
+identifier_name:
+  min_length: 2
+  excluded: [x, y, i]
+trailing_whitespace:
+  ignores_empty_lines: true
