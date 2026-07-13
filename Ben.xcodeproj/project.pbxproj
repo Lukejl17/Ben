@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */; };
+		2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE7D358CE9DD7567DEE507 /* Analytics.swift */; };
 		3306C19B21C87B4D1CB6B5BA /* BenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C98855D95537CDA714CA2 /* BenTests.swift */; };
 		46861AD8B860C5160C3B7264 /* BenTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D4F001318AA2CE3A5FE684 /* BenTheme.swift */; };
+		4AC6D2F813D314B4FD139596 /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA6AFC020BECE9B79402CCC /* Bill.swift */; };
 		5A9F0D122828DFCFB76B4CED /* BenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F620063485E9C32AEFFFCA9A /* BenApp.swift */; };
 		6EBF5D2863D4F4ECC3FBD993 /* BenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FE0778C4F862592E060A1C /* BenUITests.swift */; };
+		7AB87A651FE75B1B423E4F0E /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E711747696076530D8DDE297 /* AnalyticsTests.swift */; };
 		7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A884086B3F417CFBD382BA0 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,17 +37,29 @@
 
 /* Begin PBXFileReference section */
 		10FE0778C4F862592E060A1C /* BenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenUITests.swift; sourceTree = "<group>"; };
+		3BA6AFC020BECE9B79402CCC /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		483D07784F323ACB8F0F4838 /* BenTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D4F001318AA2CE3A5FE684 /* BenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenTheme.swift; sourceTree = "<group>"; };
 		50A75E32DF28C87EAF49B530 /* Ben.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ben.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A884086B3F417CFBD382BA0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7E4C98855D95537CDA714CA2 /* BenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenTests.swift; sourceTree = "<group>"; };
 		7EBCD7F4F8044A5C00421325 /* BenUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9EBE7D358CE9DD7567DEE507 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
+		ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillStatusTests.swift; sourceTree = "<group>"; };
 		D1FEB6A681D22FBFC5617414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E711747696076530D8DDE297 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		F620063485E9C32AEFFFCA9A /* BenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		0A189D815590F1831DFB2971 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3BA6AFC020BECE9B79402CCC /* Bill.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		158E7D901E4856F17A23C2E4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -60,6 +76,8 @@
 				F620063485E9C32AEFFFCA9A /* BenApp.swift */,
 				7A884086B3F417CFBD382BA0 /* ContentView.swift */,
 				D1FEB6A681D22FBFC5617414 /* Info.plist */,
+				0A189D815590F1831DFB2971 /* Models */,
+				C40324C4FA75F9BF83E65728 /* Services */,
 				63DD75080B989B7ACFD4CEC8 /* Theme */,
 			);
 			path = Ben;
@@ -84,9 +102,19 @@
 		A0193D1AF4C8C9F6CED103DA /* BenTests */ = {
 			isa = PBXGroup;
 			children = (
+				E711747696076530D8DDE297 /* AnalyticsTests.swift */,
 				7E4C98855D95537CDA714CA2 /* BenTests.swift */,
+				ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */,
 			);
 			path = BenTests;
+			sourceTree = "<group>";
+		};
+		C40324C4FA75F9BF83E65728 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				9EBE7D358CE9DD7567DEE507 /* Analytics.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		CF8D65C00845EE784B1A1BE8 = {
@@ -202,8 +230,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */,
 				5A9F0D122828DFCFB76B4CED /* BenApp.swift in Sources */,
 				46861AD8B860C5160C3B7264 /* BenTheme.swift in Sources */,
+				4AC6D2F813D314B4FD139596 /* Bill.swift in Sources */,
 				7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -220,7 +250,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AB87A651FE75B1B423E4F0E /* AnalyticsTests.swift in Sources */,
 				3306C19B21C87B4D1CB6B5BA /* BenTests.swift in Sources */,
+				29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +357,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -341,6 +374,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -431,6 +465,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -447,6 +482,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

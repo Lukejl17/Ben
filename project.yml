@@ -29,12 +29,18 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources: [BenTests]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Ben
   BenUITests:
     type: bundle.ui-testing
     platform: iOS
     sources: [BenUITests]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Ben
 schemes:
