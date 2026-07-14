@@ -40,6 +40,55 @@ enum ReminderStyle: String, CaseIterable, Codable, Sendable {
     }
 }
 
+/// S7b — how often Ben mentions a bill that has slipped past its due date.
+/// Capped mention counts keep the constitution's "silence is a feature" promise.
+enum OverdueCadence: String, CaseIterable, Codable, Sendable {
+    case everyDay = "every_day"
+    case everySecondDay = "every_second_day"
+    case weekly = "weekly"
+    case once = "once"
+
+    static let storageKey = "overdueCadence"
+
+    var label: String {
+        switch self {
+        case .everyDay: "Every day"
+        case .everySecondDay: "Every second day"
+        case .weekly: "Once a week"
+        case .once: "Just the once"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .everyDay: "A daily mention until it's sorted — for the must-not-miss."
+        case .everySecondDay: "Persistent without being a pest."
+        case .weekly: "A gentle weekly check-in."
+        case .once: "One mention the day after, then silence."
+        }
+    }
+
+    /// Days between overdue mentions.
+    var dayStep: Int {
+        switch self {
+        case .everyDay: 1
+        case .everySecondDay: 2
+        case .weekly: 7
+        case .once: 1
+        }
+    }
+
+    /// Hard cap on mentions — Ben never nags forever.
+    var maxMentions: Int {
+        switch self {
+        case .everyDay: 7
+        case .everySecondDay: 4
+        case .weekly: 3
+        case .once: 1
+        }
+    }
+}
+
 /// S4/S5 — how the bill came in. Raw values feed analytics.
 enum UploadMethod: String, Sendable {
     case photo

@@ -238,6 +238,7 @@ struct SelectablePill: View {
         .buttonStyle(BenPressable())
         .benShadow(.card)
         .animation(.spring(duration: 0.3), value: isSelected)
+        .accessibilityIdentifier(label)
     }
 }
 

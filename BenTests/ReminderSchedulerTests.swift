@@ -57,6 +57,49 @@ struct ReminderSchedulerTests {
         #expect(dates.isEmpty)
     }
 
+    // MARK: Overdue cadence
+
+    @Test func everyDayMentionsDailyFromDayAfterDue() {
+        let dates = ReminderScheduler.overdueTriggerDates(
+            cadence: .everyDay, dueDate: date(10), now: date(10), calendar: calendar
+        )
+        #expect(dates == (11...17).map { date($0, hour: 9) })
+    }
+
+    @Test func everySecondDayStepsByTwoCappedAtFour() {
+        let dates = ReminderScheduler.overdueTriggerDates(
+            cadence: .everySecondDay, dueDate: date(10), now: date(10), calendar: calendar
+        )
+        #expect(dates == [date(12, hour: 9), date(14, hour: 9), date(16, hour: 9), date(18, hour: 9)])
+    }
+
+    @Test func weeklyStepsBySevenCappedAtThree() {
+        let dates = ReminderScheduler.overdueTriggerDates(
+            cadence: .weekly, dueDate: date(1), now: date(1), calendar: calendar
+        )
+        #expect(dates == [date(8, hour: 9), date(15, hour: 9), date(22, hour: 9)])
+    }
+
+    @Test func onceMentionsExactlyOnce() {
+        let dates = ReminderScheduler.overdueTriggerDates(
+            cadence: .once, dueDate: date(10), now: date(10), calendar: calendar
+        )
+        #expect(dates == [date(11, hour: 9)])
+    }
+
+    @Test func overdueMentionsAlreadyPassedAreDropped() {
+        // Bill went overdue days ago: only future mentions remain.
+        let dates = ReminderScheduler.overdueTriggerDates(
+            cadence: .everySecondDay, dueDate: date(10), now: date(15), calendar: calendar
+        )
+        #expect(dates == [date(16, hour: 9), date(18, hour: 9)])
+    }
+
+    @Test func overdueCopyIsFactualAndNamesTheDate() {
+        let body = ReminderScheduler.overdueBody(issuer: "AGL", dueDate: date(24), calendar: calendar)
+        #expect(body == "Ben here — AGL was due 24 July and still needs a look.")
+    }
+
     // MARK: B1 tonight nudge
 
     @Test func tonightNudgeAtSevenPMWhenEarlier() {

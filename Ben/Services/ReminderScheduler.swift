@@ -34,6 +34,36 @@ struct ReminderScheduler: Sendable {
         .sorted()
     }
 
+    /// Mention dates for a bill that slipped past its due date: one every
+    /// `dayStep` days after due, capped at `maxMentions`, never in the past.
+    static func overdueTriggerDates(
+        cadence: OverdueCadence,
+        dueDate: Date,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> [Date] {
+        (1...cadence.maxMentions).compactMap { mention in
+            guard let day = calendar.date(byAdding: .day, value: mention * cadence.dayStep, to: dueDate) else {
+                return nil
+            }
+            var components = calendar.dateComponents([.year, .month, .day], from: day)
+            components.hour = reminderHour
+            components.minute = 0
+            return calendar.date(from: components)
+        }
+        .filter { $0 > now }
+        .sorted()
+    }
+
+    /// Overdue copy: factual, no guilt. "Ben here — AGL was due 24 July and still needs a look."
+    static func overdueBody(issuer: String, dueDate: Date, calendar: Calendar = .current) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateFormat = "d MMMM"
+        return "Ben here — \(issuer) was due \(formatter.string(from: dueDate)) and still needs a look."
+    }
+
     /// B1 "remind me tonight": 7pm today, or 9am tomorrow if 7pm has passed.
     static func tonightTrigger(now: Date = .now, calendar: Calendar = .current) -> Date {
         var tonight = calendar.dateComponents([.year, .month, .day], from: now)
@@ -117,6 +147,43 @@ struct ReminderScheduler: Sendable {
             content.userInfo = ["billID": billID, "kind": "bill_reminder"]
             let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger)
             let identifier = "bill-\(billID)-\(components.day ?? 0)-\(components.month ?? 0)"
+            let request = UNNotificationRequest(
+                identifier: identifier,
+                content: content,
+                trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+            )
+            do {
+                try await center.add(request)
+                identifiers.append(identifier)
+            } catch {
+                // Scheduling failure is silent by design — the bill is still tracked.
+            }
+        }
+        return identifiers
+    }
+
+    /// Schedules the capped overdue mentions for a bill; returns the identifiers.
+    /// Paying the bill cancels these along with everything else on it.
+    @discardableResult
+    func scheduleOverdueReminders(
+        billID: String,
+        issuer: String,
+        dueDate: Date,
+        cadence: OverdueCadence,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) async -> [String] {
+        let center = UNUserNotificationCenter.current()
+        var identifiers: [String] = []
+        let triggers = Self.overdueTriggerDates(cadence: cadence, dueDate: dueDate, now: now, calendar: calendar)
+        for (index, trigger) in triggers.enumerated() {
+            let content = UNMutableNotificationContent()
+            content.title = "Ben"
+            content.body = Self.overdueBody(issuer: issuer, dueDate: dueDate, calendar: calendar)
+            content.sound = .default
+            content.userInfo = ["billID": billID, "kind": "bill_reminder"]
+            let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger)
+            let identifier = "bill-\(billID)-overdue-\(index)"
             let request = UNNotificationRequest(
                 identifier: identifier,
                 content: content,

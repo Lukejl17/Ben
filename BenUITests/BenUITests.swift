@@ -67,6 +67,12 @@ final class BenUITests: XCTestCase {
         // Nudge the run loop so the interruption monitor fires on the OS alert.
         app.swipeUp()
 
+        // S7b — overdue cadence
+        let overdueCTA = app.buttons["That works"]
+        XCTAssertTrue(overdueCTA.waitForExistence(timeout: 15))
+        app.buttons["Every second day"].tap()
+        overdueCTA.tap()
+
         // S8 — set state
         let s8Continue = app.buttons["Continue"]
         XCTAssertTrue(s8Continue.waitForExistence(timeout: 15))

@@ -13,6 +13,7 @@ final class OnboardingCoordinator {
         case manualEntry      // B2
         case confirm          // S6
         case reminderSetup    // S7
+        case overdueStyle     // S7b — cadence for bills that slip
         case setState         // S8
         case paywall          // S9
         case secondBill       // S10

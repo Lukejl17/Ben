@@ -69,6 +69,11 @@ final class ScreenshotTests: XCTestCase {
         allowButton.tap()
         app.swipeUp()
 
+        let overdueCTA = app.buttons["That works"]
+        XCTAssertTrue(overdueCTA.waitForExistence(timeout: 15))
+        snap(app, "s7c-overdue-style")
+        overdueCTA.tap()
+
         let s8Continue = app.buttons["Continue"]
         XCTAssertTrue(s8Continue.waitForExistence(timeout: 15))
         snap(app, "s8-set-state")

@@ -10,13 +10,36 @@ struct HomeView: View {
     @State private var showAddBill = false
     @State private var detailBill: Bill?
 
-    private var sortedBills: [Bill] {
-        let rank: [BillStatus: Int] = [.overdue: 0, .dueSoon: 1, .upcoming: 2, .paid: 3]
-        return bills.sorted {
-            let left = rank[$0.status, default: 2]
-            let right = rank[$1.status, default: 2]
-            return left == right ? $0.dueDate < $1.dueDate : left < right
+    /// Home reads as a timeline: what's slipped, then this week, then this month.
+    private var sections: [(title: String, bills: [Bill])] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        var overdue: [Bill] = [], next7: [Bill] = [], next30: [Bill] = []
+        var later: [Bill] = [], paid: [Bill] = []
+        for bill in bills.sorted(by: { $0.dueDate < $1.dueDate }) {
+            if bill.status == .paid {
+                paid.append(bill)
+                continue
+            }
+            if bill.status == .overdue {
+                overdue.append(bill)
+                continue
+            }
+            let days = calendar.dateComponents(
+                [.day], from: today, to: calendar.startOfDay(for: bill.dueDate)
+            ).day ?? 0
+            if days <= 7 {
+                next7.append(bill)
+            } else if days <= 30 {
+                next30.append(bill)
+            } else {
+                later.append(bill)
+            }
         }
+        return [
+            ("Overdue", overdue), ("Next 7 days", next7), ("Next 30 days", next30),
+            ("Later", later), ("Paid", paid)
+        ].filter { !$0.1.isEmpty }
     }
 
     private var needsAttention: Bool {
@@ -114,15 +137,35 @@ struct HomeView: View {
                             .foregroundStyle(Color.benInkSecondary)
                     }
                 }
-                ForEach(sortedBills) { bill in
-                    BillRow(bill: bill) {
-                        detailBill = bill
+                ForEach(sections, id: \.title) { section in
+                    sectionHeader(title: section.title, bills: section.bills)
+                        .padding(.top, section.title == sections.first?.title ? 0 : 14)
+                    ForEach(section.bills) { bill in
+                        BillRow(bill: bill) {
+                            detailBill = bill
+                        }
                     }
                 }
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 40)
         }
+    }
+
+    /// Section header: title left, factual total right. No drama, even for overdue.
+    private func sectionHeader(title: String, bills sectionBills: [Bill]) -> some View {
+        let total = sectionBills.reduce(Decimal.zero) { $0 + $1.amount }
+        return HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(.benCardTitle)
+                .foregroundStyle(title == "Overdue" ? Color.statusOverdueFg : Color.benInk)
+            Spacer()
+            Text(total.formatted(.currency(code: "AUD")))
+                .font(.benMeta)
+                .monospacedDigit()
+                .foregroundStyle(Color.benInkMuted)
+        }
+        .padding(.horizontal, 4)
     }
 
     private var emptyState: some View {

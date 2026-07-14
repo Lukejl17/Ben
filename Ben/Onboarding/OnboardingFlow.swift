@@ -17,6 +17,7 @@ struct OnboardingFlow: View {
                 case .manualEntry: ManualEntryView()
                 case .confirm: ConfirmBillView()
                 case .reminderSetup: ReminderSetupView()
+                case .overdueStyle: OverdueStyleView()
                 case .setState: SetStateView()
                 case .paywall: PaywallView()
                 case .secondBill: SecondBillView()

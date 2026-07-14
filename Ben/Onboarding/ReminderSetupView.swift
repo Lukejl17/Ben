@@ -64,7 +64,10 @@ struct ReminderSetupView: View {
             }
         } cta: {
             BenPrimaryButton(title: denied ? "Continue" : "Sounds right — set it up") {
-                if denied || permissionResolved {
+                if denied {
+                    // B3: no permission means no overdue mentions either — skip S7b.
+                    coordinator.advance(to: coordinator.isAddingSubsequentBill ? .done : .setState)
+                } else if permissionResolved {
                     coordinator.advance(to: nextStep)
                 } else {
                     showPrePermissionSheet = true
@@ -86,8 +89,10 @@ struct ReminderSetupView: View {
         }
     }
 
+    /// First onboarding continues to the overdue-cadence ask; the add-a-bill
+    /// flow reuses the stored cadence and finishes.
     private var nextStep: OnboardingCoordinator.Step {
-        coordinator.isAddingSubsequentBill ? .done : .setState
+        coordinator.isAddingSubsequentBill ? .done : .overdueStyle
     }
 
     private var benLine: String {
@@ -145,6 +150,15 @@ struct ReminderSetupView: View {
         )
         bill.hasNotification = !identifiers.isEmpty
         bill.notificationIDs = identifiers
+        // Subsequent bills reuse the cadence chosen during onboarding (S7b).
+        if coordinator.isAddingSubsequentBill {
+            let raw = UserDefaults.standard.string(forKey: OverdueCadence.storageKey)
+            let cadence = OverdueCadence(rawValue: raw ?? "") ?? .everySecondDay
+            let overdueIDs = await services.scheduler.scheduleOverdueReminders(
+                billID: bill.uuid, issuer: bill.issuer, dueDate: bill.dueDate, cadence: cadence
+            )
+            bill.notificationIDs.append(contentsOf: overdueIDs)
+        }
         services.analytics.track(.notificationSet)
         coordinator.advance(to: nextStep)
     }
