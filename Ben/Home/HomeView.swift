@@ -9,6 +9,7 @@ struct HomeView: View {
     @Query(sort: \Bill.dueDate) private var bills: [Bill]
     @State private var showAddBill = false
     @State private var detailBill: Bill?
+    @State private var fabExpanded = false
 
     /// Home reads as a timeline: what's slipped, then this week, then this month.
     private var sections: [(title: String, bills: [Bill])] {
@@ -58,12 +59,21 @@ struct HomeView: View {
             }
             .navigationTitle("Bills")
             .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    BenCircleButton(systemName: "plus", accessibilityLabel: "Add a bill") {
-                        startAddBill()
-                    }
+            .overlay {
+                // Scrim behind the expanded dial — tap anywhere to collapse.
+                if fabExpanded {
+                    Color.black.opacity(0.18)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring(duration: 0.3)) { fabExpanded = false }
+                        }
+                        .transition(.opacity)
                 }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                addBillDial
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 24)
             }
         }
         .tint(.benAccent)
@@ -182,9 +192,23 @@ struct HomeView: View {
         }
     }
 
-    private func startAddBill() {
+    private var addBillDial: some View {
+        AddBillDial(expanded: $fabExpanded) { method in
+            startAddBill(method: method)
+        }
+    }
+
+    /// Photo/PDF from the dial skip the method screen and land on capture.
+    /// The empty-state button passes nil and starts at the trust block instead.
+    private func startAddBill(method: UploadMethod? = nil) {
+        withAnimation(.spring(duration: 0.3)) { fabExpanded = false }
         coordinator.isAddingSubsequentBill = true
         coordinator.resetForSecondBill()
+        if let method {
+            coordinator.uploadMethod = method
+            services.analytics.track(.billUploadStarted(uploadMethod: method.rawValue))
+            coordinator.advance(to: .capture)
+        }
         showAddBill = true
     }
 }
@@ -244,5 +268,86 @@ struct BillRow: View {
                 try? modelContext.save()
             }
         }
+    }
+}
+
+/// Thumb-reach add-bill entry: a floating dial that expands into the
+/// three upload options (Unscripted-style speed dial).
+struct AddBillDial: View {
+    @Binding var expanded: Bool
+    let onPick: (UploadMethod) -> Void
+
+    var body: some View {
+        VStack(alignment: .trailing, spacing: 12) {
+            if expanded {
+                option(symbol: "camera.fill", wash: (.washEucalyptusBg, .washEucalyptusFg), label: "Photo") {
+                    onPick(.photo)
+                }
+                option(symbol: "doc.fill", wash: (.washSkyBg, .washSkyFg), label: "PDF or file") {
+                    onPick(.pdf)
+                }
+                disabledOption
+            }
+
+            Button {
+                withAnimation(.spring(duration: 0.3)) { expanded.toggle() }
+            } label: {
+                Image(systemName: "plus")
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .rotationEffect(.degrees(expanded ? 45 : 0))
+                    .frame(width: 60, height: 60)
+                    .background(
+                        LinearGradient(colors: [.benAccent, .benAccentDeep], startPoint: .top, endPoint: .bottom),
+                        in: Circle()
+                    )
+            }
+            .buttonStyle(BenPressable())
+            .benShadow(.floating)
+            .accessibilityLabel(expanded ? "Close" : "Add a bill")
+            .accessibilityIdentifier("Add a bill")
+        }
+    }
+
+    private func option(
+        symbol: String, wash: (Color, Color), label: String, action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Text(label)
+                    .font(.benLabel)
+                    .foregroundStyle(Color.benInk)
+                BenIconCircle(systemName: symbol, wash: wash, size: 40)
+            }
+            .padding(.leading, 18)
+            .padding(.trailing, 10)
+            .padding(.vertical, 10)
+            .background(Color.benCard, in: Capsule())
+        }
+        .buttonStyle(BenPressable())
+        .benShadow(.floating)
+        .accessibilityIdentifier(label)
+        .transition(.move(edge: .trailing).combined(with: .opacity))
+    }
+
+    private var disabledOption: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .trailing, spacing: 1) {
+                Text("Forward an email")
+                    .font(.benLabel)
+                    .foregroundStyle(Color.benInkMuted)
+                Text("Available after setup")
+                    .font(.caption)
+                    .foregroundStyle(Color.benInkMuted)
+            }
+            BenIconCircle(systemName: "envelope.fill", wash: (.washClayBg, .washClayFg), size: 40)
+                .opacity(0.55)
+        }
+        .padding(.leading, 18)
+        .padding(.trailing, 10)
+        .padding(.vertical, 10)
+        .background(Color.benCard.opacity(0.8), in: Capsule())
+        .benShadow(.card)
+        .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 }

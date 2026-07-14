@@ -99,5 +99,10 @@ final class ScreenshotTests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Bills"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["AGL"].waitForExistence(timeout: 5))
         snap(app, "home")
+
+        // The add-bill dial, expanded
+        app.buttons["Add a bill"].tap()
+        XCTAssertTrue(app.buttons["Photo"].waitForExistence(timeout: 5))
+        snap(app, "home-add-dial")
     }
 }
