@@ -6,8 +6,10 @@ enum BillCategories {
     static func category(forIssuer issuer: String) -> String {
         let lower = issuer.lowercased()
         let map: [(keywords: [String], category: String)] = [
-            (["agl", "origin", "energyaustralia", "red energy", "alinta", "ausgrid", "jemena", "electric", "energy", "power"], "electricity"),
-            (["telstra", "optus", "vodafone", "tpg", "aussie broadband", "iinet", "internet", "broadband", "nbn", "mobile"], "internet"),
+            (["agl", "origin", "energyaustralia", "red energy", "alinta", "ausgrid", "jemena",
+              "electric", "energy", "power"], "electricity"),
+            (["telstra", "optus", "vodafone", "tpg", "aussie broadband", "iinet",
+              "internet", "broadband", "nbn", "mobile"], "internet"),
             (["water", "urban utilities"], "water"),
             (["nrma", "aami", "allianz", "bupa", "medibank", "hcf", "nib", "insurance"], "insurance"),
             (["council", "rates"], "council rates"),
@@ -56,7 +58,8 @@ struct SecondBillView: View {
             HStack(alignment: .top, spacing: 12) {
                 BenAvatar()
                 BenVoiceText(
-                    text: "One bill down. Got internet or insurance floating around an inbox somewhere? Add it now, forward it later, or leave it with me."
+                    text: "One bill down. Got internet or insurance floating around an inbox somewhere? "
+                        + "Add it now, forward it later, or leave it with me."
                 )
             }
             .padding(.top, 48)

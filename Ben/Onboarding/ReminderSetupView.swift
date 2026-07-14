@@ -95,7 +95,8 @@ struct ReminderSetupView: View {
         let due = bill.dueDate.formatted(.dateTime.day().month(.wide))
         if let first = plannedDates.first, plannedDates.count > 0 {
             let mention = first.formatted(.dateTime.day().month(.wide))
-            return "Your \(bill.issuer) bill is due \(due). I'll mention it on \(mention) — sound right? After that, silence until it matters."
+            return "Your \(bill.issuer) bill is due \(due). I'll mention it on \(mention) — sound right? "
+                + "After that, silence until it matters."
         }
         return "Your \(bill.issuer) bill is due \(due)."
     }

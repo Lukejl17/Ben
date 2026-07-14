@@ -28,6 +28,7 @@
 		7000A84DFA998DCD5EA766F6 /* SecondBillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D11383F8442B847789DB6 /* SecondBillView.swift */; };
 		7AB87A651FE75B1B423E4F0E /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E711747696076530D8DDE297 /* AnalyticsTests.swift */; };
 		7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A884086B3F417CFBD382BA0 /* ContentView.swift */; };
+		800435273F6E6DA4D8C0F3C3 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6372B46A46205B936B03CED /* ScreenshotTests.swift */; };
 		84F36372710AD65AE4F81D66 /* VisionBillParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2841117AF82C3AB361A867C2 /* VisionBillParser.swift */; };
 		8E6EDD43CBD558F9A5024043 /* BillDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD436987B9E9BD9F0777E62 /* BillDetailView.swift */; };
 		9425425482A268F9D66DC440 /* OnboardingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB845796FD03BDFDDD41226 /* OnboardingModels.swift */; };
@@ -99,6 +100,7 @@
 		E9069EEDC762F738D1DD7364 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		F620063485E9C32AEFFFCA9A /* BenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenApp.swift; sourceTree = "<group>"; };
+		F6372B46A46205B936B03CED /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -141,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				10FE0778C4F862592E060A1C /* BenUITests.swift */,
+				F6372B46A46205B936B03CED /* ScreenshotTests.swift */,
 			);
 			path = BenUITests;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EBF5D2863D4F4ECC3FBD993 /* BenUITests.swift in Sources */,
+				800435273F6E6DA4D8C0F3C3 /* ScreenshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

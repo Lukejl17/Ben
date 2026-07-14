@@ -26,6 +26,8 @@ You are building v1. Read `docs/onboarding-flow.md` and `docs/design-system.md` 
 
 ## Commands
 
+- ⚠️ `/Applications/Xcode.app` (26.6) is missing its iOS platform component; build with
+  `export DEVELOPER_DIR=~/Downloads/Xcode-beta.app/Contents/Developer` until it's downloaded.
 - Regenerate project: `xcodegen generate`
 - Build: `xcodebuild -project Ben.xcodeproj -scheme Ben -destination 'platform=iOS Simulator,name=iPhone 17' build`
 - Test: `xcodebuild -project Ben.xcodeproj -scheme Ben -destination 'platform=iOS Simulator,name=iPhone 17' test`

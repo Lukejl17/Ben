@@ -9,3 +9,10 @@ Pre-seeded — these need Luke, not Claude:
 - [ ] PostHog project + API key → replace LocalAnalytics
 - [ ] Email forwarding ingestion backend (S10 forwarding address is display-only)
 - [ ] Ben's illustration (clay + ink palette, one calm expression, ≤44pt — replaces SF Symbol placeholder)
+
+Added overnight (14 Jul 2026):
+
+- [ ] Xcode 26.6 in /Applications is missing the iOS 26.5 simulator platform — open Xcode once and
+      install it (Settings → Components), or keep building with ~/Downloads/Xcode-beta.app
+      (`export DEVELOPER_DIR=~/Downloads/Xcode-beta.app/Contents/Developer`). Everything tonight
+      was built and tested with the beta.

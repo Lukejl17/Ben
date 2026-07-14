@@ -27,6 +27,10 @@ struct ContentView: View {
             notificationRouter.resumeUploadRequested = false
             coordinator.advance(to: .upload)
         }
+        // UI-test hook for the dark-mode screenshot pass.
+        .preferredColorScheme(
+            ProcessInfo.processInfo.arguments.contains("-forceDark") ? .dark : nil
+        )
     }
 }
 

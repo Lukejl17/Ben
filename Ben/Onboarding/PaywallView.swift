@@ -150,7 +150,8 @@ struct PaywallView: View {
                     Text("The deal, plainly")
                         .font(.benLabel)
                         .foregroundStyle(Color.benInk)
-                    Text("You pay for Ben, so your data is never the product. Cancel in one tap. If the trial lapses, your bills stay visible — reminders stop, that's all.")
+                    Text("You pay for Ben, so your data is never the product. Cancel in one tap. "
+                         + "If the trial lapses, your bills stay visible — reminders stop, that's all.")
                         .font(.benMeta)
                         .foregroundStyle(Color.benInkSecondary)
                 }

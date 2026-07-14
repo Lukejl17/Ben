@@ -52,6 +52,11 @@ struct CaptureExtractView: View {
             .ignoresSafeArea()
         }
         .onAppear {
+            // UI-test hook: feed the (mock) parser directly, skipping OS pickers.
+            if ProcessInfo.processInfo.arguments.contains("-autoCapture") {
+                Task { await process(Data("ui-test-bill".utf8)) }
+                return
+            }
             // Photo method goes straight to the picker — no extra tap.
             if coordinator.uploadMethod == .photo && coordinator.pendingImageData == nil {
                 showPhotoPicker = true

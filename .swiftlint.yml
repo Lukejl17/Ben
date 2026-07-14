@@ -10,3 +10,7 @@ identifier_name:
   excluded: [x, y, i]
 trailing_whitespace:
   ignores_empty_lines: true
+function_body_length:
+  # UI walkthrough tests are linear scripts; splitting them hurts readability.
+  warning: 80
+  error: 100

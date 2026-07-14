@@ -11,7 +11,8 @@ struct WelcomeView: View {
             HStack(alignment: .top, spacing: 12) {
                 BenAvatar()
                 BenVoiceText(
-                    text: "G'day — I'm Ben. Give me your bills and I'll tell you when they matter. The rest of the time, you won't hear from me."
+                    text: "G'day — I'm Ben. Give me your bills and I'll tell you when they matter. "
+                        + "The rest of the time, you won't hear from me."
                 )
             }
             .padding(.horizontal, 24)
