@@ -51,7 +51,7 @@ final class ScreenshotTests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["You confirm everything before it's saved."].waitForExistence(timeout: 5))
         snap(app, "s4-trust-upload")
-        app.buttons["Photo"].tap()
+        app.buttons["Choose a photo"].tap()
 
         let confirmCTA = app.buttons["Looks right — track it"]
         XCTAssertTrue(confirmCTA.waitForExistence(timeout: 10))
@@ -102,7 +102,7 @@ final class ScreenshotTests: XCTestCase {
 
         // The add-bill dial, expanded
         app.buttons["Add a bill"].tap()
-        XCTAssertTrue(app.buttons["Photo"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Choose a photo"].waitForExistence(timeout: 5))
         snap(app, "home-add-dial")
     }
 }

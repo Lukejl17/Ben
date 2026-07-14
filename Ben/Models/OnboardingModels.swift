@@ -91,7 +91,10 @@ enum OverdueCadence: String, CaseIterable, Codable, Sendable {
 
 /// S4/S5 — how the bill came in. Raw values feed analytics.
 enum UploadMethod: String, Sendable {
+    /// Chosen from the photo library.
     case photo
+    /// Taken with the camera, there and then.
+    case camera
     case pdf
     case email
     case manual

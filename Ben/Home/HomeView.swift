@@ -280,7 +280,13 @@ struct AddBillDial: View {
     var body: some View {
         VStack(alignment: .trailing, spacing: 12) {
             if expanded {
-                option(symbol: "camera.fill", wash: (.washEucalyptusBg, .washEucalyptusFg), label: "Photo") {
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    option(symbol: "camera.fill", wash: (.washEucalyptusBg, .washEucalyptusFg), label: "Take a photo") {
+                        onPick(.camera)
+                    }
+                }
+                option(symbol: "photo.on.rectangle.angled", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                       label: "Choose a photo") {
                     onPick(.photo)
                 }
                 option(symbol: "doc.fill", wash: (.washSkyBg, .washSkyFg), label: "PDF or file") {

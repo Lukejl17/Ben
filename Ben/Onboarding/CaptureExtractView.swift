@@ -56,11 +56,21 @@ struct CaptureExtractView: View {
                 Task { await process(Data("ui-test-bill".utf8)) }
                 return
             }
-            // Photo method goes straight to the picker — no extra tap.
-            if coordinator.uploadMethod == .photo && coordinator.pendingImageData == nil {
+            // The chosen method goes straight to its picker — no extra tap.
+            guard coordinator.pendingImageData == nil else { return }
+            switch coordinator.uploadMethod {
+            case .photo:
                 showPhotoPicker = true
-            } else if coordinator.uploadMethod == .pdf {
+            case .camera:
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    showCamera = true
+                } else {
+                    showPhotoPicker = true  // simulator has no camera
+                }
+            case .pdf:
                 showFileImporter = true
+            default:
+                break
             }
         }
     }

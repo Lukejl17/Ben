@@ -28,8 +28,12 @@ struct UploadBillView: View {
                 .foregroundStyle(Color.benInk)
 
             VStack(spacing: 12) {
-                methodCard(symbol: "camera.fill", wash: (.washEucalyptusBg, .washEucalyptusFg),
-                           label: "Photo", detail: "Snap it or pick from your library", method: .photo)
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    methodCard(symbol: "camera.fill", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                               label: "Take a photo", detail: "Point it at the bill — I'll do the reading", method: .camera)
+                }
+                methodCard(symbol: "photo.on.rectangle.angled", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                           label: "Choose a photo", detail: "From your photo library", method: .photo)
                 methodCard(symbol: "doc.fill", wash: (.washSkyBg, .washSkyFg),
                            label: "PDF or file", detail: "Straight from an email attachment", method: .pdf)
                 emailMethodRow

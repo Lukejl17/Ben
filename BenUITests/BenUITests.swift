@@ -47,7 +47,7 @@ final class BenUITests: XCTestCase {
 
         // S4 — trust block + method
         XCTAssertTrue(app.staticTexts["You confirm everything before it's saved."].waitForExistence(timeout: 5))
-        app.buttons["Photo"].tap()
+        app.buttons["Choose a photo"].tap()
 
         // S5 auto-captures via the mock parser → S6 confirm shows the AGL fixture
         let confirmCTA = app.buttons["Looks right — track it"]
