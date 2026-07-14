@@ -44,11 +44,21 @@ struct HomeView: View {
             }
         }
         .tint(.benAccent)
-        .sheet(isPresented: $showAddBill) {
-            OnboardingFlow()
-                .presentationCornerRadius(28)
-                .presentationBackground(Color.benCanvas)
-        }
+        .sheet(
+            isPresented: $showAddBill,
+            onDismiss: { coordinator.isAddingSubsequentBill = false },
+            content: {
+            ZStack(alignment: .topTrailing) {
+                OnboardingFlow()
+                BenCircleButton(systemName: "xmark", accessibilityLabel: "Close") {
+                    showAddBill = false
+                }
+                .padding(.top, 16)
+                .padding(.trailing, 20)
+            }
+            .presentationCornerRadius(28)
+            .presentationBackground(Color.benCanvas)
+        })
         .onChange(of: coordinator.step) { _, step in
             if step == .done {
                 showAddBill = false
