@@ -17,6 +17,16 @@ enum InsightsPeriod: String, CaseIterable, Sendable {
         }
     }
 
+    /// Compact form for the chip row — all four must fit one line on any phone.
+    var chipLabel: String {
+        switch self {
+        case .threeMonths: "3 mo"
+        case .sixMonths: "6 mo"
+        case .year: "12 mo"
+        case .all: "All"
+        }
+    }
+
     var months: Int? {
         switch self {
         case .threeMonths: 3

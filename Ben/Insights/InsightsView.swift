@@ -100,17 +100,18 @@ struct InsightsView: View {
                 Button {
                     withAnimation(.spring(duration: 0.3)) { period = option }
                 } label: {
-                    Text(option.label)
+                    Text(option.chipLabel)
                         .font(.benLabel)
                         .lineLimit(1)
                         .fixedSize()
                         .foregroundStyle(isSelected ? .white : Color.benInk)
-                        .padding(.horizontal, 13)
+                        .padding(.horizontal, 14)
                         .padding(.vertical, 9)
                         .background(isSelected ? Color.benAccent : Color.benCard, in: Capsule())
                 }
                 .buttonStyle(BenPressable())
                 .benShadow(.card)
+                .accessibilityLabel(option.label)
             }
         }
     }
