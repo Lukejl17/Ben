@@ -16,7 +16,14 @@ struct ContentView: View {
         ZStack {
             BenCanvas()
             if hasCompletedOnboarding {
-                HomeView()
+                TabView {
+                    Tab("Bills", systemImage: "doc.text.fill") {
+                        HomeView()
+                    }
+                    Tab("Insights", systemImage: "chart.pie.fill") {
+                        InsightsView()
+                    }
+                }
             } else {
                 OnboardingFlow()
             }

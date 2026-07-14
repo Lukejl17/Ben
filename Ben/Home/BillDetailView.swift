@@ -7,6 +7,7 @@ struct BillDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.services) private var services
     @Environment(\.dismiss) private var dismiss
+    @State private var showCategoryPicker = false
 
     var body: some View {
         ScrollView {
@@ -46,6 +47,35 @@ struct BillDetailView: View {
                     }
                 }
 
+                Button {
+                    showCategoryPicker = true
+                } label: {
+                    HStack(spacing: 14) {
+                        BenIconCircle(
+                            systemName: BillCategory.symbol(for: bill.resolvedCategory),
+                            wash: BillCategory.wash(for: bill.resolvedCategory),
+                            size: 40
+                        )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(BillCategory.label(for: bill.resolvedCategory))
+                                .font(.benCardTitle)
+                                .foregroundStyle(Color.benInk)
+                            Text("Category — used in Insights")
+                                .font(.benMeta)
+                                .foregroundStyle(Color.benInkMuted)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(Color.benInkMuted)
+                    }
+                    .padding(18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                }
+                .buttonStyle(BenPressable())
+                .benShadow(.card)
+
                 if let data = bill.sourceImageData, let image = UIImage(data: data) {
                     Image(uiImage: image)
                         .resizable()
@@ -58,6 +88,12 @@ struct BillDetailView: View {
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
+        }
+        .sheet(isPresented: $showCategoryPicker) {
+            CategoryPickerSheet(bill: bill)
+                .presentationDetents([.large])
+                .presentationCornerRadius(28)
+                .presentationBackground(Color.benCanvas)
         }
         .safeAreaInset(edge: .bottom) {
             if bill.status != .paid {

@@ -109,6 +109,7 @@ struct ConfirmBillView: View {
             sourceImageData: coordinator.pendingImageData,
             uploadMethod: coordinator.uploadMethod.rawValue
         )
+        bill.category = BillCategories.category(forIssuer: bill.issuer)
         modelContext.insert(bill)
         try? modelContext.save()
 

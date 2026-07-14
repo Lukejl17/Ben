@@ -6,14 +6,18 @@ enum BillCategories {
     static func category(forIssuer issuer: String) -> String {
         let lower = issuer.lowercased()
         let map: [(keywords: [String], category: String)] = [
+            (["agl gas", "gas", "elgas", "kleenheat"], "gas"),
             (["agl", "origin", "energyaustralia", "red energy", "alinta", "ausgrid", "jemena",
               "electric", "energy", "power"], "electricity"),
+            (["telstra mobile", "boost", "amaysim", "mobile", "phone"], "phone"),
             (["telstra", "optus", "vodafone", "tpg", "aussie broadband", "iinet",
-              "internet", "broadband", "nbn", "mobile"], "internet"),
+              "internet", "broadband", "nbn"], "internet"),
             (["water", "urban utilities"], "water"),
             (["nrma", "aami", "allianz", "bupa", "medibank", "hcf", "nib", "insurance"], "insurance"),
             (["council", "rates"], "council rates"),
-            (["foxtel", "netflix", "stan", "spotify", "streaming"], "streaming")
+            (["rent", "real estate", "property management"], "rent"),
+            (["foxtel", "netflix", "stan", "binge", "disney", "streaming"], "streaming"),
+            (["spotify", "apple", "icloud", "subscription"], "subscriptions")
         ]
         for entry in map where entry.keywords.contains(where: lower.contains) {
             return entry.category
@@ -22,27 +26,11 @@ enum BillCategories {
     }
 
     static func symbol(forIssuer issuer: String) -> String {
-        switch category(forIssuer: issuer) {
-        case "electricity": "bolt.fill"
-        case "internet": "wifi"
-        case "water": "drop.fill"
-        case "insurance": "shield.fill"
-        case "council rates": "building.columns.fill"
-        case "streaming": "play.tv.fill"
-        default: "doc.text.fill"
-        }
+        BillCategory.symbol(for: category(forIssuer: issuer))
     }
 
     static func wash(forIssuer issuer: String) -> (bg: Color, fg: Color) {
-        switch category(forIssuer: issuer) {
-        case "electricity": (.washAmberBg, .washAmberFg)
-        case "internet": (.washSkyBg, .washSkyFg)
-        case "water": (.washSkyBg, .washSkyFg)
-        case "insurance": (.washEucalyptusBg, .washEucalyptusFg)
-        case "council rates": (.washClayBg, .washClayFg)
-        case "streaming": (.washClayBg, .washClayFg)
-        default: (.washEucalyptusBg, .washEucalyptusFg)
-        }
+        BillCategory.wash(for: category(forIssuer: issuer))
     }
 
     static func suggestions(afterCategory category: String, intent: IntentContext?) -> [String] {
@@ -63,15 +51,7 @@ enum BillCategories {
     }
 
     static func symbol(forCategory category: String) -> String {
-        switch category {
-        case "electricity": "bolt.fill"
-        case "internet": "wifi"
-        case "water": "drop.fill"
-        case "insurance": "shield.fill"
-        case "council rates": "building.columns.fill"
-        case "streaming": "play.tv.fill"
-        default: "doc.text.fill"
-        }
+        BillCategory.symbol(for: category)
     }
 }
 

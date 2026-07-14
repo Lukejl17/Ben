@@ -13,6 +13,8 @@ final class Bill {
     var paidAt: Date?
     @Attribute(.externalStorage) var sourceImageData: Data?
     var notes: String
+    /// Spend category — stored lowercase; empty means "infer from issuer".
+    var category: String = ""
     var createdAt: Date
     /// How the bill got in: "photo", "pdf", "manual", "sample".
     var uploadMethod: String
@@ -47,6 +49,11 @@ final class Bill {
 
     var status: BillStatus {
         BillStatus.derive(dueDate: dueDate, paidAt: paidAt)
+    }
+
+    /// The category shown everywhere: explicit if set, else inferred from issuer.
+    var resolvedCategory: String {
+        category.isEmpty ? BillCategories.category(forIssuer: issuer) : category
     }
 
     /// 1-based position of this bill by creation order. The PMF metric cares

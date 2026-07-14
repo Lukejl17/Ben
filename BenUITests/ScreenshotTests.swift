@@ -104,5 +104,11 @@ final class ScreenshotTests: XCTestCase {
         app.buttons["Add a bill"].tap()
         XCTAssertTrue(app.buttons["Choose a photo"].waitForExistence(timeout: 5))
         snap(app, "home-add-dial")
+        app.buttons["Add a bill"].tap()  // collapse
+
+        // Insights tab
+        app.tabBars.buttons["Insights"].tap()
+        XCTAssertTrue(app.buttons["3 months"].waitForExistence(timeout: 5))
+        snap(app, "insights")
     }
 }
