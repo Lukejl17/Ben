@@ -25,28 +25,28 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
+                BenCanvas()
                 if bills.isEmpty {
                     emptyState
                 } else {
                     billList
                 }
             }
-            .background(Color.benCanvas)
             .navigationTitle("Bills")
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
+                    BenCircleButton(systemName: "plus", accessibilityLabel: "Add a bill") {
                         startAddBill()
-                    } label: {
-                        Image(systemName: "plus")
                     }
-                    .accessibilityLabel("Add a bill")
                 }
             }
         }
+        .tint(.benAccent)
         .sheet(isPresented: $showAddBill) {
             OnboardingFlow()
+                .presentationCornerRadius(28)
                 .presentationBackground(Color.benCanvas)
         }
         .onChange(of: coordinator.step) { _, step in
@@ -64,6 +64,8 @@ struct HomeView: View {
         }
         .sheet(item: $detailBill) { bill in
             BillDetailView(bill: bill)
+                .presentationCornerRadius(28)
+                .presentationBackground(Color.benCanvas)
         }
         .onChange(of: notificationRouter.openBillID) { _, _ in handleDeepLinks() }
         .onChange(of: notificationRouter.addBillRequested) { _, _ in handleDeepLinks() }
@@ -85,38 +87,46 @@ struct HomeView: View {
 
     private var billList: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 12) {
                 if !needsAttention {
-                    BenVoiceText(text: "Nothing needs your attention.")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 8)
+                    HStack(spacing: 12) {
+                        BenAvatar(size: 40)
+                        BenVoiceText(text: "Nothing needs your attention.", quiet: true)
+                            .foregroundStyle(Color.benInkSecondary)
+                    }
+                    .padding(.top, 6)
+                    .padding(.bottom, 8)
                 }
                 if case .lapsed = services.subscriptions.state() {
-                    Text("Your trial has ended — bills stay visible here, reminders are off.")
-                        .font(.benMeta)
-                        .foregroundStyle(Color.benInkMuted)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    BenCard(padding: 14) {
+                        Text("Your trial has ended — bills stay visible here, reminders are off.")
+                            .font(.benMeta)
+                            .foregroundStyle(Color.benInkSecondary)
+                    }
                 }
                 ForEach(sortedBills) { bill in
-                    BillRow(bill: bill)
+                    BillRow(bill: bill) {
+                        detailBill = bill
+                    }
                 }
             }
             .padding(.horizontal, 20)
-            .padding(.bottom, 24)
+            .padding(.bottom, 40)
         }
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 18) {
             Spacer()
-            BenAvatar()
+            BenAvatar(size: 44)
             BenVoiceText(text: "No bills yet. Hand one over and it becomes my problem.")
+                .foregroundStyle(Color.benInkSecondary)
                 .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
             BenPrimaryButton(title: "Add a bill") { startAddBill() }
-                .padding(.horizontal, 48)
+                .padding(.horizontal, 60)
             Spacer()
         }
-        .padding(.horizontal, 24)
     }
 
     private func startAddBill() {
@@ -128,15 +138,23 @@ struct HomeView: View {
 
 struct BillRow: View {
     let bill: Bill
+    var onTap: (() -> Void)?
     @Environment(\.modelContext) private var modelContext
     @Environment(\.services) private var services
 
     var body: some View {
-        BenCard {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 4) {
+        Button {
+            onTap?()
+        } label: {
+            HStack(alignment: .center, spacing: 14) {
+                BenIconCircle(
+                    systemName: BillCategories.symbol(forIssuer: bill.issuer),
+                    wash: BillCategories.wash(forIssuer: bill.issuer)
+                )
+                .opacity(bill.status == .paid ? 0.55 : 1)
+                VStack(alignment: .leading, spacing: 3) {
                     Text(bill.issuer)
-                        .font(.benLabel)
+                        .font(.benCardTitle)
                         .foregroundStyle(Color.benInk)
                     Text("Due \(bill.dueDate.formatted(.dateTime.day().month(.wide)))")
                         .font(.benMeta)
@@ -151,7 +169,12 @@ struct BillRow: View {
                     StatusPill(status: bill.status)
                 }
             }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
+        .buttonStyle(BenPressable())
+        .benShadow(.card)
         .contextMenu {
             if bill.status != .paid {
                 Button("Mark as paid", systemImage: "checkmark.circle") {

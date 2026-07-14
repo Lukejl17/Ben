@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 
-/// Where a tapped reminder lands: the bill, plainly.
+/// Where a tapped reminder lands: the bill, plainly. Amount is the hero.
 struct BillDetailView: View {
     let bill: Bill
     @Environment(\.modelContext) private var modelContext
@@ -11,34 +11,38 @@ struct BillDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .firstTextBaseline) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(bill.issuer)
-                            .font(.benTitle)
-                            .foregroundStyle(Color.benInk)
-                        Text("Due \(bill.dueDate.formatted(.dateTime.day().month(.wide).year()))")
-                            .font(.benBody)
-                            .foregroundStyle(Color.benInkSecondary)
-                    }
-                    Spacer()
-                    VStack(alignment: .trailing, spacing: 6) {
-                        Text(bill.amount.formatted(.currency(code: "AUD")))
-                            .font(.benAmount)
-                            .monospacedDigit()
-                            .foregroundStyle(Color.benInk)
-                        StatusPill(status: bill.status)
-                    }
+                VStack(alignment: .center, spacing: 10) {
+                    BenIconCircle(
+                        systemName: BillCategories.symbol(forIssuer: bill.issuer),
+                        wash: BillCategories.wash(forIssuer: bill.issuer),
+                        size: 56
+                    )
+                    Text(bill.amount.formatted(.currency(code: "AUD")))
+                        .font(.benHeroAmount)
+                        .monospacedDigit()
+                        .foregroundStyle(Color.benInk)
+                    Text(bill.issuer)
+                        .font(.benCardTitle)
+                        .foregroundStyle(Color.benInkSecondary)
+                    StatusPill(status: bill.status)
                 }
-                .padding(.top, 28)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 36)
+                .padding(.bottom, 8)
 
-                if bill.status != .paid {
-                    BenPrimaryButton(title: "Mark as paid") {
-                        bill.paidAt = .now
-                        services.scheduler.cancel(identifiers: bill.notificationIDs)
-                        bill.notificationIDs = []
-                        bill.hasNotification = false
-                        try? modelContext.save()
-                        dismiss()
+                BenCard {
+                    HStack(spacing: 14) {
+                        BenIconCircle(systemName: "calendar", wash: (.washAmberBg, .washAmberFg), size: 40)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Due \(bill.dueDate.formatted(.dateTime.weekday(.wide).day().month(.wide).year()))")
+                                .font(.benCardTitle)
+                                .foregroundStyle(Color.benInk)
+                            Text(bill.hasNotification
+                                 ? "Reminder set — I'll mention it when it matters."
+                                 : "No reminder for this one — it stays visible here.")
+                                .font(.benMeta)
+                                .foregroundStyle(Color.benInkMuted)
+                        }
                     }
                 }
 
@@ -46,13 +50,28 @@ struct BillDetailView: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.benHairline, lineWidth: 0.5))
+                        .frame(maxHeight: 300)
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .benShadow(.card)
                 }
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, 20)
             .padding(.bottom, 24)
         }
-        .presentationBackground(Color.benCanvas)
+        .safeAreaInset(edge: .bottom) {
+            if bill.status != .paid {
+                BenPrimaryButton(title: "Mark as paid", systemImage: "checkmark") {
+                    bill.paidAt = .now
+                    services.scheduler.cancel(identifiers: bill.notificationIDs)
+                    bill.notificationIDs = []
+                    bill.hasNotification = false
+                    try? modelContext.save()
+                    dismiss()
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
+            }
+        }
     }
 }

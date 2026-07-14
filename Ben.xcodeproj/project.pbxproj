@@ -41,6 +41,7 @@
 		E8B177DBC1A4F227A48A5F3C /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FE7C86E066B7A77F16EA65 /* ReminderScheduler.swift */; };
 		EB27BCBAFB7274AA519D35DB /* ConfirmBillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAFF1EA8A85A8657AF1413 /* ConfirmBillView.swift */; };
 		EB3D74E6A9DEC1DF8D542037 /* AppServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C5EEE4FD3295DC04F51F56 /* AppServices.swift */; };
+		F04198C1E1B530F8DCABDEDB /* BenComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F2CCEE2A9C323E66090979 /* BenComponents.swift */; };
 		F1A82F76A2224F6A757539AB /* BillHeuristicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B26863D9E8B7D3C9F88DA /* BillHeuristicsTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -94,6 +95,7 @@
 		CAB845796FD03BDFDDD41226 /* OnboardingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModels.swift; sourceTree = "<group>"; };
 		CBE7532AE49874607299953C /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
 		D1FEB6A681D22FBFC5617414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D5F2CCEE2A9C323E66090979 /* BenComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenComponents.swift; sourceTree = "<group>"; };
 		D853ACCC7A4596D8497D055A /* ReminderSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSetupView.swift; sourceTree = "<group>"; };
 		D9744BD8828BD4119D2EC87F /* CaptureExtractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureExtractView.swift; sourceTree = "<group>"; };
 		E711747696076530D8DDE297 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 		63DD75080B989B7ACFD4CEC8 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
+				D5F2CCEE2A9C323E66090979 /* BenComponents.swift */,
 				48D4F001318AA2CE3A5FE684 /* BenTheme.swift */,
 			);
 			path = Theme;
@@ -335,6 +338,7 @@
 				2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */,
 				EB3D74E6A9DEC1DF8D542037 /* AppServices.swift in Sources */,
 				5A9F0D122828DFCFB76B4CED /* BenApp.swift in Sources */,
+				F04198C1E1B530F8DCABDEDB /* BenComponents.swift in Sources */,
 				46861AD8B860C5160C3B7264 /* BenTheme.swift in Sources */,
 				4AC6D2F813D314B4FD139596 /* Bill.swift in Sources */,
 				8E6EDD43CBD558F9A5024043 /* BillDetailView.swift in Sources */,

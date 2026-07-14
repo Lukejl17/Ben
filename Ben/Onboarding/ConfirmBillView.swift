@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 
-/// S6 — confirm. Nothing saves without the user's explicit once-over.
+/// S6 — confirm. The amount is the hero; nothing saves without a once-over.
 struct ConfirmBillView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
@@ -16,61 +16,76 @@ struct ConfirmBillView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .top, spacing: 12) {
-                    BenAvatar()
-                    BenVoiceText(text: "Give this a once-over so everything stays accurate. I'd rather be checked than wrong.")
-                }
-                .padding(.top, 48)
-
-                BenCard {
-                    VStack(spacing: 14) {
-                        LabeledContent("From") {
-                            TextField("Issuer", text: $issuer)
-                                .multilineTextAlignment(.trailing)
-                                .accessibilityIdentifier("confirm-issuer")
-                        }
-                        Divider()
-                        LabeledContent("Amount") {
-                            TextField("$0.00", text: $amountText)
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .font(.benAmount)
-                                .monospacedDigit()
-                                .accessibilityIdentifier("confirm-amount")
-                        }
-                        Divider()
-                        DatePicker("Due date", selection: $dueDate, displayedComponents: .date)
-                    }
+        BenScreen {
+            // Hero: the number you're about to trust Ben with.
+            VStack(alignment: .center, spacing: 6) {
+                Text((amount ?? 0).formatted(.currency(code: "AUD")))
+                    .font(.benHeroAmount)
+                    .monospacedDigit()
+                    .foregroundStyle(Color.benInk)
+                    .contentTransition(.numericText())
+                    .animation(.spring(duration: 0.3), value: amount)
+                Text(issuer.isEmpty ? "New bill" : issuer)
                     .font(.benBody)
-                }
-
-                if let data = coordinator.pendingImageData, let image = UIImage(data: data) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.benHairline, lineWidth: 0.5))
-                }
-
-                if coordinator.isSampleWalkthrough {
-                    Text("This is a sample bill — nothing is saved.")
-                        .font(.benMeta)
-                        .foregroundStyle(Color.benInkMuted)
-                }
-
-                BenPrimaryButton(
-                    title: coordinator.isSampleWalkthrough ? "Got it — back to my own bills" : "Looks right — track it"
-                ) {
-                    coordinator.isSampleWalkthrough ? coordinator.endSampleWalkthrough() : confirm()
-                }
-                .disabled(!coordinator.isSampleWalkthrough && (issuer.isEmpty || amount == nil))
-                .padding(.bottom, 32)
+                    .foregroundStyle(Color.benInkSecondary)
             }
-            .padding(.horizontal, 24)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 20)
+            .padding(.bottom, 10)
+
+            HStack(alignment: .top, spacing: 12) {
+                BenAvatar(size: 40)
+                BenVoiceText(
+                    text: "Give this a once-over so everything stays accurate. I'd rather be checked than wrong.",
+                    quiet: true
+                )
+                .foregroundStyle(Color.benInkSecondary)
+            }
+            .padding(.bottom, 12)
+
+            VStack(spacing: 12) {
+                BenField("From") {
+                    TextField("Issuer", text: $issuer)
+                        .accessibilityIdentifier("confirm-issuer")
+                }
+                BenField("Amount") {
+                    TextField("$0.00", text: $amountText)
+                        .keyboardType(.decimalPad)
+                        .monospacedDigit()
+                        .accessibilityIdentifier("confirm-amount")
+                }
+                BenField("Due date") {
+                    DatePicker("", selection: $dueDate, displayedComponents: .date)
+                        .labelsHidden()
+                }
+            }
+
+            if let data = coordinator.pendingImageData, let image = UIImage(data: data) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 260)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .benShadow(.card)
+                    .padding(.top, 8)
+            }
+
+            if coordinator.isSampleWalkthrough {
+                Text("This is a sample bill — nothing is saved.")
+                    .font(.benMeta)
+                    .foregroundStyle(Color.benInkMuted)
+                    .frame(maxWidth: .infinity)
+            }
+        } cta: {
+            BenPrimaryButton(
+                title: coordinator.isSampleWalkthrough ? "Got it — back to my own bills" : "Looks right — track it"
+            ) {
+                coordinator.isSampleWalkthrough ? coordinator.endSampleWalkthrough() : confirm()
+            }
+            .disabled(!coordinator.isSampleWalkthrough && (issuer.isEmpty || amount == nil))
+            .opacity(!coordinator.isSampleWalkthrough && (issuer.isEmpty || amount == nil) ? 0.45 : 1)
         }
-        .scrollDismissesKeyboard(.interactively)
         .onAppear(perform: prefill)
     }
 

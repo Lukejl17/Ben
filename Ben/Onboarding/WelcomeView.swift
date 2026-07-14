@@ -1,28 +1,37 @@
 import SwiftUI
 
-/// S1 — one promise, one CTA. No signup, no carousel.
+/// S1 — one promise, one CTA. Ben introduces himself in his own voice.
 struct WelcomeView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-            HStack(alignment: .top, spacing: 12) {
-                BenAvatar()
+        BenScreen {
+            VStack(alignment: .leading, spacing: 0) {
+                Spacer(minLength: 120)
+
+                BenAvatar(size: 44)
+                    .padding(.bottom, 20)
+
+                Text("G'day — I'm Ben.")
+                    .font(.system(size: 40, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.benInk)
+                    .padding(.bottom, 14)
+
                 BenVoiceText(
-                    text: "G'day — I'm Ben. Give me your bills and I'll tell you when they matter. "
-                        + "The rest of the time, you won't hear from me."
+                    text: "Give me your bills and I'll tell you when they matter. The rest of the time, you won't hear from me."
                 )
+                .foregroundStyle(Color.benInkSecondary)
+
+                Spacer(minLength: 40)
             }
-            .padding(.horizontal, 24)
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 480)
+        } cta: {
             BenPrimaryButton(title: "Set up my first bill") {
                 services.analytics.track(.onboardingStarted)
                 coordinator.advance(to: .intent)
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 32)
         }
     }
 }

@@ -13,35 +13,38 @@ struct ManualEntryView: View {
         Decimal(string: amountText.replacingOccurrences(of: ",", with: ""))
     }
 
+    private var isValid: Bool {
+        !issuer.trimmingCharacters(in: .whitespaces).isEmpty && amount != nil
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        BenScreen {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar()
-                BenVoiceText(text: "That one's hard to read — happens a lot. Type the basics and I've got it from here.")
+                BenAvatar(size: 40)
+                BenVoiceText(
+                    text: "That one's hard to read — happens a lot. Type the basics and I've got it from here.",
+                    quiet: true
+                )
+                .foregroundStyle(Color.benInkSecondary)
             }
-            .padding(.top, 48)
+            .padding(.top, 28)
+            .padding(.bottom, 12)
 
-            BenCard {
-                VStack(spacing: 14) {
-                    LabeledContent("Who's it from") {
-                        TextField("AGL, Telstra…", text: $issuer)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    Divider()
-                    LabeledContent("Amount") {
-                        TextField("$0.00", text: $amountText)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .monospacedDigit()
-                    }
-                    Divider()
-                    DatePicker("Due date", selection: $dueDate, displayedComponents: .date)
+            VStack(spacing: 12) {
+                BenField("Who's it from") {
+                    TextField("AGL, Telstra…", text: $issuer)
                 }
-                .font(.benBody)
+                BenField("Amount") {
+                    TextField("$0.00", text: $amountText)
+                        .keyboardType(.decimalPad)
+                        .monospacedDigit()
+                }
+                BenField("Due date") {
+                    DatePicker("", selection: $dueDate, displayedComponents: .date)
+                        .labelsHidden()
+                }
             }
-
-            Spacer()
-
+        } cta: {
             BenPrimaryButton(title: "Continue") {
                 coordinator.parsed = ParsedBill(
                     issuer: issuer.trimmingCharacters(in: .whitespaces),
@@ -53,10 +56,9 @@ struct ManualEntryView: View {
                 services.analytics.track(.manualEntryCompleted)
                 coordinator.advance(to: .confirm)
             }
-            .disabled(issuer.trimmingCharacters(in: .whitespaces).isEmpty || amount == nil)
-            .padding(.bottom, 32)
+            .disabled(!isValid)
+            .opacity(isValid ? 1 : 0.45)
         }
-        .padding(.horizontal, 24)
         .onAppear {
             services.analytics.track(.manualEntryStarted)
             if let parsed = coordinator.parsed {

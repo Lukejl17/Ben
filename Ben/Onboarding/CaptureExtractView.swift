@@ -14,14 +14,13 @@ struct CaptureExtractView: View {
     @State private var isProcessing = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        Group {
             if isProcessing {
                 processingState
             } else {
-                pickerButtons
+                pickerScreen
             }
         }
-        .padding(.horizontal, 24)
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItem, matching: .images)
         .onChange(of: photoItem) { _, item in
             guard let item else { return }
@@ -66,52 +65,61 @@ struct CaptureExtractView: View {
         }
     }
 
-    private var pickerButtons: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Add your bill")
-                .font(.benTitle)
-                .foregroundStyle(Color.benInk)
-                .padding(.top, 48)
-            VStack(spacing: 10) {
-                captureButton(symbol: "photo.on.rectangle", label: "Choose a photo") { showPhotoPicker = true }
+    private var pickerScreen: some View {
+        BenScreen(title: "Add your bill") {
+            VStack(spacing: 12) {
+                captureCard(symbol: "photo.on.rectangle.angled", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                            label: "Choose a photo") { showPhotoPicker = true }
                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                    captureButton(symbol: "camera", label: "Take a photo") { showCamera = true }
+                    captureCard(symbol: "camera.fill", wash: (.washSkyBg, .washSkyFg),
+                                label: "Take a photo") { showCamera = true }
                 }
-                captureButton(symbol: "doc", label: "Choose a PDF or file") { showFileImporter = true }
+                captureCard(symbol: "doc.fill", wash: (.washAmberBg, .washAmberFg),
+                            label: "Choose a PDF or file") { showFileImporter = true }
             }
-            Spacer()
-            BenSecondaryButton(title: "Back") {
+        } cta: {
+            BenTextButton(title: "Back") {
                 coordinator.advance(to: .upload)
             }
             .frame(maxWidth: .infinity)
-            .padding(.bottom, 32)
         }
     }
 
     private var processingState: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            ProgressView()
-            BenVoiceText(text: "Reading it now…")
-            Spacer()
+        ZStack {
+            BenCanvas()
+            VStack(spacing: 20) {
+                BenAvatar(size: 44)
+                ProgressView()
+                    .controlSize(.large)
+                    .tint(.benAccent)
+                BenVoiceText(text: "Reading it now…")
+                    .foregroundStyle(Color.benInkSecondary)
+            }
         }
-        .frame(maxWidth: .infinity)
     }
 
-    private func captureButton(symbol: String, label: String, action: @escaping () -> Void) -> some View {
+    private func captureCard(
+        symbol: String, wash: (Color, Color), label: String, action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
-            HStack(spacing: 10) {
-                Image(systemName: symbol)
+            HStack(spacing: 14) {
+                BenIconCircle(systemName: symbol, wash: wash)
                 Text(label)
-                    .font(.benLabel)
+                    .font(.benCardTitle)
+                    .foregroundStyle(Color.benInk)
                 Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Color.benInkMuted)
             }
             .padding(16)
-            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.benHairline, lineWidth: 0.5))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(Color.benInk)
+        .buttonStyle(BenPressable())
+        .benShadow(.card)
+        .accessibilityIdentifier(label)
     }
 
     private func process(_ data: Data) async {

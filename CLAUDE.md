@@ -34,6 +34,14 @@ You are building v1. Read `docs/onboarding-flow.md` and `docs/design-system.md` 
 - Lint: `swiftlint --strict` (config in `.swiftlint.yml`)
 - If the iPhone 17 simulator is missing, list with `xcrun simctl list devices available` and use the newest iPhone.
 
+## Visual QA (mandatory after any UI change)
+
+- Run `./shots.sh light && ./shots.sh dark` — walks S1→S10 + home via XCUITest and
+  exports named PNGs to `screenshots/{light,dark}/`.
+- READ the screenshots and critique against `docs/design-system.md` and `design-refs/`
+  (wraps, contrast, spacing, dead zones, shadow presence, dark-mode token flips).
+  Fix and re-run until clean. Never ship a screen you haven't looked at.
+
 ## Working rules
 
 - Work in small vertical slices; after EVERY slice: `xcodegen generate` (if files added), build, test. Never move on with a red build.

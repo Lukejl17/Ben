@@ -7,19 +7,20 @@ struct IntentView: View {
     @State private var selected: IntentContext?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("What brings you in?")
-                .font(.benTitle)
-                .foregroundStyle(Color.benInk)
-                .padding(.top, 48)
-            VStack(spacing: 10) {
+        BenScreen(title: "What brings you in?") {
+            Text("Helps me pitch things right — no wrong answers.")
+                .font(.benBody)
+                .foregroundStyle(Color.benInkSecondary)
+                .padding(.bottom, 10)
+
+            VStack(spacing: 12) {
                 ForEach(IntentContext.allCases, id: \.self) { intent in
                     SelectablePill(label: intent.label, isSelected: selected == intent) {
                         selected = intent
                     }
                 }
             }
-            Spacer()
+        } cta: {
             BenPrimaryButton(title: "Continue") {
                 guard let selected else { return }
                 coordinator.intent = selected
@@ -27,8 +28,7 @@ struct IntentView: View {
                 coordinator.advance(to: .reminderStyle)
             }
             .disabled(selected == nil)
-            .padding(.bottom, 32)
+            .opacity(selected == nil ? 0.45 : 1)
         }
-        .padding(.horizontal, 24)
     }
 }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Static category mapping: what people tracking X usually also track,
-/// flavoured by the S2 intent.
+/// flavoured by the S2 intent. Plus icon/wash lookups for bill rows.
 enum BillCategories {
     static func category(forIssuer issuer: String) -> String {
         let lower = issuer.lowercased()
@@ -21,6 +21,30 @@ enum BillCategories {
         return "other"
     }
 
+    static func symbol(forIssuer issuer: String) -> String {
+        switch category(forIssuer: issuer) {
+        case "electricity": "bolt.fill"
+        case "internet": "wifi"
+        case "water": "drop.fill"
+        case "insurance": "shield.fill"
+        case "council rates": "building.columns.fill"
+        case "streaming": "play.tv.fill"
+        default: "doc.text.fill"
+        }
+    }
+
+    static func wash(forIssuer issuer: String) -> (bg: Color, fg: Color) {
+        switch category(forIssuer: issuer) {
+        case "electricity": (.washAmberBg, .washAmberFg)
+        case "internet": (.washSkyBg, .washSkyFg)
+        case "water": (.washSkyBg, .washSkyFg)
+        case "insurance": (.washEucalyptusBg, .washEucalyptusFg)
+        case "council rates": (.washClayBg, .washClayFg)
+        case "streaming": (.washClayBg, .washClayFg)
+        default: (.washEucalyptusBg, .washEucalyptusFg)
+        }
+    }
+
     static func suggestions(afterCategory category: String, intent: IntentContext?) -> [String] {
         var suggested: [String] = switch category {
         case "electricity": ["internet", "water", "insurance"]
@@ -36,6 +60,18 @@ enum BillCategories {
             suggested[suggested.count - 1] = "council rates"
         }
         return suggested
+    }
+
+    static func symbol(forCategory category: String) -> String {
+        switch category {
+        case "electricity": "bolt.fill"
+        case "internet": "wifi"
+        case "water": "drop.fill"
+        case "insurance": "shield.fill"
+        case "council rates": "building.columns.fill"
+        case "streaming": "play.tv.fill"
+        default: "doc.text.fill"
+        }
     }
 }
 
@@ -54,64 +90,69 @@ struct SecondBillView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        BenScreen(title: "One bill down") {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar()
+                BenAvatar(size: 40)
                 BenVoiceText(
-                    text: "One bill down. Got internet or insurance floating around an inbox somewhere? "
-                        + "Add it now, forward it later, or leave it with me."
+                    text: "Got internet or insurance floating around an inbox somewhere? "
+                        + "Add it now, forward it later, or leave it with me.",
+                    quiet: true
                 )
+                .foregroundStyle(Color.benInkSecondary)
             }
-            .padding(.top, 48)
+            .padding(.bottom, 12)
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("People tracking \(firstCategory) usually also track")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.benInkMuted)
-                HStack(spacing: 8) {
-                    ForEach(suggestions, id: \.self) { category in
-                        Button {
-                            addSecondBill()
-                        } label: {
+            Text("People tracking \(firstCategory) usually also track")
+                .font(.benMeta)
+                .foregroundStyle(Color.benInkMuted)
+
+            HStack(spacing: 10) {
+                ForEach(suggestions, id: \.self) { category in
+                    Button {
+                        addSecondBill()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: BillCategories.symbol(forCategory: category))
+                                .font(.footnote)
                             Text(category)
-                                .font(.benLabel)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                                .background(Color.benCard, in: Capsule())
-                                .overlay(Capsule().strokeBorder(Color.benHairline, lineWidth: 0.5))
                         }
-                        .buttonStyle(.plain)
+                        .font(.benLabel)
                         .foregroundStyle(Color.benInk)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(Color.benCard, in: Capsule())
                     }
+                    .buttonStyle(BenPressable())
+                    .benShadow(.card)
                 }
             }
+            .padding(.bottom, 12)
 
             // HUMAN: email forwarding ingestion backend — this card is display-only.
             BenCard {
-                VStack(alignment: .leading, spacing: 6) {
-                    Label("bills@ben.app", systemImage: "envelope")
-                        .font(.benLabel)
-                        .foregroundStyle(Color.benInk)
-                    Text("Forward any bill email and I'll do the rest. Available once your account backend is live.")
-                        .font(.benMeta)
-                        .foregroundStyle(Color.benInkSecondary)
+                HStack(spacing: 14) {
+                    BenIconCircle(systemName: "envelope.fill", wash: (.washSkyBg, .washSkyFg))
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("bills@ben.app")
+                            .font(.benCardTitle)
+                            .foregroundStyle(Color.benInk)
+                        Text("Forward any bill email and I'll do the rest. Live once your account backend is up.")
+                            .font(.benMeta)
+                            .foregroundStyle(Color.benInkSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
-
-            Spacer()
-
+        } cta: {
             BenPrimaryButton(title: "Add another bill now") { addSecondBill() }
-
-            BenSecondaryButton(title: "Later's fine") {
+            BenTextButton(title: "Later's fine") {
                 // The single promised nudge — cancelled if a second bill lands first.
                 let scheduler = services.scheduler
                 Task { await scheduler.scheduleDayFourNudge() }
                 finish()
             }
             .frame(maxWidth: .infinity)
-            .padding(.bottom, 32)
         }
-        .padding(.horizontal, 24)
         .onAppear {
             services.analytics.track(.secondBillPromptShown)
         }

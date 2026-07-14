@@ -7,29 +7,30 @@ struct ReminderStyleView: View {
     @State private var selected: ReminderStyle = .fewDaysEarly
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        BenScreen(title: "When should I speak up?") {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar()
+                BenAvatar(size: 40)
                 BenVoiceText(
-                    text: "I only speak up when a bill actually needs you. No streaks, no check-ins, no noise. When suits you?"
+                    text: "I only speak up when a bill actually needs you. No streaks, no check-ins, no noise.",
+                    quiet: true
                 )
+                .foregroundStyle(Color.benInkSecondary)
             }
-            .padding(.top, 48)
-            VStack(spacing: 10) {
+            .padding(.bottom, 10)
+
+            VStack(spacing: 12) {
                 ForEach(ReminderStyle.allCases, id: \.self) { style in
                     SelectablePill(label: style.label, detail: style.detail, isSelected: selected == style) {
                         selected = style
                     }
                 }
             }
-            Spacer()
+        } cta: {
             BenPrimaryButton(title: "Continue") {
                 coordinator.reminderStyle = selected
                 services.analytics.track(.reminderStyleSelected(style: selected.rawValue))
                 coordinator.advance(to: .upload)
             }
-            .padding(.bottom, 32)
         }
-        .padding(.horizontal, 24)
     }
 }

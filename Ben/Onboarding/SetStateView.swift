@@ -9,30 +9,41 @@ struct SetStateView: View {
     private var bill: Bill? { coordinator.confirmedBill }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .top, spacing: 12) {
-                BenAvatar()
-                BenVoiceText(text: benLine)
+        BenScreen {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Done.")
+                    .font(.system(size: 40, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.benInk)
+                    .padding(.top, 36)
+                    .padding(.bottom, 10)
+
+                BenVoiceText(text: benLine, quiet: true)
+                    .foregroundStyle(Color.benInkSecondary)
+                    .padding(.bottom, 22)
             }
-            .padding(.top, 48)
 
             if let bill {
                 BenCard {
-                    HStack(alignment: .firstTextBaseline) {
-                        VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .center, spacing: 14) {
+                        BenIconCircle(
+                            systemName: BillCategories.symbol(forIssuer: bill.issuer),
+                            wash: BillCategories.wash(forIssuer: bill.issuer)
+                        )
+                        VStack(alignment: .leading, spacing: 3) {
                             Text(bill.issuer)
-                                .font(.benLabel)
+                                .font(.benCardTitle)
                                 .foregroundStyle(Color.benInk)
                             Text("Due \(bill.dueDate.formatted(.dateTime.day().month(.wide)))")
                                 .font(.benMeta)
                                 .foregroundStyle(Color.benInkMuted)
                             if bill.hasNotification, let next = nextReminder {
                                 Label(
-                                    "Reminder \(next.formatted(.dateTime.day().month(.abbreviated)))",
-                                    systemImage: "bell"
+                                    "Mention on \(next.formatted(.dateTime.day().month(.abbreviated)))",
+                                    systemImage: "bell.fill"
                                 )
                                 .font(.benMeta)
-                                .foregroundStyle(Color.benInkSecondary)
+                                .lineLimit(1)
+                                .foregroundStyle(Color.washAmberFg)
                             }
                         }
                         Spacer()
@@ -45,6 +56,7 @@ struct SetStateView: View {
                         }
                     }
                 }
+                .padding(.bottom, 12)
             }
 
             Text("Nothing else needs your attention.")
@@ -54,22 +66,14 @@ struct SetStateView: View {
             Text("1 bill tracked. Most people add 2–3 to stop thinking about bills entirely.")
                 .font(.benMeta)
                 .foregroundStyle(Color.benInkMuted)
-
-            Spacer()
-
+        } cta: {
             // HUMAN: Sign in with Apple capability + entitlement, then replace
             // this stub with SignInWithAppleButton.
             if !accountSaved {
-                Button {
+                BenSecondaryButton(title: "Save my setup with Apple", systemImage: "applelogo") {
                     services.analytics.track(.accountCreated)
                     accountSaved = true
-                } label: {
-                    Label("Save my setup with Apple", systemImage: "applelogo")
-                        .font(.benLabel)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
                 }
-                .buttonStyle(.bordered)
             } else {
                 Text("Setup saved to this device.")
                     .font(.benMeta)
@@ -80,16 +84,14 @@ struct SetStateView: View {
             BenPrimaryButton(title: "Continue") {
                 coordinator.advance(to: .paywall)
             }
-            .padding(.bottom, 32)
         }
-        .padding(.horizontal, 24)
     }
 
     private var benLine: String {
-        guard let bill else { return "Done. Nothing else needs your attention." }
+        guard let bill else { return "Nothing else needs your attention." }
         let due = bill.dueDate.formatted(.dateTime.day().month(.wide))
         let amount = bill.amount.formatted(.currency(code: "AUD"))
-        return "Done. \(bill.issuer), \(amount), due \(due) is my problem now."
+        return "\(bill.issuer), \(amount), due \(due) is my problem now."
     }
 
     private var nextReminder: Date? {

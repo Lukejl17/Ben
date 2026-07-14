@@ -20,33 +20,38 @@ struct ReminderSetupView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        BenScreen(title: denied ? "All set" : "The deal on reminders") {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar()
-                BenVoiceText(text: benLine)
+                BenAvatar(size: 40)
+                BenVoiceText(text: benLine, quiet: true)
+                    .foregroundStyle(Color.benInkSecondary)
             }
-            .padding(.top, 48)
+            .padding(.bottom, 12)
 
             if !denied {
-                VStack(spacing: 10) {
+                VStack(spacing: 12) {
                     ForEach(ReminderStyle.allCases, id: \.self) { option in
                         SelectablePill(label: option.label, detail: option.detail, isSelected: style == option) {
                             style = option
                         }
                     }
                 }
+                .padding(.bottom, 12)
 
                 if !plannedDates.isEmpty {
                     BenCard {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 14) {
                             ForEach(plannedDates, id: \.self) { date in
-                                HStack(spacing: 10) {
-                                    Image(systemName: "bell")
-                                        .font(.subheadline)
-                                        .foregroundStyle(Color.benAccent)
-                                    Text(date.formatted(date: .abbreviated, time: .shortened))
-                                        .font(.benBody)
-                                        .foregroundStyle(Color.benInk)
+                                HStack(spacing: 12) {
+                                    BenIconCircle(systemName: "bell.fill", wash: (.washAmberBg, .washAmberFg), size: 38)
+                                    VStack(alignment: .leading, spacing: 1) {
+                                        Text(date.formatted(.dateTime.weekday(.wide).day().month(.wide)))
+                                            .font(.benCardTitle)
+                                            .foregroundStyle(Color.benInk)
+                                        Text("9:00 am — one mention, that's all")
+                                            .font(.benMeta)
+                                            .foregroundStyle(Color.benInkMuted)
+                                    }
                                 }
                             }
                         }
@@ -57,9 +62,7 @@ struct ReminderSetupView: View {
                         .foregroundStyle(Color.benInkSecondary)
                 }
             }
-
-            Spacer()
-
+        } cta: {
             BenPrimaryButton(title: denied ? "Continue" : "Sounds right — set it up") {
                 if denied || permissionResolved {
                     coordinator.advance(to: nextStep)
@@ -67,9 +70,7 @@ struct ReminderSetupView: View {
                     showPrePermissionSheet = true
                 }
             }
-            .padding(.bottom, 32)
         }
-        .padding(.horizontal, 24)
         .onAppear { style = coordinator.reminderStyle }
         .sheet(isPresented: $showPrePermissionSheet) {
             PrePermissionSheet(
@@ -79,7 +80,9 @@ struct ReminderSetupView: View {
                     handleDenied(osLevel: false)
                 }
             )
-            .presentationDetents([.medium])
+            .presentationDetents([.height(300)])
+            .presentationCornerRadius(28)
+            .presentationBackground(Color.benCanvas)
         }
     }
 
@@ -93,7 +96,7 @@ struct ReminderSetupView: View {
             return "No worries — I'll keep everything ready in here instead."
         }
         let due = bill.dueDate.formatted(.dateTime.day().month(.wide))
-        if let first = plannedDates.first, plannedDates.count > 0 {
+        if let first = plannedDates.first {
             let mention = first.formatted(.dateTime.day().month(.wide))
             return "Your \(bill.issuer) bill is due \(due). I'll mention it on \(mention) — sound right? "
                 + "After that, silence until it matters."
@@ -153,19 +156,22 @@ private struct PrePermissionSheet: View {
     let onNotNow: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            BenVoiceText(
-                text: "iOS will ask if I'm allowed to notify you. It's only ever about a bill needing you — nothing else, I promise."
-            )
-            .padding(.top, 28)
+        VStack(alignment: .leading, spacing: 22) {
+            HStack(alignment: .top, spacing: 12) {
+                BenAvatar(size: 40)
+                BenVoiceText(
+                    text: "iOS will ask if I'm allowed to notify you. It's only ever about a bill needing you — nothing else, I promise.",
+                    quiet: true
+                )
+            }
+            .padding(.top, 30)
 
             BenPrimaryButton(title: "Allow notifications", action: onAllow)
-            BenSecondaryButton(title: "Not now", action: onNotNow)
+            BenTextButton(title: "Not now", action: onNotNow)
                 .frame(maxWidth: .infinity)
 
             Spacer()
         }
-        .padding(.horizontal, 24)
-        .presentationBackground(Color.benCanvas)
+        .padding(.horizontal, 20)
     }
 }
