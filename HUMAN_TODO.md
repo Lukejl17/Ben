@@ -16,3 +16,7 @@ Added overnight (14 Jul 2026):
       install it (Settings → Components), or keep building with ~/Downloads/Xcode-beta.app
       (`export DEVELOPER_DIR=~/Downloads/Xcode-beta.app/Contents/Developer`). Everything tonight
       was built and tested with the beta.
+
+- [ ] Ben character v1 (design-refs/character/): the PNG has a baked-in checkerboard instead of
+      real alpha — re-export with true transparency before native use. Consider a flat 2–3 colour
+      redraw + one calmer second pose (see character board 02 notes).
