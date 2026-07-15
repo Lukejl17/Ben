@@ -18,7 +18,8 @@ Added overnight (14 Jul 2026):
       was built and tested with the beta.
 
 - [x] Ben character flat redraw — done (v2, design-refs/character/ben-character-v2-flat.png).
-- [ ] Ben character: still no true alpha (white ground) — fine while he lives in circular masks;
-      re-export with transparency only if he ever needs to sit on a non-disc shape.
+- [x] Ben character true-alpha export — done (v3, 5016px,
+      design-refs/character/ben-character-v3-alpha.png). CANONICAL asset. Note: hat + thumb break
+      outside the lime disc by design — never circle-mask this file, render it whole.
 - [ ] Ben character: one calmer second pose (no thumbs-up) for neutral/apologetic moments
       (B2 manual entry, overdue contexts).
