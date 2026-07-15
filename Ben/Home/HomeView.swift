@@ -37,6 +37,16 @@ struct HomeView: View {
         ).slices.first
     }
 
+    private var expectations: [ExpectedBill] {
+        ExpectedBills.expectations(from: bills.map { bill in
+            ExpectedBills.Entry(
+                uuid: bill.uuid, issuer: bill.issuer, category: bill.resolvedCategory,
+                amount: bill.amount, dueDate: bill.dueDate, isPaid: bill.paidAt != nil,
+                recurrence: BillRecurrence(rawValue: bill.recurrence) ?? .none
+            )
+        })
+    }
+
     /// Home reads as a timeline: what's slipped, then this week, then this month.
     private var sections: [(title: String, bills: [Bill])] {
         let calendar = Calendar.current
@@ -196,6 +206,17 @@ struct HomeView: View {
                         }
                     }
                 }
+
+                ExpectedSection(
+                    expectations: expectations,
+                    onArrived: { startAddBill() },
+                    onStopExpecting: { expectation in
+                        if let source = bills.first(where: { $0.uuid == expectation.sourceBillUUID }) {
+                            source.recurrence = BillRecurrence.none.rawValue
+                            services.scheduler.cancel(identifiers: ["expect-\(source.uuid)"])
+                        }
+                    }
+                )
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 110)

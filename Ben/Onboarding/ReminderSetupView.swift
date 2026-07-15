@@ -149,6 +149,7 @@ struct ReminderSetupView: View {
         )
         bill.hasNotification = !identifiers.isEmpty
         bill.notificationIDs = identifiers
+        bill.reminderStyleRaw = style.rawValue
         // Subsequent bills reuse the cadence chosen during onboarding (S7b).
         if coordinator.isAddingSubsequentBill {
             let raw = UserDefaults.standard.string(forKey: OverdueCadence.storageKey)

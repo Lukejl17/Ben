@@ -43,6 +43,17 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         let info = response.notification.request.content.userInfo
         let kind = info["kind"] as? String
         let billID = info["billID"] as? String
+
+        // "Remind me tomorrow": reschedule quietly, no app opening.
+        if response.actionIdentifier == "snooze_tomorrow", let billID {
+            let body = response.notification.request.content.body
+            Task {
+                await ReminderScheduler().scheduleSnooze(billID: billID, body: body)
+            }
+            completionHandler()
+            return
+        }
+
         analytics.track(.appOpenedFromNotification)
         Task { @MainActor in
             self.route(kind: kind, billID: billID)

@@ -33,6 +33,9 @@ struct SettingsView: View {
                     accountWidget
                     subscriptionWidget
 
+                    sectionLabel("Reminders")
+                    RemindersSection()
+
                     sectionLabel("Tools")
                     toolRow(symbol: "envelope.fill", chip: (.sky, .onSky),
                             title: "Email bills in",

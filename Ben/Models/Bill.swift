@@ -22,6 +22,10 @@ final class Bill {
     var hasNotification: Bool
     /// Notification identifiers scheduled for this bill, so they can be cancelled.
     var notificationIDs: [String]
+    /// How often this bill comes around: "none", "monthly", "quarterly", "yearly".
+    var recurrence: String = "none"
+    /// The reminder style chosen for this bill (raw ReminderStyle), for rescheduling.
+    var reminderStyleRaw: String = ""
 
     init(
         issuer: String,

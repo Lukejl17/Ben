@@ -105,6 +105,23 @@ final class ScreenshotTests: XCTestCase {
         XCTAssertTrue(app.buttons["Choose a photo"].waitForExistence(timeout: 5))
         snap(app, "home-add-dial")
         app.buttons["Add a bill"].tap()  // collapse
+        let dialGone = expectation(
+            for: NSPredicate(format: "exists == FALSE"),
+            evaluatedWith: app.buttons["Choose a photo"]
+        )
+        wait(for: [dialGone], timeout: 5)
+
+        // Pay the bill → cadence ask → expected ghost row
+        app.staticTexts["AGL"].firstMatch.tap()
+        let markPaid = app.buttons["Mark as paid"]
+        XCTAssertTrue(markPaid.waitForExistence(timeout: 5))
+        markPaid.tap()
+        XCTAssertTrue(app.buttons["Quarterly"].waitForExistence(timeout: 5))
+        snap(app, "cadence-ask")
+        app.buttons["Quarterly"].tap()
+        app.buttons["Expect it"].tap()
+        XCTAssertTrue(app.staticTexts["Expected"].waitForExistence(timeout: 8))
+        snap(app, "home-expected")
 
         // Insights tab
         app.tabBars.buttons["Insights"].tap()

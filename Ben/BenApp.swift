@@ -14,6 +14,12 @@ struct BenApp: App {
         let router = NotificationRouter()
         let delegate = NotificationDelegate(router: router, analytics: services.analytics)
         UNUserNotificationCenter.current().delegate = delegate
+        // "Remind me tomorrow" on every bill reminder.
+        let snooze = UNNotificationAction(identifier: "snooze_tomorrow", title: "Remind me tomorrow")
+        let category = UNNotificationCategory(
+            identifier: "bill_reminder", actions: [snooze], intentIdentifiers: []
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([category])
         self.services = services
         self._router = State(initialValue: router)
         self.notificationDelegate = delegate

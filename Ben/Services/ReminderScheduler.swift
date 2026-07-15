@@ -1,10 +1,26 @@
 import Foundation
 import UserNotifications
 
+/// User-tunable delivery preferences. Stored flat; read at scheduling time.
+enum ReminderPrefs {
+    static let hourKey = "reminderDeliveryHour"
+    static let quietWeekendsKey = "reminderQuietWeekends"
+
+    /// 9am default — early enough to act, late enough to be civil.
+    static func hour(defaults: UserDefaults = .standard) -> Int {
+        let stored = defaults.integer(forKey: hourKey)
+        return stored == 0 ? 9 : stored
+    }
+
+    static func quietWeekends(defaults: UserDefaults = .standard) -> Bool {
+        defaults.bool(forKey: quietWeekendsKey)
+    }
+}
+
 /// All local-notification work: permission, scheduling maths, actual scheduling.
 /// The maths is pure and static so it can be tested hard.
 struct ReminderScheduler: Sendable {
-    static let reminderHour = 9  // 9am local — early enough to act, late enough to be civil
+    static let reminderHour = 9  // fallback; live scheduling reads ReminderPrefs
 
     // MARK: Pure scheduling maths
 
@@ -14,7 +30,9 @@ struct ReminderScheduler: Sendable {
         style: ReminderStyle,
         dueDate: Date,
         now: Date = .now,
-        calendar: Calendar = .current
+        calendar: Calendar = .current,
+        hour: Int = ReminderPrefs.hour(),
+        quietWeekends: Bool = ReminderPrefs.quietWeekends()
     ) -> [Date] {
         var offsets: [Int] {
             switch style {
@@ -23,15 +41,40 @@ struct ReminderScheduler: Sendable {
             case .both: [-3, 0]
             }
         }
-        return offsets.compactMap { offset in
+        return offsets.compactMap { offset -> Date? in
             guard let day = calendar.date(byAdding: .day, value: offset, to: dueDate) else { return nil }
             var components = calendar.dateComponents([.year, .month, .day], from: day)
-            components.hour = reminderHour
+            components.hour = hour
             components.minute = 0
-            return calendar.date(from: components)
+            guard let date = calendar.date(from: components) else { return nil }
+            return Self.shiftedForQuietWeekends(date, enabled: quietWeekends, calendar: calendar)
         }
         .filter { $0 > now }
         .sorted()
+    }
+
+    /// Quiet weekends: Saturday/Sunday reminders slide to Monday, same hour.
+    static func shiftedForQuietWeekends(
+        _ date: Date, enabled: Bool, calendar: Calendar = .current
+    ) -> Date {
+        guard enabled else { return date }
+        let weekday = calendar.component(.weekday, from: date)  // 1 = Sunday, 7 = Saturday
+        let shift = weekday == 7 ? 2 : (weekday == 1 ? 1 : 0)
+        guard shift > 0, let moved = calendar.date(byAdding: .day, value: shift, to: date) else {
+            return date
+        }
+        return moved
+    }
+
+    /// "Remind me tomorrow" — next day at the user's delivery hour.
+    static func snoozeDate(
+        from now: Date, hour: Int, calendar: Calendar = .current
+    ) -> Date {
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: now) ?? now
+        var components = calendar.dateComponents([.year, .month, .day], from: tomorrow)
+        components.hour = hour
+        components.minute = 0
+        return calendar.date(from: components) ?? tomorrow
     }
 
     /// Mention dates for a bill that slipped past its due date: one every
@@ -145,6 +188,7 @@ struct ReminderScheduler: Sendable {
             content.body = body
             content.sound = .default
             content.userInfo = ["billID": billID, "kind": "bill_reminder"]
+            content.categoryIdentifier = "bill_reminder"
             let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger)
             let identifier = "bill-\(billID)-\(components.day ?? 0)-\(components.month ?? 0)"
             let request = UNNotificationRequest(
@@ -198,7 +242,10 @@ struct ReminderScheduler: Sendable {
         }
         return identifiers
     }
+}
 
+// MARK: - Nudges, expectations, snooze
+extension ReminderScheduler {
     /// B1: one notification tonight deep-linking back to the upload step.
     @discardableResult
     func scheduleTonightNudge(now: Date = .now, calendar: Calendar = .current) async -> String? {
@@ -247,6 +294,70 @@ struct ReminderScheduler: Sendable {
         } catch {
             return nil
         }
+    }
+
+    /// Heads-up 3 days before an expected recurring bill lands.
+    @discardableResult
+    func scheduleExpectedHeadsUp(
+        expectation: ExpectedBill,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) async -> String? {
+        guard let headsUpDay = calendar.date(byAdding: .day, value: -3, to: expectation.expectedDate) else {
+            return nil
+        }
+        var components = calendar.dateComponents([.year, .month, .day], from: headsUpDay)
+        components.hour = ReminderPrefs.hour()
+        components.minute = 0
+        guard let trigger = calendar.date(from: components),
+              Self.shiftedForQuietWeekends(
+                  trigger, enabled: ReminderPrefs.quietWeekends(), calendar: calendar
+              ) > now else { return nil }
+        let shifted = Self.shiftedForQuietWeekends(
+            trigger, enabled: ReminderPrefs.quietWeekends(), calendar: calendar
+        )
+        let content = UNMutableNotificationContent()
+        content.title = "Ben"
+        content.body = "Ben here — \(expectation.issuer) usually lands about now. I'll keep an eye out."
+        content.sound = .default
+        content.userInfo = ["kind": "expected_bill"]
+        let identifier = "expect-\(expectation.sourceBillUUID)"
+        let request = UNNotificationRequest(
+            identifier: identifier,
+            content: content,
+            trigger: UNCalendarNotificationTrigger(
+                dateMatching: calendar.dateComponents([.year, .month, .day, .hour, .minute], from: shifted),
+                repeats: false
+            )
+        )
+        do {
+            try await UNUserNotificationCenter.current().add(request)
+            return identifier
+        } catch {
+            return nil
+        }
+    }
+
+    /// "Remind me tomorrow" from a notification action.
+    func scheduleSnooze(
+        billID: String, body: String, now: Date = .now, calendar: Calendar = .current
+    ) async {
+        let trigger = Self.snoozeDate(from: now, hour: ReminderPrefs.hour(), calendar: calendar)
+        let content = UNMutableNotificationContent()
+        content.title = "Ben"
+        content.body = body
+        content.sound = .default
+        content.userInfo = ["billID": billID, "kind": "bill_reminder"]
+        content.categoryIdentifier = "bill_reminder"
+        let request = UNNotificationRequest(
+            identifier: "snooze-\(billID)-\(Int(trigger.timeIntervalSince1970))",
+            content: content,
+            trigger: UNCalendarNotificationTrigger(
+                dateMatching: calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger),
+                repeats: false
+            )
+        )
+        try? await UNUserNotificationCenter.current().add(request)
     }
 
     func cancel(identifiers: [String]) {

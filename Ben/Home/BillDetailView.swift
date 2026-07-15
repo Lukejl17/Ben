@@ -8,6 +8,9 @@ struct BillDetailView: View {
     @Environment(\.services) private var services
     @Environment(\.dismiss) private var dismiss
     @State private var showCategoryPicker = false
+    @State private var showRecurrence = false
+    @State private var showReminderOverride = false
+    @State private var askCadenceAfterPaid = false
 
     var body: some View {
         ScrollView {
@@ -78,6 +81,19 @@ struct BillDetailView: View {
                 .buttonStyle(BenPressable())
                 .benShadow(.floating)
 
+                HStack(spacing: 12) {
+                    detailChipRow(
+                        symbol: "arrow.triangle.2.circlepath",
+                        title: BillRecurrence(rawValue: bill.recurrence)?.label ?? "Just this once",
+                        eyebrow: "Repeats"
+                    ) { showRecurrence = true }
+                    detailChipRow(
+                        symbol: "bell.fill",
+                        title: (ReminderStyle(rawValue: bill.reminderStyleRaw) ?? .fewDaysEarly).label,
+                        eyebrow: "Reminders"
+                    ) { showReminderOverride = true }
+                }
+
                 if let data = bill.sourceImageData, let image = UIImage(data: data) {
                     Image(uiImage: image)
                         .resizable()
@@ -97,6 +113,28 @@ struct BillDetailView: View {
                 .presentationCornerRadius(28)
                 .presentationBackground(Color.forestBottom)
         }
+        .sheet(isPresented: $showRecurrence) {
+            RecurrenceSheet(bill: bill)
+                .presentationDetents([.large])
+                .presentationCornerRadius(28)
+                .presentationBackground(Color.forestBottom)
+        }
+        .sheet(isPresented: $showReminderOverride) {
+            ReminderOverrideSheet(bill: bill)
+                .presentationDetents([.large])
+                .presentationCornerRadius(28)
+                .presentationBackground(Color.forestBottom)
+        }
+        .sheet(
+            isPresented: $askCadenceAfterPaid,
+            onDismiss: { dismiss() },
+            content: {
+                RecurrenceSheet(bill: bill, context: .afterPaid)
+                    .presentationDetents([.large])
+                    .presentationCornerRadius(28)
+                    .presentationBackground(Color.forestBottom)
+            }
+        )
         .safeAreaInset(edge: .bottom) {
             if bill.status != .paid {
                 BenPrimaryButton(title: "Mark as paid", systemImage: "checkmark") {
@@ -105,11 +143,45 @@ struct BillDetailView: View {
                     bill.notificationIDs = []
                     bill.hasNotification = false
                     try? modelContext.save()
-                    dismiss()
+                    // The natural moment to ask about cadence — once.
+                    if bill.recurrence == BillRecurrence.none.rawValue {
+                        askCadenceAfterPaid = true
+                    } else {
+                        dismiss()
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 12)
             }
         }
+    }
+}
+
+extension BillDetailView {
+    /// Compact tappable chip-row for detail metadata (repeats, reminders).
+    fileprivate func detailChipRow(
+        symbol: String, title: String, eyebrow: String, action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 2) {
+                BenEyebrow(text: eyebrow, color: Color.forestInk.opacity(0.55))
+                HStack(spacing: 7) {
+                    Image(systemName: symbol)
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(Color.chartreuse)
+                    Text(title)
+                        .font(.benLabel)
+                        .foregroundStyle(Color.forestInk)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+                .padding(.top, 4)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .buttonStyle(BenPressable())
+        .benRowSurface(radius: 22)
     }
 }
