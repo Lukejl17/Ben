@@ -255,7 +255,7 @@ struct HomeSummaryWidgets: View {
         Button {
             onTapBill(bill)
         } label: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     BenEyebrow(text: "Next up")
                     Spacer()
@@ -264,16 +264,19 @@ struct HomeSummaryWidgets: View {
                 Text("\(bill.issuer) · \(BillCategory.label(for: bill.resolvedCategory))")
                     .font(.benCardTitle)
                     .foregroundStyle(Color.onCream)
-                    .padding(.top, 8)
+                    .padding(.top, 4)
+                // Baloo's line box is tall at 46pt — pull the neighbours in.
                 Text(bill.amount.formatted(.currency(code: "AUD")))
                     .font(.benHeroAmount)
                     .monospacedDigit()
                     .foregroundStyle(Color.onCreamStrong)
+                    .padding(.vertical, -6)
                 Text(heroDueLine(for: bill))
                     .font(.benMeta)
                     .foregroundStyle(Color.onCreamMuted)
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.cream, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
         }
