@@ -17,6 +17,8 @@ Added overnight (14 Jul 2026):
       (`export DEVELOPER_DIR=~/Downloads/Xcode-beta.app/Contents/Developer`). Everything tonight
       was built and tested with the beta.
 
-- [ ] Ben character v1 (design-refs/character/): the PNG has a baked-in checkerboard instead of
-      real alpha — re-export with true transparency before native use. Consider a flat 2–3 colour
-      redraw + one calmer second pose (see character board 02 notes).
+- [x] Ben character flat redraw — done (v2, design-refs/character/ben-character-v2-flat.png).
+- [ ] Ben character: still no true alpha (white ground) — fine while he lives in circular masks;
+      re-export with transparency only if he ever needs to sit on a non-disc shape.
+- [ ] Ben character: one calmer second pose (no thumbs-up) for neutral/apologetic moments
+      (B2 manual entry, overdue contexts).
