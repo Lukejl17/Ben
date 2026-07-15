@@ -18,8 +18,9 @@ guest in exactly five moments.
    dial options — radius 26–32, real shadow, light-scheme interiors (`onCream` inks).
 4. **Translucent rows support.** Secondary surfaces are rowFill + rowStroke borders
    (benRowSurface) — bills, minis, chips, banners.
-5. **Baloo 2 everywhere.** ExtraBold for titles/heroes, Bold for labels/rows,
-   Medium for body/voice. Bundled variable font; Dynamic Type via relativeTo.
+5. **Two voices: Baloo speaks, Figtree reads.** Baloo 2 for titles, heroes,
+   labels, amounts, chips, Ben's voice; Figtree for body copy, sub-lines, meta,
+   fine print. Both bundled variable fonts; Dynamic Type via relativeTo.
 6. **Solid accent chips.** Icon circles and status-on-cream chips use solid amber /
    sky / lavender / clay / chartreuse with their dark `on*` inks.
 7. **Status is quiet on forest, solid on cream.** StatusPill (translucent) on rows;
@@ -45,9 +46,10 @@ Rows: fill cream@7%, stroke cream@15%.
 Status on forest: warn amber tints, calm cream tints, paid chartreuse tints,
 late terracotta tints (#C4744A/#E8A98A).
 
-## Type roles (Baloo 2 named instances)
-benTitle XB32/largeTitle · benHeroAmount XB46 · benVoice M18 · benCardTitle B17 ·
-benAmount B17 · benBody M16 · benLabel B15 · benMeta M13 · benEyebrow B11+tracking.
+## Type roles
+Baloo 2: benTitle XB32 · benHeroAmount XB46 · benVoice M18 · benVoiceQuiet M16 ·
+benCardTitle B17 · benAmount B17 · benLabel B15 · benEyebrow B11+tracking.
+Figtree: benBody R16 · benMeta R13.
 
 ## Category chips
 electricity/gas amber · internet/phone/water sky · insurance/rent chartreuse ·
