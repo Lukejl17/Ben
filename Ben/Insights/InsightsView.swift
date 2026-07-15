@@ -39,6 +39,19 @@ struct InsightsView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         periodChips
 
+                        // Above the fold — toggling it visibly changes the chart.
+                        HStack {
+                            Text("Include unpaid bills")
+                                .font(.benLabel)
+                                .foregroundStyle(Color.benInkSecondary)
+                            Spacer()
+                            Toggle("Include unpaid bills", isOn: $includeUnpaid)
+                                .labelsHidden()
+                                .tint(.benAccent)
+                        }
+                        .padding(.horizontal, 4)
+                        .padding(.top, -4)
+
                         let result = breakdown
                         if result.slices.isEmpty {
                             emptyState
@@ -55,21 +68,12 @@ struct InsightsView: View {
                             categoryRows(slices: result.slices)
                         }
 
-                        Toggle(isOn: $includeUnpaid) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Include unpaid bills")
-                                    .font(.benLabel)
-                                    .foregroundStyle(Color.benInk)
-                                Text("Off shows only money already paid.")
-                                    .font(.benMeta)
-                                    .foregroundStyle(Color.benInkMuted)
-                            }
-                        }
-                        .tint(.benAccent)
-                        .padding(16)
-                        .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-                        .benShadow(.card)
-                        .padding(.top, 4)
+                        Text(includeUnpaid
+                             ? "Showing money paid in the window plus everything still owing."
+                             : "Showing only money already paid.")
+                            .font(.benMeta)
+                            .foregroundStyle(Color.benInkMuted)
+                            .padding(.horizontal, 4)
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 40)
