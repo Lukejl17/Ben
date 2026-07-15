@@ -116,11 +116,11 @@ struct CaptureExtractView: View {
                 BenIconCircle(systemName: symbol, fill: fill, iconColor: iconColor)
                 Text(label)
                     .font(.benCardTitle)
-                    .foregroundStyle(Color.forestInk)
+                    .foregroundStyle(Color.onCream)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color.forestInk.opacity(0.5))
+                    .foregroundStyle(Color.onCreamMuted)
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)

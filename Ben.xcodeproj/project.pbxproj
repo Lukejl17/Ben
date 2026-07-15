@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		010EAE7CA74E583E5504C5CF /* Figtree-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0EB85E914FDAF24118261013 /* Figtree-OFL.txt */; };
 		0D64BDEC7E1257CFB8C1A0BD /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */; };
 		0EFF8DAA8068086F9F1A4EC4 /* ReminderStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992D3AAAD100AE4EBFCBFA41 /* ReminderStyleView.swift */; };
 		15916B09963465496E88A1FF /* BillCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D653B3B22406BC54F1F235F /* BillCategory.swift */; };
@@ -39,6 +40,7 @@
 		84F36372710AD65AE4F81D66 /* VisionBillParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2841117AF82C3AB361A867C2 /* VisionBillParser.swift */; };
 		8E6EDD43CBD558F9A5024043 /* BillDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD436987B9E9BD9F0777E62 /* BillDetailView.swift */; };
 		9425425482A268F9D66DC440 /* OnboardingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB845796FD03BDFDDD41226 /* OnboardingModels.swift */; };
+		A1BF2CB391D822994EE18DDF /* Figtree-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 43AF552C6BAC3A2CC56C0173 /* Figtree-Variable.ttf */; };
 		A5FECF5DF2FEB2F6BA58AF19 /* SubscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87989AA43748F65C5431A8CE /* SubscriptionTests.swift */; };
 		B73D5BF7903077D2126AAA7C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C802D7582126B6B88B5F56 /* HomeView.swift */; };
 		B77A3042488E55AD145ADA3B /* BillRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */; };
@@ -75,6 +77,7 @@
 
 /* Begin PBXFileReference section */
 		0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillRow.swift; sourceTree = "<group>"; };
+		0EB85E914FDAF24118261013 /* Figtree-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Figtree-OFL.txt"; sourceTree = "<group>"; };
 		10FE0778C4F862592E060A1C /* BenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenUITests.swift; sourceTree = "<group>"; };
 		1211F816584B17BEC264ACE5 /* UploadBillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadBillView.swift; sourceTree = "<group>"; };
 		1BD436987B9E9BD9F0777E62 /* BillDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillDetailView.swift; sourceTree = "<group>"; };
@@ -82,6 +85,7 @@
 		2A9BD2482F4FD2847F694570 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F8141350D969191D98384F2 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
 		3BA6AFC020BECE9B79402CCC /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
+		43AF552C6BAC3A2CC56C0173 /* Figtree-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-Variable.ttf"; sourceTree = "<group>"; };
 		483D07784F323ACB8F0F4838 /* BenTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D4F001318AA2CE3A5FE684 /* BenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenTheme.swift; sourceTree = "<group>"; };
 		4D653B3B22406BC54F1F235F /* BillCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCategory.swift; sourceTree = "<group>"; };
@@ -202,6 +206,8 @@
 			children = (
 				AFB59CB04E7AE7B9C1F20E17 /* Baloo2-OFL.txt */,
 				F536126BA06D59B1DC3B13FA /* Baloo2-Variable.ttf */,
+				0EB85E914FDAF24118261013 /* Figtree-OFL.txt */,
+				43AF552C6BAC3A2CC56C0173 /* Figtree-Variable.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -396,6 +402,8 @@
 				C6EB0CA3E086923A21F03DF9 /* Assets.xcassets in Resources */,
 				2724569FD26CFD971ABBB546 /* Baloo2-OFL.txt in Resources */,
 				FE5C73B74554461B38F1C992 /* Baloo2-Variable.ttf in Resources */,
+				010EAE7CA74E583E5504C5CF /* Figtree-OFL.txt in Resources */,
+				A1BF2CB391D822994EE18DDF /* Figtree-Variable.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

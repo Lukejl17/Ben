@@ -136,18 +136,20 @@ struct InsightsView: View {
         }
         .frame(height: 240)
         .chartBackground { _ in
+            // The hole is ~64% of the 240pt chart: keep the number inside it
+            // whatever its length ($243 through $12,345.67).
             VStack(spacing: 2) {
                 Text(result.total.formatted(.currency(code: "AUD")))
-                    .font(.baloo("Baloo2-ExtraBold", 32, relativeTo: .largeTitle))
+                    .font(.baloo("Baloo2-ExtraBold", 28, relativeTo: .largeTitle))
                     .monospacedDigit()
                     .foregroundStyle(Color.forestInk)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.6)
+                    .minimumScaleFactor(0.4)
                 Text(period == .all ? "all time" : "last \(period.label.lowercased())")
                     .font(.benMeta)
                     .foregroundStyle(Color.forestInk.opacity(0.5))
             }
-            .padding(.horizontal, 60)
+            .frame(maxWidth: 128)
         }
         .padding(.vertical, 8)
     }

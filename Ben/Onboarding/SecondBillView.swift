@@ -96,7 +96,7 @@ struct SecondBillView: View {
                             Text(category)
                         }
                         .font(.benLabel)
-                        .foregroundStyle(Color.forestInk)
+                        .foregroundStyle(Color.onCream)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
                         .background(Color.cream, in: Capsule())
@@ -114,10 +114,10 @@ struct SecondBillView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("bills@ben.app")
                             .font(.benCardTitle)
-                            .foregroundStyle(Color.forestInk)
+                            .foregroundStyle(Color.onCreamStrong)
                         Text("Forward any bill email and I'll do the rest. Live once your account backend is up.")
                             .font(.benMeta)
-                            .foregroundStyle(Color.forestInk.opacity(0.65))
+                            .foregroundStyle(Color.onCreamMuted)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }

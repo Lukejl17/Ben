@@ -122,10 +122,17 @@ enum BillStatus: String, Codable {
     }
 }
 
-// MARK: - Typography · Baloo 2 (bundled variable font, named instances)
+// MARK: - Typography
+// Baloo 2 is the voice: titles, buttons, amounts, chips, Ben speaking.
+// Figtree is the reader: body copy, sub-lines, meta, fine print.
+// Both bundled variable fonts, addressed by named instance.
 
 extension Font {
     static func baloo(_ instance: String, _ size: CGFloat, relativeTo style: TextStyle) -> Font {
+        .custom(instance, size: size, relativeTo: style)
+    }
+
+    static func figtree(_ instance: String, _ size: CGFloat, relativeTo style: TextStyle) -> Font {
         .custom(instance, size: size, relativeTo: style)
     }
 
@@ -140,11 +147,12 @@ extension Font {
     static let benCardTitle = baloo("Baloo2-Bold", 17, relativeTo: .headline)
     /// Amounts in rows
     static let benAmount = baloo("Baloo2-Bold", 17, relativeTo: .title3)
-    static let benBody = baloo("Baloo2-Medium", 16, relativeTo: .body)
+    /// Body copy — Figtree does the reading
+    static let benBody = figtree("Figtree-Regular", 16, relativeTo: .body)
     /// Buttons, chips, field labels
     static let benLabel = baloo("Baloo2-Bold", 15, relativeTo: .subheadline)
-    /// Meta, captions
-    static let benMeta = baloo("Baloo2-Medium", 13, relativeTo: .footnote)
+    /// Meta, sub-lines, captions, fine print
+    static let benMeta = figtree("Figtree-Regular", 13, relativeTo: .footnote)
     /// Tiny eyebrow labels on widgets (pair with tracking + uppercase)
     static let benEyebrow = baloo("Baloo2-Bold", 11, relativeTo: .caption)
 }
