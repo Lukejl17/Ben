@@ -23,6 +23,9 @@ struct ContentView: View {
                     Tab("Insights", systemImage: "chart.pie.fill") {
                         InsightsView()
                     }
+                    Tab("Settings", systemImage: "gearshape.fill") {
+                        SettingsView()
+                    }
                 }
             } else {
                 OnboardingFlow()

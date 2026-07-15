@@ -21,7 +21,7 @@ final class ScreenshotTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = [
             "-resetOnboarding", "-inMemoryStore", "-mockParser",
-            "-nullAnalytics", "-freshTrial", "-autoCapture"
+            "-nullAnalytics", "-freshTrial", "-freshAccount", "-autoCapture"
         ]
         if ProcessInfo.processInfo.environment["SCREENSHOT_DARK"] == "1" {
             app.launchArguments.append("-forceDark")
@@ -110,5 +110,30 @@ final class ScreenshotTests: XCTestCase {
         app.tabBars.buttons["Insights"].tap()
         XCTAssertTrue(app.buttons["3 months"].waitForExistence(timeout: 5))
         snap(app, "insights")
+
+        // Settings tab
+        app.tabBars.buttons["Settings"].tap()
+        XCTAssertTrue(app.staticTexts["Not signed in"].waitForExistence(timeout: 5))
+        snap(app, "settings")
+
+        // Export sheet
+        app.buttons["Export bills"].tap()
+        XCTAssertTrue(app.buttons["Upcoming"].waitForExistence(timeout: 5))
+        app.buttons["Upcoming"].tap()
+        XCTAssertTrue(app.buttons["Share CSV"].waitForExistence(timeout: 5))
+        snap(app, "settings-export")
+        app.swipeDown(velocity: .fast)
+
+        // Email-in (signed out) → account sheet → signed in
+        XCTAssertTrue(app.buttons["Email bills in"].waitForExistence(timeout: 5))
+        app.buttons["Email bills in"].tap()
+        XCTAssertTrue(app.buttons["Set up my address"].waitForExistence(timeout: 5))
+        snap(app, "settings-emailin-signedout")
+        app.buttons["Set up my address"].tap()
+        XCTAssertTrue(app.buttons["Continue with Apple"].waitForExistence(timeout: 5))
+        snap(app, "settings-account-sheet")
+        app.buttons["Continue with Apple"].tap()
+        XCTAssertTrue(app.buttons["Copy address"].waitForExistence(timeout: 5))
+        snap(app, "settings-emailin-signedin")
     }
 }

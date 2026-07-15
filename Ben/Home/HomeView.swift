@@ -12,6 +12,7 @@ struct HomeView: View {
     @State private var showAddBill = false
     @State private var detailBill: Bill?
     @State private var fabExpanded = false
+    @State private var showEmailIn = false
 
     // MARK: Derived
 
@@ -91,9 +92,14 @@ struct HomeView: View {
                 }
             }
             .overlay(alignment: .bottomTrailing) {
-                AddBillDial(expanded: $fabExpanded) { method in
-                    startAddBill(method: method)
-                }
+                AddBillDial(
+                    expanded: $fabExpanded,
+                    onPick: { startAddBill(method: $0) },
+                    onEmailIn: {
+                        withAnimation(.spring(duration: 0.3)) { fabExpanded = false }
+                        showEmailIn = true
+                    }
+                )
                 .padding(.trailing, 20)
                 .padding(.bottom, 24)
             }
@@ -129,6 +135,12 @@ struct HomeView: View {
         }
         .sheet(item: $detailBill) { bill in
             BillDetailView(bill: bill)
+                .presentationCornerRadius(28)
+                .presentationBackground(Color.forestBottom)
+        }
+        .sheet(isPresented: $showEmailIn) {
+            EmailInSheet()
+                .presentationDetents([.large])
                 .presentationCornerRadius(28)
                 .presentationBackground(Color.forestBottom)
         }

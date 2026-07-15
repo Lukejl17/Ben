@@ -23,3 +23,13 @@ Added overnight (14 Jul 2026):
       outside the lime disc by design — never circle-mask this file, render it whole.
 - [ ] Ben character: one calmer second pose (no thumbs-up) for neutral/apologetic moments
       (B2 manual entry, overdue contexts).
+
+Added 15 Jul 2026 (settings/accounts/email-in build):
+
+- [ ] Replace StubAccountService internals with real auth: Sign in with Apple
+      (capability + entitlement — same item as above) AND Google Sign-In SDK
+      (OAuth client ID in Google Cloud console). Protocol + all call sites stay.
+- [ ] Email ingestion backend: provision per-account addresses matching
+      StubAccountService.forwardingAddress format (bills-<8 chars>@ben.app),
+      parse inbound MIME → ParsedBill → push to app for S6 confirm.
+      Requires owning ben.app inbound mail (e.g. SES/Postmark inbound).

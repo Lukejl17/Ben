@@ -4,6 +4,7 @@ import SwiftUI
 struct AddBillDial: View {
     @Binding var expanded: Bool
     let onPick: (UploadMethod) -> Void
+    var onEmailIn: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 12) {
@@ -20,7 +21,9 @@ struct AddBillDial: View {
                 option(symbol: "doc.fill", fill: .sky, iconColor: .onSky, label: "PDF or file") {
                     onPick(.pdf)
                 }
-                disabledOption
+                option(symbol: "envelope.fill", fill: .clay, iconColor: .onClay, label: "Email it in") {
+                    onEmailIn?()
+                }
             }
 
             Button {
@@ -61,23 +64,4 @@ struct AddBillDial: View {
         .transition(.move(edge: .trailing).combined(with: .opacity))
     }
 
-    private var disabledOption: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .trailing, spacing: 0) {
-                Text("Forward an email")
-                    .font(.benLabel)
-                    .foregroundStyle(Color.forestInk.opacity(0.7))
-                Text("Available after setup")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.5))
-            }
-            BenIconCircle(systemName: "envelope.fill", fill: .clay, iconColor: .onClay, size: 36)
-                .opacity(0.55)
-        }
-        .padding(.leading, 18)
-        .padding(.trailing, 10)
-        .padding(.vertical, 9)
-        .benRowSurface(radius: 99)
-        .transition(.move(edge: .trailing).combined(with: .opacity))
-    }
 }

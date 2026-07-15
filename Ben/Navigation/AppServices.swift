@@ -7,13 +7,15 @@ struct AppServices {
     var parser: any BillParsing
     var scheduler: ReminderScheduler
     var subscriptions: any SubscriptionService
+    var accounts: any AccountService
 
     static func live() -> AppServices {
         AppServices(
             analytics: LocalAnalytics(),
             parser: VisionBillParser(),
             scheduler: ReminderScheduler(),
-            subscriptions: StubSubscriptionService()
+            subscriptions: StubSubscriptionService(),
+            accounts: StubAccountService()
         )
     }
 
@@ -27,6 +29,11 @@ struct AppServices {
         }
         if arguments.contains("-nullAnalytics") {
             services.analytics = NullAnalytics()
+        }
+        if arguments.contains("-freshAccount") {
+            let suite = UserDefaults(suiteName: "ui-test-account")!
+            suite.removePersistentDomain(forName: "ui-test-account")
+            services.accounts = StubAccountService(defaults: suite)
         }
         if arguments.contains("-freshTrial") {
             let suite = UserDefaults(suiteName: "ui-test-trial")!
@@ -42,7 +49,8 @@ private struct AppServicesKey: EnvironmentKey {
         analytics: NullAnalytics(),
         parser: MockBillParser(),
         scheduler: ReminderScheduler(),
-        subscriptions: StubSubscriptionService()
+        subscriptions: StubSubscriptionService(),
+        accounts: StubAccountService()
     )
 }
 

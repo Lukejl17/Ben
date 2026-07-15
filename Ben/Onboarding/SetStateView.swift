@@ -5,6 +5,7 @@ struct SetStateView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
     @State private var accountSaved = false
+    @State private var showAccountSheet = false
 
     private var bill: Bill? { coordinator.confirmedBill }
 
@@ -68,15 +69,12 @@ struct SetStateView: View {
                 .font(.benMeta)
                 .foregroundStyle(Color.forestInk.opacity(0.5))
         } cta: {
-            // HUMAN: Sign in with Apple capability + entitlement, then replace
-            // this stub with SignInWithAppleButton.
             if !accountSaved {
-                BenSecondaryButton(title: "Save my setup with Apple", systemImage: "applelogo") {
-                    services.analytics.track(.accountCreated)
-                    accountSaved = true
+                BenSecondaryButton(title: "Save my setup", systemImage: "person.crop.circle.badge.plus") {
+                    showAccountSheet = true
                 }
             } else {
-                Text("Setup saved to this device.")
+                Text("Setup saved to your account.")
                     .font(.benMeta)
                     .foregroundStyle(Color.forestInk.opacity(0.65))
                     .frame(maxWidth: .infinity)
@@ -85,6 +83,14 @@ struct SetStateView: View {
             BenPrimaryButton(title: "Continue") {
                 coordinator.advance(to: .paywall)
             }
+        }
+        .sheet(isPresented: $showAccountSheet) {
+            AccountSheet { _ in
+                accountSaved = true
+            }
+            .presentationDetents([.large])
+            .presentationCornerRadius(28)
+            .presentationBackground(Color.forestBottom)
         }
     }
 

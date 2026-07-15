@@ -60,6 +60,7 @@ struct SecondBillView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showEmailIn = false
 
     private var firstCategory: String {
         BillCategories.category(forIssuer: coordinator.confirmedBill?.issuer ?? "")
@@ -107,21 +108,29 @@ struct SecondBillView: View {
             }
             .padding(.bottom, 12)
 
-            // HUMAN: email forwarding ingestion backend — this card is display-only.
-            BenCard {
-                HStack(spacing: 14) {
-                    BenIconCircle(systemName: "envelope.fill", fill: .sky, iconColor: .onSky)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("bills@ben.app")
-                            .font(.benCardTitle)
-                            .foregroundStyle(Color.onCreamStrong)
-                        Text("Forward any bill email and I'll do the rest. Live once your account backend is up.")
-                            .font(.benMeta)
+            Button {
+                showEmailIn = true
+            } label: {
+                BenCard {
+                    HStack(spacing: 14) {
+                        BenIconCircle(systemName: "envelope.fill", fill: .sky, iconColor: .onSky)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Email bills in")
+                                .font(.benCardTitle)
+                                .foregroundStyle(Color.onCreamStrong)
+                            Text("Get your own forwarding address — send any bill email, Ben does the rest.")
+                                .font(.benMeta)
+                                .foregroundStyle(Color.onCreamMuted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.bold))
                             .foregroundStyle(Color.onCreamMuted)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
+            .buttonStyle(BenPressable())
         } cta: {
             BenPrimaryButton(title: "Add another bill now") { addSecondBill() }
             BenTextButton(title: "Later's fine") {
@@ -134,6 +143,12 @@ struct SecondBillView: View {
         }
         .onAppear {
             services.analytics.track(.secondBillPromptShown)
+        }
+        .sheet(isPresented: $showEmailIn) {
+            EmailInSheet()
+                .presentationDetents([.large])
+                .presentationCornerRadius(28)
+                .presentationBackground(Color.forestBottom)
         }
     }
 
