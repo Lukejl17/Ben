@@ -40,7 +40,7 @@ struct PaywallView: View {
                          ? "US$49.99/yr after the trial · cancel anytime in one tap"
                          : "US$5.99/mo after the trial · cancel anytime in one tap")
                         .font(.benMeta)
-                        .foregroundStyle(Color.benInkMuted)
+                        .foregroundStyle(Color.forestInk.opacity(0.5))
                 }
             }
             .padding(.horizontal, 20)
@@ -48,7 +48,7 @@ struct PaywallView: View {
             .padding(.bottom, 12)
             .background {
                 LinearGradient(
-                    colors: [Color.benCanvasBottom.opacity(0), Color.benCanvasBottom],
+                    colors: [Color.forestBottom.opacity(0), Color.forestBottom],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -70,7 +70,7 @@ struct PaywallView: View {
         HStack(spacing: 8) {
             ForEach(0..<3, id: \.self) { index in
                 Capsule()
-                    .fill(index == page ? Color.benAccent : Color.benInkMuted.opacity(0.25))
+                    .fill(index == page ? Color.chartreuse : Color.forestInk.opacity(0.5).opacity(0.25))
                     .frame(width: index == page ? 22 : 7, height: 7)
                     .animation(.spring(duration: 0.3), value: page)
             }
@@ -82,14 +82,13 @@ struct PaywallView: View {
     private var outcomePage: some View {
         VStack(alignment: .leading, spacing: 18) {
             Spacer()
-            BenAvatar(size: 44)
             Text("Never get surprised by a bill again — and never hear from Ben otherwise.")
-                .font(.system(size: 34, weight: .bold, design: .serif))
-                .foregroundStyle(Color.benInk)
+                .font(.baloo("Baloo2-ExtraBold", 36, relativeTo: .largeTitle))
+                .foregroundStyle(Color.chartreuse)
                 .lineSpacing(2)
             Text("Every bill tracked, one calm reminder when it matters, silence the rest of the time.")
                 .font(.benBody)
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.forestInk.opacity(0.65))
             Spacer()
             Spacer()
         }
@@ -104,18 +103,18 @@ struct PaywallView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("How the trial works")
                     .font(.benTitle)
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.chartreuse)
                     .padding(.top, 24)
 
                 BenCard {
                     VStack(alignment: .leading, spacing: 18) {
-                        timelineRow(symbol: "checkmark.circle.fill", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                        timelineRow(symbol: "checkmark.circle.fill", fill: .chartreuse, iconColor: .onChartreuse,
                                     title: "Today",
                                     detail: "Full access. Every feature, no card charged.")
-                        timelineRow(symbol: "bell.fill", wash: (.washAmberBg, .washAmberFg),
+                        timelineRow(symbol: "bell.fill", fill: .amber, iconColor: .onAmber,
                                     title: "Day \(StubSubscriptionService.trialLengthDays - reminderDaysBeforeEnd)",
                                     detail: "I remind you the trial is ending — before any charge.")
-                        timelineRow(symbol: "creditcard.fill", wash: (.washSkyBg, .washSkyFg),
+                        timelineRow(symbol: "creditcard.fill", fill: .sky, iconColor: .onSky,
                                     title: "Day 7",
                                     detail: "Billed, unless you've cancelled. One tap, no hoops.")
                     }
@@ -123,7 +122,7 @@ struct PaywallView: View {
 
                 Text("When should I mention it?")
                     .font(.benCardTitle)
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.forestInk)
                     .padding(.top, 8)
 
                 HStack(spacing: 8) {
@@ -145,26 +144,26 @@ struct PaywallView: View {
                 .font(.benLabel)
                 .lineLimit(1)
                 .fixedSize()
-                .foregroundStyle(isSelected ? .white : Color.benInk)
+                .foregroundStyle(isSelected ? Color.onChartreuse : Color.forestInk)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(isSelected ? Color.benAccent : Color.benCard, in: Capsule())
+                .background(isSelected ? Color.chartreuse : Color.cream, in: Capsule())
         }
         .buttonStyle(BenPressable())
-        .benShadow(.card)
+        .benShadow(.floating)
         .animation(.spring(duration: 0.25), value: isSelected)
     }
 
-    private func timelineRow(symbol: String, wash: (Color, Color), title: String, detail: String) -> some View {
+    private func timelineRow(symbol: String, fill: Color, iconColor: Color, title: String, detail: String) -> some View {
         HStack(alignment: .center, spacing: 14) {
-            BenIconCircle(systemName: symbol, wash: wash, size: 44)
+            BenIconCircle(systemName: symbol, fill: fill, iconColor: iconColor, size: 44)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.benCardTitle)
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.onCream)
                 Text(detail)
                     .font(.benMeta)
-                    .foregroundStyle(Color.benInkSecondary)
+                    .foregroundStyle(Color.onCreamMuted)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -177,7 +176,7 @@ struct PaywallView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Keep Ben on the job")
                     .font(.benTitle)
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.chartreuse)
                     .padding(.top, 24)
 
                 PriceCard(
@@ -196,11 +195,11 @@ struct PaywallView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("The deal, plainly")
                             .font(.benCardTitle)
-                            .foregroundStyle(Color.benInk)
+                            .foregroundStyle(Color.onCream)
                         Text("You pay for Ben, so your data is never the product. Cancel in one tap. "
                              + "If the trial lapses, your bills stay visible — reminders stop, that's all.")
                             .font(.benMeta)
-                            .foregroundStyle(Color.benInkSecondary)
+                            .foregroundStyle(Color.onCreamMuted)
                     }
                 }
             }
@@ -247,11 +246,11 @@ private struct PriceCard: View {
                         .font(.benCardTitle)
                         .lineLimit(1)
                         .fixedSize()
-                        .foregroundStyle(Color.benInk)
+                        .foregroundStyle(Color.onCream)
                     Text(plan.detail)
                         .font(.benMeta)
                         .lineLimit(1)
-                        .foregroundStyle(Color.benInkMuted)
+                        .foregroundStyle(Color.onCreamMuted)
                 }
                 .layoutPriority(1)
                 Spacer(minLength: 8)
@@ -261,24 +260,24 @@ private struct PriceCard: View {
                         .monospacedDigit()
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-                        .foregroundStyle(Color.benInk)
+                        .foregroundStyle(Color.onCream)
                     Text(plan.cadence)
                         .font(.benMeta)
-                        .foregroundStyle(Color.benInkMuted)
+                        .foregroundStyle(Color.onCreamMuted)
                 }
                 Image(systemName: selected ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
-                    .foregroundStyle(selected ? Color.benAccent : Color.benInkMuted.opacity(0.4))
+                    .foregroundStyle(selected ? Color.onCreamStrong : Color.onCream.opacity(0.35))
             }
             .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                selected ? Color.washEucalyptusBg : Color.benCard,
+                Color.cream,
                 in: RoundedRectangle(cornerRadius: 20, style: .continuous)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .strokeBorder(selected ? Color.benAccent : .clear, lineWidth: 1.5)
+                    .strokeBorder(selected ? Color.onCreamStrong : .clear, lineWidth: 2)
             )
             .overlay(alignment: .topTrailing) {
                 if let badge = plan.badge {
@@ -286,16 +285,16 @@ private struct PriceCard: View {
                         .font(.caption.weight(.semibold))
                         .lineLimit(1)
                         .fixedSize()
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.onChartreuse)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(Color.benAccent, in: Capsule())
+                        .background(Color.chartreuse, in: Capsule())
                         .offset(x: -14, y: -11)
                 }
             }
         }
         .buttonStyle(BenPressable())
-        .benShadow(.card)
+        .benShadow(.floating)
         .animation(.spring(duration: 0.3), value: selected)
     }
 }

@@ -52,21 +52,22 @@ enum BillCategory {
         symbols[category] ?? "tag.fill"  // customs get the tag
     }
 
+    /// Solid accent chip colours (fill + icon) per category — Forest Bold style.
     static func wash(for category: String) -> (bg: Color, fg: Color) {
         switch category {
-        case "electricity", "gas": return (Color.washAmberBg, Color.washAmberFg)
-        case "internet", "phone", "water": return (Color.washSkyBg, Color.washSkyFg)
-        case "insurance", "rent": return (Color.washEucalyptusBg, Color.washEucalyptusFg)
-        case "council rates", "streaming": return (Color.washClayBg, Color.washClayFg)
-        case "other": return (Color.washEucalyptusBg, Color.washEucalyptusFg)
+        case "electricity", "gas": return (Color.amber, Color.onAmber)
+        case "internet", "phone", "water": return (Color.sky, Color.onSky)
+        case "insurance", "rent": return (Color.chartreuse, Color.onChartreuse)
+        case "council rates", "streaming": return (Color.clay, Color.onClay)
+        case "other": return (Color.lavender, Color.onLavender)
         default:
-            // Customs: stable wash picked from the name itself.
-            let washes: [(Color, Color)] = [
-                (.washEucalyptusBg, .washEucalyptusFg), (.washAmberBg, .washAmberFg),
-                (.washSkyBg, .washSkyFg), (.washClayBg, .washClayFg)
+            // Customs: stable chip colour picked from the name itself.
+            let fills: [(Color, Color)] = [
+                (.chartreuse, .onChartreuse), (.amber, .onAmber),
+                (.sky, .onSky), (.lavender, .onLavender)
             ]
-            let index = abs(category.unicodeScalars.reduce(0) { $0 &+ Int($1.value) }) % washes.count
-            return washes[index]
+            let index = abs(category.unicodeScalars.reduce(0) { $0 &+ Int($1.value) }) % fills.count
+            return fills[index]
         }
     }
 

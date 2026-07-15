@@ -20,7 +20,7 @@ struct CategoryPickerSheet: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Category")
                     .font(.benTitle)
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.forestInk)
                     .padding(.top, 28)
 
                 VStack(spacing: 10) {
@@ -31,32 +31,33 @@ struct CategoryPickerSheet: View {
                             HStack(spacing: 12) {
                                 BenIconCircle(
                                     systemName: BillCategory.symbol(for: category),
-                                    wash: BillCategory.wash(for: category),
+                                    fill: BillCategory.wash(for: category).bg,
+                                    iconColor: BillCategory.wash(for: category).fg,
                                     size: 38
                                 )
                                 Text(BillCategory.label(for: category))
                                     .font(.benLabel)
-                                    .foregroundStyle(Color.benInk)
+                                    .foregroundStyle(Color.onCream)
                                 Spacer()
                                 if bill.resolvedCategory == category {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.title3)
-                                        .foregroundStyle(Color.benAccent)
+                                        .foregroundStyle(Color.onCreamStrong)
                                 }
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .background(Color.cream, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                         }
                         .buttonStyle(BenPressable())
-                        .benShadow(.card)
+                        .benShadow(.floating)
                     }
                 }
 
                 Text("Or make your own")
                     .font(.benCardTitle)
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.forestInk)
                     .padding(.top, 10)
 
                 HStack(spacing: 10) {

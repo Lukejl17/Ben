@@ -78,13 +78,13 @@ struct CaptureExtractView: View {
     private var pickerScreen: some View {
         BenScreen(title: "Add your bill") {
             VStack(spacing: 12) {
-                captureCard(symbol: "photo.on.rectangle.angled", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                captureCard(symbol: "photo.on.rectangle.angled", fill: .chartreuse, iconColor: .onChartreuse,
                             label: "Choose a photo") { showPhotoPicker = true }
                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                    captureCard(symbol: "camera.fill", wash: (.washSkyBg, .washSkyFg),
+                    captureCard(symbol: "camera.fill", fill: .sky, iconColor: .onSky,
                                 label: "Take a photo") { showCamera = true }
                 }
-                captureCard(symbol: "doc.fill", wash: (.washAmberBg, .washAmberFg),
+                captureCard(symbol: "doc.fill", fill: .amber, iconColor: .onAmber,
                             label: "Choose a PDF or file") { showFileImporter = true }
             }
         } cta: {
@@ -99,36 +99,35 @@ struct CaptureExtractView: View {
         ZStack {
             BenCanvas()
             VStack(spacing: 20) {
-                BenAvatar(size: 44)
+                BenCharacter(size: 110)
                 ProgressView()
                     .controlSize(.large)
-                    .tint(.benAccent)
+                    .tint(.chartreuse)
                 BenVoiceText(text: "Reading it now…")
-                    .foregroundStyle(Color.benInkSecondary)
             }
         }
     }
 
     private func captureCard(
-        symbol: String, wash: (Color, Color), label: String, action: @escaping () -> Void
+        symbol: String, fill: Color, iconColor: Color, label: String, action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                BenIconCircle(systemName: symbol, wash: wash)
+                BenIconCircle(systemName: symbol, fill: fill, iconColor: iconColor)
                 Text(label)
                     .font(.benCardTitle)
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.forestInk)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color.benInkMuted)
+                    .foregroundStyle(Color.forestInk.opacity(0.5))
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(Color.cream, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
         .buttonStyle(BenPressable())
-        .benShadow(.card)
+        .benShadow(.floating)
         .accessibilityIdentifier(label)
     }
 

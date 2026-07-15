@@ -22,9 +22,8 @@ struct ReminderSetupView: View {
     var body: some View {
         BenScreen(title: denied ? "All set" : "The deal on reminders") {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar(size: 40)
                 BenVoiceText(text: benLine, quiet: true)
-                    .foregroundStyle(Color.benInkSecondary)
+                    .foregroundStyle(Color.forestInk.opacity(0.65))
             }
             .padding(.bottom, 12)
 
@@ -43,14 +42,14 @@ struct ReminderSetupView: View {
                         VStack(alignment: .leading, spacing: 14) {
                             ForEach(plannedDates, id: \.self) { date in
                                 HStack(spacing: 12) {
-                                    BenIconCircle(systemName: "bell.fill", wash: (.washAmberBg, .washAmberFg), size: 38)
+                                    BenIconCircle(systemName: "bell.fill", fill: .amber, iconColor: .onAmber, size: 38)
                                     VStack(alignment: .leading, spacing: 1) {
                                         Text(date.formatted(.dateTime.weekday(.wide).day().month(.wide)))
                                             .font(.benCardTitle)
-                                            .foregroundStyle(Color.benInk)
+                                            .foregroundStyle(Color.onCream)
                                         Text("9:00 am — one mention, that's all")
                                             .font(.benMeta)
-                                            .foregroundStyle(Color.benInkMuted)
+                                            .foregroundStyle(Color.onCreamMuted)
                                     }
                                 }
                             }
@@ -59,7 +58,7 @@ struct ReminderSetupView: View {
                 } else {
                     Text("That due date is close — reminders would already have passed, so I'll just keep it visible in here.")
                         .font(.benMeta)
-                        .foregroundStyle(Color.benInkSecondary)
+                        .foregroundStyle(Color.forestInk.opacity(0.65))
                 }
             }
         } cta: {
@@ -85,7 +84,7 @@ struct ReminderSetupView: View {
             )
             .presentationDetents([.height(300)])
             .presentationCornerRadius(28)
-            .presentationBackground(Color.benCanvas)
+            .presentationBackground(Color.forestBottom)
         }
     }
 
@@ -172,7 +171,6 @@ private struct PrePermissionSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar(size: 40)
                 BenVoiceText(
                     text: "iOS will ask if I'm allowed to notify you. It's only ever about a bill needing you — nothing else, I promise.",
                     quiet: true

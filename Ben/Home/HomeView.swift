@@ -1,7 +1,9 @@
+import Charts
 import SwiftData
 import SwiftUI
 
-/// Home — the system of record. Status-sorted bills, one designed empty state.
+/// Home — the system of record, widget-first: a cream hero for the next bill,
+/// a summary mini-row, then the timeline sections.
 struct HomeView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(NotificationRouter.self) private var notificationRouter
@@ -10,6 +12,29 @@ struct HomeView: View {
     @State private var showAddBill = false
     @State private var detailBill: Bill?
     @State private var fabExpanded = false
+
+    // MARK: Derived
+
+    /// The soonest bill that still needs paying — the hero widget's subject.
+    private var nextUp: Bill? {
+        bills.filter { $0.paidAt == nil }.min { $0.dueDate < $1.dueDate }
+    }
+
+    private var thisMonth: (total: Decimal, count: Int) {
+        let calendar = Calendar.current
+        let due = bills.filter { calendar.isDate($0.dueDate, equalTo: .now, toGranularity: .month) }
+        return (due.reduce(Decimal.zero) { $0 + $1.amount }, due.count)
+    }
+
+    private var biggestSlice: CategorySlice? {
+        InsightsMath.breakdown(
+            bills: bills.map {
+                BillEntry(category: $0.resolvedCategory, amount: $0.amount, paidAt: $0.paidAt)
+            },
+            period: .threeMonths,
+            includeUnpaid: true
+        ).slices.first
+    }
 
     /// Home reads as a timeline: what's slipped, then this week, then this month.
     private var sections: [(title: String, bills: [Bill])] {
@@ -43,10 +68,6 @@ struct HomeView: View {
         ].filter { !$0.1.isEmpty }
     }
 
-    private var needsAttention: Bool {
-        bills.contains { $0.status == .dueSoon || $0.status == .overdue }
-    }
-
     var body: some View {
         NavigationStack {
             ZStack {
@@ -57,12 +78,11 @@ struct HomeView: View {
                     billList
                 }
             }
-            .navigationTitle("Bills")
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar(.hidden, for: .navigationBar)
             .overlay {
                 // Scrim behind the expanded dial — tap anywhere to collapse.
                 if fabExpanded {
-                    Color.black.opacity(0.18)
+                    Color.black.opacity(0.35)
                         .ignoresSafeArea()
                         .onTapGesture {
                             withAnimation(.spring(duration: 0.3)) { fabExpanded = false }
@@ -71,12 +91,14 @@ struct HomeView: View {
                 }
             }
             .overlay(alignment: .bottomTrailing) {
-                addBillDial
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 24)
+                AddBillDial(expanded: $fabExpanded) { method in
+                    startAddBill(method: method)
+                }
+                .padding(.trailing, 20)
+                .padding(.bottom, 24)
             }
         }
-        .tint(.benAccent)
+        .tint(.chartreuse)
         .sheet(
             isPresented: $showAddBill,
             onDismiss: { coordinator.isAddingSubsequentBill = false },
@@ -90,7 +112,7 @@ struct HomeView: View {
                 .padding(.trailing, 20)
             }
             .presentationCornerRadius(28)
-            .presentationBackground(Color.benCanvas)
+            .presentationBackground(Color.forestBottom)
         })
         .onChange(of: coordinator.step) { _, step in
             if step == .done {
@@ -108,7 +130,7 @@ struct HomeView: View {
         .sheet(item: $detailBill) { bill in
             BillDetailView(bill: bill)
                 .presentationCornerRadius(28)
-                .presentationBackground(Color.benCanvas)
+                .presentationBackground(Color.forestBottom)
         }
         .onChange(of: notificationRouter.openBillID) { _, _ in handleDeepLinks() }
         .onChange(of: notificationRouter.addBillRequested) { _, _ in handleDeepLinks() }
@@ -131,25 +153,31 @@ struct HomeView: View {
     private var billList: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                if !needsAttention {
-                    HStack(spacing: 12) {
-                        BenAvatar(size: 40)
-                        BenVoiceText(text: "Nothing needs your attention.", quiet: true)
-                            .foregroundStyle(Color.benInkSecondary)
-                    }
-                    .padding(.top, 6)
-                    .padding(.bottom, 8)
-                }
+                Text("Bills")
+                    .font(.benTitle)
+                    .foregroundStyle(Color.chartreuse)
+                    .padding(.top, 18)
+                    .accessibilityAddTraits(.isHeader)
+
+                HomeSummaryWidgets(
+                    nextUp: nextUp,
+                    thisMonth: thisMonth,
+                    biggestSlice: biggestSlice,
+                    onTapBill: { detailBill = $0 }
+                )
+
                 if case .lapsed = services.subscriptions.state() {
-                    BenCard(padding: 14) {
-                        Text("Your trial has ended — bills stay visible here, reminders are off.")
-                            .font(.benMeta)
-                            .foregroundStyle(Color.benInkSecondary)
-                    }
+                    Text("Your trial has ended — bills stay visible here, reminders are off.")
+                        .font(.benMeta)
+                        .foregroundStyle(Color.forestInk.opacity(0.65))
+                        .padding(14)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .benRowSurface(radius: 20)
                 }
+
                 ForEach(sections, id: \.title) { section in
                     sectionHeader(title: section.title, bills: section.bills)
-                        .padding(.top, section.title == sections.first?.title ? 0 : 14)
+                        .padding(.top, 12)
                     ForEach(section.bills) { bill in
                         BillRow(bill: bill) {
                             detailBill = bill
@@ -158,7 +186,7 @@ struct HomeView: View {
                 }
             }
             .padding(.horizontal, 20)
-            .padding(.bottom, 40)
+            .padding(.bottom, 110)
         }
     }
 
@@ -168,12 +196,12 @@ struct HomeView: View {
         return HStack(alignment: .firstTextBaseline) {
             Text(title)
                 .font(.benCardTitle)
-                .foregroundStyle(title == "Overdue" ? Color.statusOverdueFg : Color.benInk)
+                .foregroundStyle(title == "Overdue" ? Color.statusLateFg : Color.chartreuse)
             Spacer()
             Text(total.formatted(.currency(code: "AUD")))
                 .font(.benMeta)
                 .monospacedDigit()
-                .foregroundStyle(Color.benInkMuted)
+                .foregroundStyle(Color.forestInk.opacity(0.5))
         }
         .padding(.horizontal, 4)
     }
@@ -181,20 +209,13 @@ struct HomeView: View {
     private var emptyState: some View {
         VStack(spacing: 18) {
             Spacer()
-            BenAvatar(size: 44)
+            BenCharacter(size: 150)
             BenVoiceText(text: "No bills yet. Hand one over and it becomes my problem.")
-                .foregroundStyle(Color.benInkSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             BenPrimaryButton(title: "Add a bill") { startAddBill() }
                 .padding(.horizontal, 60)
             Spacer()
-        }
-    }
-
-    private var addBillDial: some View {
-        AddBillDial(expanded: $fabExpanded) { method in
-            startAddBill(method: method)
         }
     }
 
@@ -213,147 +234,111 @@ struct HomeView: View {
     }
 }
 
-struct BillRow: View {
-    let bill: Bill
-    var onTap: (() -> Void)?
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.services) private var services
+/// The summary block at the top of home: cream hero + the two mini widgets.
+struct HomeSummaryWidgets: View {
+    let nextUp: Bill?
+    let thisMonth: (total: Decimal, count: Int)
+    let biggestSlice: CategorySlice?
+    let onTapBill: (Bill) -> Void
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if let nextUp {
+                heroWidget(for: nextUp)
+            }
+            miniRow
+        }
+    }
+
+    /// The cream hero: the one bill that needs you next.
+    private func heroWidget(for bill: Bill) -> some View {
         Button {
-            onTap?()
+            onTapBill(bill)
         } label: {
-            HStack(alignment: .center, spacing: 14) {
-                BenIconCircle(
-                    systemName: BillCategories.symbol(forIssuer: bill.issuer),
-                    wash: BillCategories.wash(forIssuer: bill.issuer)
-                )
-                .opacity(bill.status == .paid ? 0.55 : 1)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(bill.issuer)
-                        .font(.benCardTitle)
-                        .foregroundStyle(Color.benInk)
-                    Text("Due \(bill.dueDate.formatted(.dateTime.day().month(.wide)))")
-                        .font(.benMeta)
-                        .foregroundStyle(Color.benInkMuted)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(alignment: .top) {
+                    BenEyebrow(text: "Next up")
+                    Spacer()
+                    StatusChipOnCream(status: bill.status)
                 }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 6) {
-                    Text(bill.amount.formatted(.currency(code: "AUD")))
-                        .font(.benAmount)
-                        .monospacedDigit()
-                        .foregroundStyle(Color.benInk)
-                    StatusPill(status: bill.status)
+                Text("\(bill.issuer) · \(BillCategory.label(for: bill.resolvedCategory))")
+                    .font(.benCardTitle)
+                    .foregroundStyle(Color.onCream)
+                    .padding(.top, 8)
+                Text(bill.amount.formatted(.currency(code: "AUD")))
+                    .font(.benHeroAmount)
+                    .monospacedDigit()
+                    .foregroundStyle(Color.onCreamStrong)
+                Text(heroDueLine(for: bill))
+                    .font(.benMeta)
+                    .foregroundStyle(Color.onCreamMuted)
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.cream, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
+        }
+        .buttonStyle(BenPressable())
+        .benShadow(.cream)
+    }
+
+    private func heroDueLine(for bill: Bill) -> String {
+        let due = "Due \(bill.dueDate.formatted(.dateTime.weekday(.wide).day().month(.wide)))"
+        return bill.hasNotification ? due + " · reminder set" : due
+    }
+
+    /// Two supporting widgets: month total + biggest category.
+    private var miniRow: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                BenEyebrow(text: "This month", color: Color.forestInk.opacity(0.55))
+                Text(thisMonth.total.formatted(.currency(code: "AUD").precision(.fractionLength(0))))
+                    .font(.baloo("Baloo2-ExtraBold", 28, relativeTo: .title))
+                    .monospacedDigit()
+                    .foregroundStyle(Color.chartreuse)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .padding(.top, 6)
+                Text(thisMonth.count == 1 ? "1 bill" : "\(thisMonth.count) bills")
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.6))
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .benRowSurface(radius: 26)
+
+            VStack(alignment: .leading, spacing: 2) {
+                BenEyebrow(text: "Biggest", color: Color.forestInk.opacity(0.55))
+                if let slice = biggestSlice {
+                    HStack(spacing: 10) {
+                        miniDonut(share: slice.share)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("\(Int((slice.share * 100).rounded()))%")
+                                .font(.baloo("Baloo2-ExtraBold", 22, relativeTo: .title2))
+                                .foregroundStyle(Color.forestInk)
+                            Text(BillCategory.label(for: slice.category))
+                                .font(.benMeta)
+                                .foregroundStyle(Color.forestInk.opacity(0.6))
+                                .lineLimit(1)
+                        }
+                    }
+                    .padding(.top, 6)
                 }
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        }
-        .buttonStyle(BenPressable())
-        .benShadow(.card)
-        .contextMenu {
-            if bill.status != .paid {
-                Button("Mark as paid", systemImage: "checkmark.circle") {
-                    bill.paidAt = .now
-                    services.scheduler.cancel(identifiers: bill.notificationIDs)
-                    bill.notificationIDs = []
-                    bill.hasNotification = false
-                    try? modelContext.save()
-                }
-            }
-            Button("Delete", systemImage: "trash", role: .destructive) {
-                services.scheduler.cancel(identifiers: bill.notificationIDs)
-                modelContext.delete(bill)
-                try? modelContext.save()
-            }
-        }
-    }
-}
-
-/// Thumb-reach add-bill entry: a floating dial that expands into the
-/// three upload options (Unscripted-style speed dial).
-struct AddBillDial: View {
-    @Binding var expanded: Bool
-    let onPick: (UploadMethod) -> Void
-
-    var body: some View {
-        VStack(alignment: .trailing, spacing: 12) {
-            if expanded {
-                if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                    option(symbol: "camera.fill", wash: (.washEucalyptusBg, .washEucalyptusFg), label: "Take a photo") {
-                        onPick(.camera)
-                    }
-                }
-                option(symbol: "photo.on.rectangle.angled", wash: (.washEucalyptusBg, .washEucalyptusFg),
-                       label: "Choose a photo") {
-                    onPick(.photo)
-                }
-                option(symbol: "doc.fill", wash: (.washSkyBg, .washSkyFg), label: "PDF or file") {
-                    onPick(.pdf)
-                }
-                disabledOption
-            }
-
-            Button {
-                withAnimation(.spring(duration: 0.3)) { expanded.toggle() }
-            } label: {
-                Image(systemName: "plus")
-                    .font(.title2.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .rotationEffect(.degrees(expanded ? 45 : 0))
-                    .frame(width: 60, height: 60)
-                    .background(
-                        LinearGradient(colors: [.benAccent, .benAccentDeep], startPoint: .top, endPoint: .bottom),
-                        in: Circle()
-                    )
-            }
-            .buttonStyle(BenPressable())
-            .benShadow(.floating)
-            .accessibilityLabel(expanded ? "Close" : "Add a bill")
-            .accessibilityIdentifier("Add a bill")
+            .benRowSurface(radius: 26)
         }
     }
 
-    private func option(
-        symbol: String, wash: (Color, Color), label: String, action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Text(label)
-                    .font(.benLabel)
-                    .foregroundStyle(Color.benInk)
-                BenIconCircle(systemName: symbol, wash: wash, size: 40)
-            }
-            .padding(.leading, 18)
-            .padding(.trailing, 10)
-            .padding(.vertical, 10)
-            .background(Color.benCard, in: Capsule())
+    private func miniDonut(share: Double) -> some View {
+        ZStack {
+            Circle()
+                .stroke(Color.rowStroke, lineWidth: 7)
+            Circle()
+                .trim(from: 0, to: share)
+                .stroke(Color.chartreuse, style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                .rotationEffect(.degrees(-90))
         }
-        .buttonStyle(BenPressable())
-        .benShadow(.floating)
-        .accessibilityIdentifier(label)
-        .transition(.move(edge: .trailing).combined(with: .opacity))
-    }
-
-    private var disabledOption: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .trailing, spacing: 1) {
-                Text("Forward an email")
-                    .font(.benLabel)
-                    .foregroundStyle(Color.benInkMuted)
-                Text("Available after setup")
-                    .font(.caption)
-                    .foregroundStyle(Color.benInkMuted)
-            }
-            BenIconCircle(systemName: "envelope.fill", wash: (.washClayBg, .washClayFg), size: 40)
-                .opacity(0.55)
-        }
-        .padding(.leading, 18)
-        .padding(.trailing, 10)
-        .padding(.vertical, 10)
-        .background(Color.benCard.opacity(0.8), in: Capsule())
-        .benShadow(.card)
-        .transition(.move(edge: .trailing).combined(with: .opacity))
+        .frame(width: 44, height: 44)
     }
 }

@@ -1,9 +1,55 @@
 import SwiftUI
 
-// MARK: - Ben Design System v2 · Reusable components
-// Atoms, buttons, selection rows, fields, and the screen scaffold.
+// MARK: - Ben Design System v3 · Forest Bold components
+// Cream widgets float on the forest; secondary rows are translucent.
+// Chartreuse is the only interactive colour.
 
-// MARK: - Atoms
+// MARK: Surfaces
+
+/// Cream widget — the star surface. Content inside renders in light scheme so
+/// native controls (fields, pickers) stay dark-on-cream.
+struct BenCard<Content: View>: View {
+    var padding: CGFloat = 18
+    var radius: CGFloat = 28
+    private let content: Content
+
+    init(padding: CGFloat = 18, radius: CGFloat = 28, @ViewBuilder content: () -> Content) {
+        self.padding = padding
+        self.radius = radius
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .environment(\.colorScheme, .light)
+            .padding(padding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.cream, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
+            .benShadow(.cream)
+    }
+}
+
+/// Translucent forest row — the supporting surface for lists and options.
+struct BenRowSurface: ViewModifier {
+    var radius: CGFloat = 24
+
+    func body(content: Content) -> some View {
+        content
+            .background(Color.rowFill, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(Color.rowStroke, lineWidth: 1.5)
+            )
+    }
+}
+
+extension View {
+    func benRowSurface(radius: CGFloat = 24) -> some View {
+        modifier(BenRowSurface(radius: radius))
+    }
+}
+
+// MARK: Atoms
 
 /// The status capsule — the only situational colour in the app.
 struct StatusPill: View {
@@ -13,81 +59,75 @@ struct StatusPill: View {
             .font(.benLabel)
             .foregroundStyle(status.foreground)
             .padding(.horizontal, 12)
-            .padding(.vertical, 5)
+            .padding(.vertical, 4)
             .background(status.background, in: Capsule())
     }
 }
 
-/// A line spoken by Ben. Serif signals who's talking before a word is read.
+/// Status chip for CREAM surfaces — solid fills (the translucent StatusPill
+/// disappears on cream).
+struct StatusChipOnCream: View {
+    let status: BillStatus
+
+    var body: some View {
+        let style: (Color, Color) = switch status {
+        case .dueSoon: (.amber, .onAmber)
+        case .overdue: (.clay, .onClay)
+        case .paid: (.chartreuse, .onChartreuse)
+        case .upcoming: (.lavender, .onLavender)
+        }
+        return Text(status.label)
+            .font(.benLabel)
+            .foregroundStyle(style.1)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(style.0, in: Capsule())
+    }
+}
+
+/// A line spoken by Ben — soft cream, Baloo Medium. Never shouty.
 struct BenVoiceText: View {
     let text: String
     var quiet = false
     var body: some View {
         Text(text)
             .font(quiet ? .benVoiceQuiet : .benVoice)
-            .foregroundStyle(Color.benInk)
+            .foregroundStyle(Color.forestInkSoft)
             .lineSpacing(3)
     }
 }
 
-/// Opaque floating surface. Elevation, not borders (hairline only in dark).
-struct BenCard<Content: View>: View {
-    @Environment(\.colorScheme) private var scheme
-    var padding: CGFloat = 18
-    private let content: Content
-
-    init(padding: CGFloat = 18, @ViewBuilder content: () -> Content) {
-        self.padding = padding
-        self.content = content()
-    }
-
-    var body: some View {
-        content
-            .padding(padding)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .overlay {
-                if scheme == .dark {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .strokeBorder(Color.benHairline, lineWidth: 0.5)
-                }
-            }
-            .benShadow(.card)
-    }
-}
-
-/// Icon in a pastel tinted circle — where colour variety lives.
+/// Solid accent chip with an SF Symbol — where colour variety lives.
 struct BenIconCircle: View {
     let systemName: String
-    var wash: (bg: Color, fg: Color) = (.washEucalyptusBg, .washEucalyptusFg)
-    var size: CGFloat = 48
+    var fill: Color = .amber
+    var iconColor: Color = .onAmber
+    var size: CGFloat = 40
 
     var body: some View {
         Image(systemName: systemName)
-            .font(.system(size: size * 0.42, weight: .medium))
-            .foregroundStyle(wash.fg)
+            .font(.system(size: size * 0.42, weight: .bold))
+            .foregroundStyle(iconColor)
             .frame(width: size, height: size)
-            .background(wash.bg, in: Circle())
+            .background(fill, in: Circle())
     }
 }
 
-/// Ben's placeholder avatar. HUMAN: replace with the final illustration
-/// (clay + ink palette, one calm expression). Never above 44pt, never floating.
-struct BenAvatar: View {
-    var size: CGFloat = 44
+/// Widget eyebrow: tiny tracked uppercase label.
+struct BenEyebrow: View {
+    let text: String
+    var color: Color = .onCreamEyebrow
     var body: some View {
-        Image(systemName: "person.crop.circle")
-            .font(.system(size: size * 0.6, weight: .regular))
-            .foregroundStyle(Color.washClayFg)
-            .frame(width: size, height: size)
-            .background(Color.washClayBg, in: Circle())
-            .accessibilityHidden(true)
+        Text(text.uppercased())
+            .font(.benEyebrow)
+            .tracking(1.6)
+            .foregroundStyle(color)
     }
 }
 
-// MARK: - Buttons
+// MARK: Buttons
 
-/// Primary CTA: 56pt accent-gradient capsule with soft shadow.
+/// Primary CTA: chartreuse capsule with a soft glow.
 struct BenPrimaryButton: View {
     let title: String
     var systemImage: String?
@@ -102,24 +142,17 @@ struct BenPrimaryButton: View {
                 Text(title)
             }
             .font(.benLabel)
-            .foregroundStyle(.white)
+            .foregroundStyle(Color.onChartreuse)
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(
-                LinearGradient(
-                    colors: [.benAccent, .benAccentDeep],
-                    startPoint: .top,
-                    endPoint: .bottom
-                ),
-                in: Capsule()
-            )
+            .background(Color.chartreuse, in: Capsule())
         }
         .buttonStyle(BenPressable())
-        .benShadow(.floating)
+        .benShadow(.glow)
     }
 }
 
-/// Secondary: eucalyptus wash capsule.
+/// Secondary: cream capsule.
 struct BenSecondaryButton: View {
     let title: String
     var systemImage: String?
@@ -134,16 +167,17 @@ struct BenSecondaryButton: View {
                 Text(title)
             }
             .font(.benLabel)
-            .foregroundStyle(Color.washEucalyptusFg)
+            .foregroundStyle(Color.onCream)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
-            .background(Color.washEucalyptusBg, in: Capsule())
+            .background(Color.cream, in: Capsule())
         }
         .buttonStyle(BenPressable())
+        .benShadow(.floating)
     }
 }
 
-/// Tertiary: quiet text link with a small accent circle (Unscripted "Add item").
+/// Tertiary: quiet chartreuse text link.
 struct BenTextButton: View {
     let title: String
     var systemImage: String?
@@ -154,21 +188,21 @@ struct BenTextButton: View {
             HStack(spacing: 8) {
                 if let systemImage {
                     Image(systemName: systemImage)
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Color.onChartreuse)
                         .frame(width: 24, height: 24)
-                        .background(Color.benAccent, in: Circle())
+                        .background(Color.chartreuse, in: Circle())
                 }
                 Text(title)
                     .font(.benLabel)
-                    .foregroundStyle(Color.benAccent)
+                    .foregroundStyle(Color.chartreuse)
             }
         }
         .buttonStyle(BenPressable())
     }
 }
 
-/// Floating circular chrome action (back, close, toolbar).
+/// Floating circular chrome action (close, toolbar) — translucent on forest.
 struct BenCircleButton: View {
     let systemName: String
     var accessibilityLabel: String
@@ -177,13 +211,13 @@ struct BenCircleButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(Color.benInk)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(Color.forestInk)
                 .frame(width: 44, height: 44)
-                .background(Color.benCard, in: Circle())
+                .background(Color.rowFill, in: Circle())
+                .overlay(Circle().strokeBorder(Color.rowStroke, lineWidth: 1.5))
         }
         .buttonStyle(BenPressable())
-        .benShadow(.floating)
         .accessibilityLabel(accessibilityLabel)
     }
 }
@@ -196,9 +230,9 @@ struct BenPressable: ButtonStyle {
     }
 }
 
-// MARK: - Selection row (S2/S3/S7 pickers)
+// MARK: Selection row (S2/S3/S7/S7b pickers)
 
-/// Filled selectable row: wash tint + accent ring when chosen, e1 card otherwise.
+/// Unselected: translucent forest. Selected: cream, lifted, chartreuse check.
 struct SelectablePill: View {
     let label: String
     var detail: String?
@@ -208,43 +242,45 @@ struct SelectablePill: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(label)
-                        .font(.benLabel)
-                        .foregroundStyle(Color.benInk)
+                        .font(.benCardTitle)
+                        .foregroundStyle(isSelected ? Color.onCream : Color.forestInk)
                     if let detail {
                         Text(detail)
                             .font(.benMeta)
-                            .foregroundStyle(Color.benInkSecondary)
+                            .foregroundStyle(
+                                isSelected ? Color.onCreamMuted : Color.forestInk.opacity(0.6)
+                            )
                     }
                 }
                 Spacer(minLength: 0)
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.title3)
-                    .foregroundStyle(isSelected ? Color.benAccent : Color.benInkMuted.opacity(0.4))
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(isSelected ? Color.onCreamStrong : Color.forestInk.opacity(0.35))
             }
             .padding(.horizontal, 18)
-            .padding(.vertical, 15)
+            .padding(.vertical, 14)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                isSelected ? Color.washEucalyptusBg : Color.benCard,
-                in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+                isSelected ? Color.cream : Color.rowFill,
+                in: RoundedRectangle(cornerRadius: 24, style: .continuous)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .strokeBorder(isSelected ? Color.benAccent : .clear, lineWidth: 1.5)
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(isSelected ? Color.clear : Color.rowStroke, lineWidth: 1.5)
             )
         }
         .buttonStyle(BenPressable())
-        .benShadow(.card)
+        .benShadow(isSelected ? .cream : .floating)
         .animation(.spring(duration: 0.3), value: isSelected)
         .accessibilityIdentifier(label)
     }
 }
 
-// MARK: - Filled input field
+// MARK: Filled input field
 
-/// Unscripted-style filled field: accent-toned label above the value, no borders.
+/// Cream field: eyebrow label above the value. Light scheme inside.
 struct BenField<Content: View>: View {
     let label: String
     private let content: Content
@@ -255,25 +291,24 @@ struct BenField<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.benMeta.weight(.medium))
-                .foregroundStyle(Color.benAccent)
+        VStack(alignment: .leading, spacing: 3) {
+            BenEyebrow(text: label)
             content
                 .font(.benBody)
-                .foregroundStyle(Color.benInk)
+                .foregroundStyle(Color.onCream)
         }
+        .environment(\.colorScheme, .light)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.benCard, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .benShadow(.card)
+        .background(Color.cream, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .benShadow(.floating)
     }
 }
 
-// MARK: - Screen scaffold
+// MARK: Screen scaffold
 
-/// Standard screen: atmospheric canvas, scrolling content, CTA pinned to bottom.
+/// Standard screen: forest canvas, scrolling content, CTA pinned to bottom.
 struct BenScreen<Content: View, CTA: View>: View {
     var title: String?
     @ViewBuilder var content: Content
@@ -283,13 +318,13 @@ struct BenScreen<Content: View, CTA: View>: View {
         ZStack {
             BenCanvas()
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 14) {
                     if let title {
                         Text(title)
                             .font(.benTitle)
-                            .foregroundStyle(Color.benInk)
-                            .padding(.top, 24)
-                            .padding(.bottom, 4)
+                            .foregroundStyle(Color.chartreuse)
+                            .padding(.top, 22)
+                            .padding(.bottom, 2)
                     }
                     content
                 }
@@ -307,7 +342,7 @@ struct BenScreen<Content: View, CTA: View>: View {
             .padding(.bottom, 12)
             .background {
                 LinearGradient(
-                    colors: [Color.benCanvasBottom.opacity(0), Color.benCanvasBottom],
+                    colors: [Color.forestBottom.opacity(0), Color.forestBottom],
                     startPoint: .top,
                     endPoint: .bottom
                 )

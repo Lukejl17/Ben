@@ -12,13 +12,13 @@ struct SetStateView: View {
         BenScreen {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Done.")
-                    .font(.system(size: 40, weight: .bold, design: .serif))
-                    .foregroundStyle(Color.benInk)
+                    .font(.baloo("Baloo2-ExtraBold", 44, relativeTo: .largeTitle))
+                    .foregroundStyle(Color.chartreuse)
                     .padding(.top, 36)
                     .padding(.bottom, 10)
 
                 BenVoiceText(text: benLine, quiet: true)
-                    .foregroundStyle(Color.benInkSecondary)
+                    .foregroundStyle(Color.forestInk.opacity(0.65))
                     .padding(.bottom, 22)
             }
 
@@ -27,15 +27,16 @@ struct SetStateView: View {
                     HStack(alignment: .center, spacing: 14) {
                         BenIconCircle(
                             systemName: BillCategories.symbol(forIssuer: bill.issuer),
-                            wash: BillCategories.wash(forIssuer: bill.issuer)
+                            fill: BillCategories.wash(forIssuer: bill.issuer).bg,
+                            iconColor: BillCategories.wash(forIssuer: bill.issuer).fg
                         )
                         VStack(alignment: .leading, spacing: 3) {
                             Text(bill.issuer)
                                 .font(.benCardTitle)
-                                .foregroundStyle(Color.benInk)
+                                .foregroundStyle(Color.onCream)
                             Text("Due \(bill.dueDate.formatted(.dateTime.day().month(.wide)))")
                                 .font(.benMeta)
-                                .foregroundStyle(Color.benInkMuted)
+                                .foregroundStyle(Color.onCreamMuted)
                             if bill.hasNotification, let next = nextReminder {
                                 Label(
                                     "Mention on \(next.formatted(.dateTime.day().month(.abbreviated)))",
@@ -43,7 +44,7 @@ struct SetStateView: View {
                                 )
                                 .font(.benMeta)
                                 .lineLimit(1)
-                                .foregroundStyle(Color.washAmberFg)
+                                .foregroundStyle(Color.amber)
                             }
                         }
                         Spacer()
@@ -51,8 +52,8 @@ struct SetStateView: View {
                             Text(bill.amount.formatted(.currency(code: "AUD")))
                                 .font(.benAmount)
                                 .monospacedDigit()
-                                .foregroundStyle(Color.benInk)
-                            StatusPill(status: bill.status)
+                                .foregroundStyle(Color.onCream)
+                            StatusChipOnCream(status: bill.status)
                         }
                     }
                 }
@@ -61,11 +62,11 @@ struct SetStateView: View {
 
             Text("Nothing else needs your attention.")
                 .font(.benBody)
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.forestInk.opacity(0.65))
 
             Text("1 bill tracked. Most people add 2–3 to stop thinking about bills entirely.")
                 .font(.benMeta)
-                .foregroundStyle(Color.benInkMuted)
+                .foregroundStyle(Color.forestInk.opacity(0.5))
         } cta: {
             // HUMAN: Sign in with Apple capability + entitlement, then replace
             // this stub with SignInWithAppleButton.
@@ -77,7 +78,7 @@ struct SetStateView: View {
             } else {
                 Text("Setup saved to this device.")
                     .font(.benMeta)
-                    .foregroundStyle(Color.benInkSecondary)
+                    .foregroundStyle(Color.forestInk.opacity(0.65))
                     .frame(maxWidth: .infinity)
             }
 

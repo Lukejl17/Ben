@@ -9,12 +9,11 @@ struct ReminderStyleView: View {
     var body: some View {
         BenScreen(title: "When should I speak up?") {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar(size: 40)
                 BenVoiceText(
                     text: "I only speak up when a bill actually needs you. No streaks, no check-ins, no noise.",
                     quiet: true
                 )
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.forestInk.opacity(0.65))
             }
             .padding(.bottom, 10)
 

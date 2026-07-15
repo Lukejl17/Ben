@@ -17,6 +17,7 @@ struct BenApp: App {
         self.services = services
         self._router = State(initialValue: router)
         self.notificationDelegate = delegate
+        Self.applyForestBoldChrome()
     }
 
     var body: some Scene {
@@ -25,10 +26,39 @@ struct BenApp: App {
                 .environment(coordinator)
                 .environment(router)
                 .environment(\.services, services)
-                .tint(.benAccent)
-                .background(Color.benCanvas)
+                .tint(.chartreuse)
+                .background(Color.forestBottom)
+                // Forest Bold is one committed world — no light variant.
+                .preferredColorScheme(.dark)
         }
         .modelContainer(Self.makeContainer())
+    }
+
+    /// Nav titles and tab bar in Baloo/forest — SwiftUI has no direct hooks for these.
+    private static func applyForestBoldChrome() {
+        let cream = UIColor(red: 0.973, green: 0.945, blue: 0.871, alpha: 1)      // F8F1DE
+        let chartreuse = UIColor(red: 0.827, green: 0.914, blue: 0.478, alpha: 1) // D3E97A
+        let nav = UINavigationBarAppearance()
+        nav.configureWithTransparentBackground()
+        if let large = UIFont(name: "Baloo2-ExtraBold", size: 34) {
+            nav.largeTitleTextAttributes = [.font: large, .foregroundColor: chartreuse]
+        }
+        if let inline = UIFont(name: "Baloo2-Bold", size: 17) {
+            nav.titleTextAttributes = [.font: inline, .foregroundColor: cream]
+        }
+        UINavigationBar.appearance().standardAppearance = nav
+        UINavigationBar.appearance().scrollEdgeAppearance = nav
+
+        if let tabFont = UIFont(name: "Baloo2-Bold", size: 11) {
+            let item = UITabBarItemAppearance()
+            item.normal.titleTextAttributes = [.font: tabFont]
+            item.selected.titleTextAttributes = [.font: tabFont]
+            let tab = UITabBarAppearance()
+            tab.stackedLayoutAppearance = item
+            tab.inlineLayoutAppearance = item
+            tab.compactInlineLayoutAppearance = item
+            UITabBar.appearance().standardAppearance = tab
+        }
     }
 
     private static func makeContainer() -> ModelContainer {

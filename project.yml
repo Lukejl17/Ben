@@ -18,6 +18,8 @@ targets:
       properties:
         UILaunchScreen: {}
         CFBundleDisplayName: Ben
+        UIAppFonts:
+          - Baloo2-Variable.ttf
         NSCameraUsageDescription: "Ben uses the camera to read your bill so you don't have to type it."
         NSPhotoLibraryUsageDescription: "Ben reads bill photos you choose so you don't have to type them."
         UIBackgroundModes: []

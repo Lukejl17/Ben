@@ -15,16 +15,17 @@ struct BillDetailView: View {
                 VStack(alignment: .center, spacing: 10) {
                     BenIconCircle(
                         systemName: BillCategories.symbol(forIssuer: bill.issuer),
-                        wash: BillCategories.wash(forIssuer: bill.issuer),
+                        fill: BillCategories.wash(forIssuer: bill.issuer).bg,
+                        iconColor: BillCategories.wash(forIssuer: bill.issuer).fg,
                         size: 56
                     )
                     Text(bill.amount.formatted(.currency(code: "AUD")))
                         .font(.benHeroAmount)
                         .monospacedDigit()
-                        .foregroundStyle(Color.benInk)
+                        .foregroundStyle(Color.forestInk)
                     Text(bill.issuer)
                         .font(.benCardTitle)
-                        .foregroundStyle(Color.benInkSecondary)
+                        .foregroundStyle(Color.forestInk.opacity(0.65))
                     StatusPill(status: bill.status)
                 }
                 .frame(maxWidth: .infinity)
@@ -33,16 +34,16 @@ struct BillDetailView: View {
 
                 BenCard {
                     HStack(spacing: 14) {
-                        BenIconCircle(systemName: "calendar", wash: (.washAmberBg, .washAmberFg), size: 40)
+                        BenIconCircle(systemName: "calendar", fill: .amber, iconColor: .onAmber, size: 40)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Due \(bill.dueDate.formatted(.dateTime.weekday(.wide).day().month(.wide).year()))")
                                 .font(.benCardTitle)
-                                .foregroundStyle(Color.benInk)
+                                .foregroundStyle(Color.onCream)
                             Text(bill.hasNotification
                                  ? "Reminder set — I'll mention it when it matters."
                                  : "No reminder for this one — it stays visible here.")
                                 .font(.benMeta)
-                                .foregroundStyle(Color.benInkMuted)
+                                .foregroundStyle(Color.onCreamMuted)
                         }
                     }
                 }
@@ -53,28 +54,29 @@ struct BillDetailView: View {
                     HStack(spacing: 14) {
                         BenIconCircle(
                             systemName: BillCategory.symbol(for: bill.resolvedCategory),
-                            wash: BillCategory.wash(for: bill.resolvedCategory),
+                            fill: BillCategory.wash(for: bill.resolvedCategory).bg,
+                            iconColor: BillCategory.wash(for: bill.resolvedCategory).fg,
                             size: 40
                         )
                         VStack(alignment: .leading, spacing: 2) {
                             Text(BillCategory.label(for: bill.resolvedCategory))
                                 .font(.benCardTitle)
-                                .foregroundStyle(Color.benInk)
+                                .foregroundStyle(Color.onCream)
                             Text("Category — used in Insights")
                                 .font(.benMeta)
-                                .foregroundStyle(Color.benInkMuted)
+                                .foregroundStyle(Color.onCreamMuted)
                         }
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(Color.benInkMuted)
+                            .foregroundStyle(Color.onCreamMuted)
                     }
                     .padding(18)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .background(Color.cream, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                 }
                 .buttonStyle(BenPressable())
-                .benShadow(.card)
+                .benShadow(.floating)
 
                 if let data = bill.sourceImageData, let image = UIImage(data: data) {
                     Image(uiImage: image)
@@ -83,7 +85,7 @@ struct BillDetailView: View {
                         .frame(maxHeight: 300)
                         .frame(maxWidth: .infinity)
                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                        .benShadow(.card)
+                        .benShadow(.floating)
                 }
             }
             .padding(.horizontal, 20)
@@ -93,7 +95,7 @@ struct BillDetailView: View {
             CategoryPickerSheet(bill: bill)
                 .presentationDetents([.large])
                 .presentationCornerRadius(28)
-                .presentationBackground(Color.benCanvas)
+                .presentationBackground(Color.forestBottom)
         }
         .safeAreaInset(edge: .bottom) {
             if bill.status != .paid {

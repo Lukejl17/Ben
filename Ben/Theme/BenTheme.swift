@@ -1,119 +1,91 @@
 import SwiftUI
 
-// MARK: - Ben Design System v2 · Warm Earthy, Tactile
-// Soft atmospheric canvas · elevation instead of borders · capsules · one accent.
-// Full spec: docs/design-system.md. Hex values live here and nowhere else.
+// MARK: - Ben Design System v3 · Forest Bold
+// One committed world: deep forest ground, chartreuse display, cream widgets
+// floating on top. Baloo 2 everywhere. Spec: docs/design-system.md +
+// design-boards/home-board-01.html (direction B). Hex values live here only.
 
 extension Color {
-    private static func dynamic(light: String, dark: String) -> Color {
-        Color(UIColor { trait in
-            trait.userInterfaceStyle == .dark ? UIColor(hex: dark) : UIColor(hex: light)
-        })
+    private static func hex(_ value: String) -> Color {
+        var int: UInt64 = 0
+        Scanner(string: value).scanHexInt64(&int)
+        return Color(
+            red: Double((int & 0xFF0000) >> 16) / 255,
+            green: Double((int & 0x00FF00) >> 8) / 255,
+            blue: Double(int & 0x0000FF) / 255
+        )
     }
 
-    // Core palette
-    static let benAccent        = dynamic(light: "3F6B52", dark: "7FA98E") // eucalyptus — the ONLY interactive colour
-    static let benAccentDeep    = dynamic(light: "2F4A3A", dark: "5E8A70") // gradient stop, pressed states
-    static let benCard          = dynamic(light: "FFFFFF", dark: "26241F") // floating surfaces
-    static let benField         = dynamic(light: "F1EEE6", dark: "2E2B25") // filled inputs
-    static let benHairline      = dynamic(light: "E3DCCB", dark: "3A372F") // dark-mode-only card edge
-    static let benInk           = dynamic(light: "2C2A23", dark: "F0EDE4")
-    static let benInkSecondary  = dynamic(light: "6B6557", dark: "A8A294")
-    static let benInkMuted      = dynamic(light: "8A8271", dark: "7A7466")
-    static let benClay          = dynamic(light: "C4744A", dark: "D08D66") // Ben's illustration ONLY
+    // Ground
+    static let forestTop      = hex("25401C")
+    static let forestBottom   = hex("1B3015")
+    static let forestGlowWarm = hex("3E6B2E")   // radial glow, top-right
+    static let forestGlowDeep = hex("173014")   // radial glow, bottom-left
 
-    // Canvas gradient stops
-    static let benCanvasTop     = dynamic(light: "EEF2F7", dark: "191C1E")
-    static let benCanvasMid     = dynamic(light: "F7F3EA", dark: "1C1B17")
-    static let benCanvasBottom  = dynamic(light: "EDF2EA", dark: "1A211C")
-    /// Flat approximation where a solid is needed (sheet backgrounds).
-    static let benCanvas        = dynamic(light: "F7F3EA", dark: "1C1B17")
+    // Display + interactive
+    static let chartreuse     = hex("D3E97A")   // THE accent: display type, CTAs, FAB
+    static let onChartreuse   = hex("22361B")   // text/icons on chartreuse
 
-    // Icon-circle washes (bg) + matching deep foregrounds
-    static let washEucalyptusBg = dynamic(light: "E4EEE6", dark: "243528")
-    static let washEucalyptusFg = dynamic(light: "2F4A3A", dark: "9DC3AA")
-    static let washAmberBg      = dynamic(light: "F6ECD4", dark: "3E3520")
-    static let washAmberFg      = dynamic(light: "6E5A24", dark: "D9C27A")
-    static let washSkyBg        = dynamic(light: "E1EBF0", dark: "20313A")
-    static let washSkyFg        = dynamic(light: "33525F", dark: "9CC0CF")
-    static let washClayBg       = dynamic(light: "F3E0D5", dark: "3B2A20")
-    static let washClayFg       = dynamic(light: "8A4A2B", dark: "D8A17E")
+    // Cream widgets
+    static let cream          = hex("FAF3E3")
+    static let onCream        = hex("293223")   // primary ink on cream
+    static let onCreamStrong  = hex("2F4A26")   // hero amounts on cream
+    static let onCreamEyebrow = hex("5E7A3A")   // eyebrow labels on cream
+    static let onCreamMuted   = hex("6B6B57")   // secondary on cream
 
-    // Bill status — tint + matching deep text
-    static let statusUpcomingBg = dynamic(light: "EDEAE0", dark: "33302A")
-    static let statusUpcomingFg = dynamic(light: "57534A", dark: "B5AF9F")
-    static let statusDueSoonBg  = dynamic(light: "F3E4D4", dark: "3E2F1E")
-    static let statusDueSoonFg  = dynamic(light: "7A4A23", dark: "D9A96F")
-    static let statusPaidBg     = dynamic(light: "E4EEE6", dark: "243528")
-    static let statusPaidFg     = dynamic(light: "2F4A3A", dark: "9DC3AA")
-    static let statusOverdueBg  = dynamic(light: "EBD6CB", dark: "3F281E") // terracotta, never red
-    static let statusOverdueFg  = dynamic(light: "8A3B22", dark: "D98F6C")
+    // Text on forest
+    static let forestInk      = hex("F8F1DE")   // primary on forest
+    static let forestInkSoft  = hex("EFE8D2")   // Ben's voice
+    // secondary on forest = forestInk.opacity(0.65); meta = 0.5
+
+    // Accent chips (solid fills + their dark foregrounds)
+    static let amber          = hex("E9A13B")
+    static let onAmber        = hex("2A2A20")
+    static let sky            = hex("9CC0CF")
+    static let onSky          = hex("1E3540")
+    static let lavender       = hex("E7CFF2")
+    static let onLavender     = hex("4A2F5E")
+    static let clay           = hex("D08D66")
+    static let onClay         = hex("3B2415")
+
+    // Status pills (on forest rows)
+    static let statusWarnBg   = hex("E9A13B").opacity(0.20)
+    static let statusWarnFg   = hex("F0C27E")
+    static let statusCalmBg   = hex("F8F1DE").opacity(0.13)
+    static let statusCalmFg   = hex("E7E0C8")
+    static let statusPaidBg   = hex("D3E97A").opacity(0.15)
+    static let statusPaidFg   = hex("D3E97A")
+    static let statusLateBg   = hex("C4744A").opacity(0.25)  // terracotta, never red
+    static let statusLateFg   = hex("E8A98A")
+
+    // Translucent forest surfaces (rows, secondary widgets)
+    static let rowFill        = hex("F8F1DE").opacity(0.07)
+    static let rowStroke      = hex("F8F1DE").opacity(0.15)
 }
 
 // MARK: - Canvas
 
-/// The atmospheric background every screen sits on. Never flat.
+/// The forest ground with its two glows. Every screen sits on this — never flat.
 struct BenCanvas: View {
     var body: some View {
-        LinearGradient(
-            stops: [
-                .init(color: .benCanvasTop, location: 0),
-                .init(color: .benCanvasMid, location: 0.45),
-                .init(color: .benCanvasBottom, location: 1)
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        ZStack {
+            LinearGradient(
+                colors: [.forestTop, .forestBottom],
+                startPoint: UnitPoint(x: 0.35, y: 0),
+                endPoint: UnitPoint(x: 0.65, y: 1)
+            )
+            RadialGradient(
+                colors: [Color.forestGlowWarm.opacity(0.55), .clear],
+                center: UnitPoint(x: 0.85, y: -0.1),
+                startRadius: 0, endRadius: 420
+            )
+            RadialGradient(
+                colors: [Color.forestGlowDeep.opacity(0.55), .clear],
+                center: UnitPoint(x: -0.1, y: 1.1),
+                startRadius: 0, endRadius: 420
+            )
+        }
         .ignoresSafeArea()
-    }
-}
-
-// MARK: - Elevation
-
-enum BenElevation {
-    case card, floating, overlay
-
-    var opacity: Double {
-        switch self {
-        case .card: 0.06
-        case .floating: 0.10
-        case .overlay: 0.14
-        }
-    }
-
-    var radius: CGFloat {
-        switch self {
-        case .card: 16
-        case .floating: 20
-        case .overlay: 28
-        }
-    }
-
-    var y: CGFloat {
-        switch self {
-        case .card: 6
-        case .floating: 8
-        case .overlay: 10
-        }
-    }
-}
-
-private struct BenShadow: ViewModifier {
-    @Environment(\.colorScheme) private var scheme
-    let level: BenElevation
-
-    func body(content: Content) -> some View {
-        content.shadow(
-            color: .black.opacity(scheme == .dark ? level.opacity / 2 : level.opacity),
-            radius: level.radius,
-            y: level.y
-        )
-    }
-}
-
-extension View {
-    func benShadow(_ level: BenElevation) -> some View {
-        modifier(BenShadow(level: level))
     }
 }
 
@@ -133,56 +105,99 @@ enum BillStatus: String, Codable {
 
     var background: Color {
         switch self {
-        case .upcoming: .statusUpcomingBg
-        case .dueSoon:  .statusDueSoonBg
+        case .upcoming: .statusCalmBg
+        case .dueSoon:  .statusWarnBg
         case .paid:     .statusPaidBg
-        case .overdue:  .statusOverdueBg
+        case .overdue:  .statusLateBg
         }
     }
 
     var foreground: Color {
         switch self {
-        case .upcoming: .statusUpcomingFg
-        case .dueSoon:  .statusDueSoonFg
+        case .upcoming: .statusCalmFg
+        case .dueSoon:  .statusWarnFg
         case .paid:     .statusPaidFg
-        case .overdue:  .statusOverdueFg
+        case .overdue:  .statusLateFg
         }
     }
 }
 
-// MARK: - Typography roles
+// MARK: - Typography · Baloo 2 (bundled variable font, named instances)
 
 extension Font {
-    /// Screen titles
-    static let benTitle = Font.largeTitle.bold()
-    /// Hero amounts — pair with .monospacedDigit()
-    static let benHeroAmount = Font.system(size: 44, weight: .bold, design: .serif)
-    /// Every line Ben speaks — and nothing else, ever
-    static let benVoice = Font.system(.title3, design: .serif)
-    /// Smaller Ben asides
-    static let benVoiceQuiet = Font.system(.body, design: .serif)
-    /// Card titles
-    static let benCardTitle = Font.headline
-    /// Bill amounts in rows
-    static let benAmount = Font.title3.weight(.semibold)
-    static let benBody = Font.body
+    static func baloo(_ instance: String, _ size: CGFloat, relativeTo style: TextStyle) -> Font {
+        .custom(instance, size: size, relativeTo: style)
+    }
+
+    /// Screen titles — chartreuse by convention
+    static let benTitle = baloo("Baloo2-ExtraBold", 32, relativeTo: .largeTitle)
+    /// Hero amounts on cream widgets
+    static let benHeroAmount = baloo("Baloo2-ExtraBold", 46, relativeTo: .largeTitle)
+    /// Ben's voice — cream, warm, never shouty
+    static let benVoice = baloo("Baloo2-Medium", 18, relativeTo: .title3)
+    static let benVoiceQuiet = baloo("Baloo2-Medium", 16, relativeTo: .body)
+    /// Card/row titles
+    static let benCardTitle = baloo("Baloo2-Bold", 17, relativeTo: .headline)
+    /// Amounts in rows
+    static let benAmount = baloo("Baloo2-Bold", 17, relativeTo: .title3)
+    static let benBody = baloo("Baloo2-Medium", 16, relativeTo: .body)
     /// Buttons, chips, field labels
-    static let benLabel = Font.subheadline.weight(.semibold)
-    /// Meta, captions — colour with benInkMuted
-    static let benMeta = Font.footnote
+    static let benLabel = baloo("Baloo2-Bold", 15, relativeTo: .subheadline)
+    /// Meta, captions
+    static let benMeta = baloo("Baloo2-Medium", 13, relativeTo: .footnote)
+    /// Tiny eyebrow labels on widgets (pair with tracking + uppercase)
+    static let benEyebrow = baloo("Baloo2-Bold", 11, relativeTo: .caption)
 }
 
-// MARK: - Hex helper
+// MARK: - Elevation
+// On the dark ground, borders and fill contrast do most of the separating;
+// shadows are reserved for cream surfaces and floating chrome.
 
-private extension UIColor {
-    convenience init(hex: String) {
-        var value: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&value)
-        self.init(
-            red: CGFloat((value & 0xFF0000) >> 16) / 255,
-            green: CGFloat((value & 0x00FF00) >> 8) / 255,
-            blue: CGFloat(value & 0x0000FF) / 255,
-            alpha: 1
-        )
+enum BenElevation {
+    case cream, floating, glow
+
+    var color: Color {
+        switch self {
+        case .cream, .floating: Color.black.opacity(0.35)
+        case .glow: Color.chartreuse.opacity(0.30)
+        }
+    }
+
+    var radius: CGFloat {
+        switch self {
+        case .cream: 22
+        case .floating: 18
+        case .glow: 24
+        }
+    }
+
+    var y: CGFloat {
+        switch self {
+        case .cream: 12
+        case .floating: 8
+        case .glow: 6
+        }
+    }
+}
+
+extension View {
+    func benShadow(_ level: BenElevation) -> some View {
+        shadow(color: level.color, radius: level.radius, y: level.y)
+    }
+}
+
+// MARK: - The character
+// Guest, not resident: welcome, working states, empty states, B2 apology.
+// The artwork breaks its own lime disc (hat + thumb) — NEVER circle-mask it.
+
+struct BenCharacter: View {
+    var size: CGFloat = 120
+
+    var body: some View {
+        Image("BenCharacter")
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
+            .accessibilityLabel("Ben")
     }
 }

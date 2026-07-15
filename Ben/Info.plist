@@ -24,6 +24,10 @@
 	<string>Ben uses the camera to read your bill so you don't have to type it.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Ben reads bill photos you choose so you don't have to type them.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Baloo2-Variable.ttf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array/>
 	<key>UILaunchScreen</key>

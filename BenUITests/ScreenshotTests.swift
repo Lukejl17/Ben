@@ -96,7 +96,7 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "s10-second-bill")
         later.tap()
 
-        XCTAssertTrue(app.navigationBars["Bills"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["Bills"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["AGL"].waitForExistence(timeout: 5))
         snap(app, "home")
 

@@ -1,86 +1,59 @@
-# Ben design system v2 — Warm Earthy, Tactile
+# Ben design system v3 — Forest Bold
 
-Distilled from `design-refs/` (Unscripted, AllTrails 2025 rebrand, Superwall) +
-Headway/Flo patterns + iOS 26 Liquid Glass. Supersedes v1's flat look.
+Locked 15 Jul 2026 from design board 01 (direction B). Supersedes v2 entirely.
+Boards: design-boards/home-board-01.html (language), character-board-02.html (character rules).
 
 ## The feel, in one line
-Soft atmospheric canvas, opaque floating surfaces with real shadows, capsule
-controls, one confident accent, serif reserved for Ben's voice and hero numbers.
+One committed world: deep forest ground with soft glows, chartreuse display type,
+cream widgets floating on top, chunky Baloo 2 everywhere, Ben the character as a
+guest in exactly five moments.
 
 ## Ten rules
 
-1. **Elevation replaces borders.** Cards/inputs/chips are filled surfaces with
-   soft shadows — never outlined boxes. Hairlines only in dark mode (shadows die there).
-2. **Atmospheric canvas.** Light: soft 3-stop gradient (pale sky → sand → pale
-   eucalyptus wash), barely saturated. Dark: deep warm charcoal gradient. Never flat.
-3. **Capsules everywhere.** Primary CTA = 56pt accent-gradient capsule. Secondary =
-   tinted wash capsule. Chips/status = small capsules. No rounded-rect buttons.
-4. **Floating circular chrome.** Back/close/toolbar actions are 44pt circles —
-   white fill + e2 shadow (light) / glass (dark), Unscripted-style.
-5. **Tinted icon circles.** Icons sit in 44–52pt pastel circles (eucalyptus,
-   amber, sky, clay washes) — this is where colour variety lives.
-6. **Filled inputs.** Fields are filled neutral surfaces, radius 14, small
-   accent-toned label INSIDE above the value. No bordered text fields.
-7. **Serif = soul.** Ben's voice lines and hero numbers (big amounts) in New
-   York serif. Everything else SF. Screen titles `.largeTitle.bold()`.
-8. **One accent.** Eucalyptus for every interactive element. Status colours only
-   on status pills. Clay only on Ben. No red — terracotta for overdue.
-9. **Pinned CTAs.** Primary action pinned to bottom via safeAreaInset, full-width,
-   20pt margins — content scrolls beneath.
-10. **Glass is chrome.** iOS 26 `.glassEffect()` for floating circles, toasts, tab
-    accessories — never for content cards (amounts stay legible on opaque).
+1. **One world.** Forest Bold has no light/dark split — the app forces dark scheme.
+   The ground is always the forest gradient + two radial glows (BenCanvas), never flat.
+2. **Chartreuse is the voice of action.** Display titles, primary CTAs, the FAB,
+   selected states, section headers. Nothing else gets it.
+3. **Cream widgets carry the content.** Hero cards, price cards, trust card, fields,
+   dial options — radius 26–32, real shadow, light-scheme interiors (`onCream` inks).
+4. **Translucent rows support.** Secondary surfaces are rowFill + rowStroke borders
+   (benRowSurface) — bills, minis, chips, banners.
+5. **Baloo 2 everywhere.** ExtraBold for titles/heroes, Bold for labels/rows,
+   Medium for body/voice. Bundled variable font; Dynamic Type via relativeTo.
+6. **Solid accent chips.** Icon circles and status-on-cream chips use solid amber /
+   sky / lavender / clay / chartreuse with their dark `on*` inks.
+7. **Status is quiet on forest, solid on cream.** StatusPill (translucent) on rows;
+   StatusChipOnCream (solid) on cream. Overdue is terracotta/clay — never red.
+8. **The character is a guest, not a resident.** Welcome (large), working states,
+   empty states, B2 apology — and nowhere else. Render whole; never circle-mask
+   (his hat and thumb break the disc by design).
+9. **Widgets first.** Screens compose from hero widget + mini widgets + rows,
+   pinned chartreuse CTA. Eyebrow labels (tracked uppercase Baloo 11) name widgets.
+10. **Motion stays calm.** Springs ~0.3s, pressed scale 0.97, dial slide+fade.
+    No confetti, no bounce-for-joy.
 
-## Tokens
+## Tokens (BenTheme.swift is the only home of hex)
 
-### Shadows (light mode; halve opacity in dark, add 0.5pt hairline instead)
-| Level | Use | Spec |
-|---|---|---|
-| e1 | cards, inputs | black 6%, radius 16, y 6 |
-| e2 | floating circles, FAB, tab bar | black 10%, radius 20, y 8 |
-| e3 | sheets, toasts | black 14%, radius 28, y 10 |
+Ground: forestTop #25401C → forestBottom #1B3015 + glows #3E6B2E / #173014.
+Display/interactive: chartreuse #D3E97A, onChartreuse #22361B.
+Cream: #FAF3E3; inks onCream #293223, onCreamStrong #2F4A26,
+onCreamEyebrow #5E7A3A, onCreamMuted #6B6B57.
+Forest inks: forestInk #F8F1DE (secondary .65, meta .5), voice #EFE8D2.
+Accents: amber #E9A13B/#2A2A20 · sky #9CC0CF/#1E3540 · lavender #E7CFF2/#4A2F5E ·
+clay #D08D66/#3B2415.
+Rows: fill cream@7%, stroke cream@15%.
+Status on forest: warn amber tints, calm cream tints, paid chartreuse tints,
+late terracotta tints (#C4744A/#E8A98A).
 
-### Radii
-Cards 20 · inputs 14 · sheets 28 (top) · buttons/chips = capsule · icon circles = circle.
+## Type roles (Baloo 2 named instances)
+benTitle XB32/largeTitle · benHeroAmount XB46 · benVoice M18 · benCardTitle B17 ·
+benAmount B17 · benBody M16 · benLabel B15 · benMeta M13 · benEyebrow B11+tracking.
 
-### Canvas gradient
-Light: `#EEF2F7` (top) → `#F7F3EA` (mid 45%) → `#EDF2EA` (bottom).
-Dark: `#191C1E` → `#1C1B17` → `#1A211C`.
+## Category chips
+electricity/gas amber · internet/phone/water sky · insurance/rent chartreuse ·
+council/streaming clay · other lavender · customs hash into the four.
 
-### Core palette (unchanged from v1)
-benAccent #3F6B52/#7FA98E · benAccentDeep #2F4A3A/#A8C6B3 · benCard #FFFFFF/#26241F ·
-benInk #2C2A23/#F0EDE4 · benInkSecondary #6B6557/#A8A294 · benInkMuted #8A8271/#7A7466 ·
-benClay #C4744A/#D08D66 · hairline (dark mode only) #3A372F.
-
-### Icon-circle washes (light/dark bg · fg pairs)
-eucalyptus #E4EEE6/#243528 · amber #F6ECD4/#3E3520 · sky #E1EBF0/#20313A ·
-clay #F3E0D5/#3B2A20. Fg = the deep stop of the same family.
-
-### Buttons
-- **Primary capsule**: LinearGradient benAccent→benAccentDeep (subtle, vertical),
-  white `.benLabel` text, height 56, e2 shadow, pressed scale 0.98.
-- **Secondary capsule**: eucalyptus wash fill, benAccentDeep text.
-- **Tertiary**: text + small accent icon circle (Unscripted "Add item" pattern).
-- **Glass circle** (44pt): floating chrome actions.
-
-### Type roles
-| Role | Spec |
-|---|---|
-| Screen title | `.largeTitle.bold()` |
-| Hero amount | `.system(size 40+, design serif, bold)` + monospacedDigit |
-| Ben's voice | `.system(.title3/.body, design: .serif)` |
-| Card title | `.headline` |
-| Body | `.body`, secondary at benInkSecondary |
-| Label/chip/button | `.subheadline.weight(.semibold)` |
-| Meta | `.footnote` benInkMuted |
-
-### Spacing rhythm
-20 horizontal margins · 12 between cards · 28 between sections · 16 title→content ·
-sections get `.headline` headers with 4pt accent tick optional.
-
-## Motion
-Springs (`.spring(duration: 0.35)`) for step transitions; pressed scale 0.98;
-toast slides from bottom with e3 + glass. Nothing bounces more than once.
-
-## Hard no's (updated)
-No outlined/stroked cards · no flat full-bleed screens without canvas gradient ·
-no bright red · no confetti · Ben ≤44pt, one expression · glass never under data.
+## Hard no's
+No flat backgrounds · no SF for display text · no red · chartreuse never as a
+text-on-cream colour (use onCreamStrong) · character never repeated per-row,
+never near editable numbers or prices · no confetti.

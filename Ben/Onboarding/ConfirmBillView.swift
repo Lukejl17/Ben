@@ -22,24 +22,23 @@ struct ConfirmBillView: View {
                 Text((amount ?? 0).formatted(.currency(code: "AUD")))
                     .font(.benHeroAmount)
                     .monospacedDigit()
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.forestInk)
                     .contentTransition(.numericText())
                     .animation(.spring(duration: 0.3), value: amount)
                 Text(issuer.isEmpty ? "New bill" : issuer)
                     .font(.benBody)
-                    .foregroundStyle(Color.benInkSecondary)
+                    .foregroundStyle(Color.forestInk.opacity(0.65))
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 20)
             .padding(.bottom, 10)
 
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar(size: 40)
                 BenVoiceText(
                     text: "Give this a once-over so everything stays accurate. I'd rather be checked than wrong.",
                     quiet: true
                 )
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.forestInk.opacity(0.65))
             }
             .padding(.bottom, 12)
 
@@ -67,14 +66,14 @@ struct ConfirmBillView: View {
                     .frame(maxHeight: 260)
                     .frame(maxWidth: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    .benShadow(.card)
+                    .benShadow(.floating)
                     .padding(.top, 8)
             }
 
             if coordinator.isSampleWalkthrough {
                 Text("This is a sample bill — nothing is saved.")
                     .font(.benMeta)
-                    .foregroundStyle(Color.benInkMuted)
+                    .foregroundStyle(Color.forestInk.opacity(0.5))
                     .frame(maxWidth: .infinity)
             }
         } cta: {

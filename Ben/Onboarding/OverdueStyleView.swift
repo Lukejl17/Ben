@@ -12,12 +12,11 @@ struct OverdueStyleView: View {
     var body: some View {
         BenScreen(title: "If one slips") {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar(size: 40)
                 BenVoiceText(
                     text: "Most bills won't get past us. If one does slip overdue, how often should I mention it?",
                     quiet: true
                 )
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.forestInk.opacity(0.65))
             }
             .padding(.bottom, 12)
 
@@ -31,7 +30,7 @@ struct OverdueStyleView: View {
 
             Text("Whatever you pick, it stops the moment you mark the bill paid.")
                 .font(.benMeta)
-                .foregroundStyle(Color.benInkMuted)
+                .foregroundStyle(Color.forestInk.opacity(0.5))
                 .padding(.top, 4)
         } cta: {
             BenPrimaryButton(title: "That works") {

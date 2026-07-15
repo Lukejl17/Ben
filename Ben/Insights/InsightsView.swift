@@ -17,8 +17,8 @@ struct InsightsView: View {
 
     /// Slice colours: ranked position → earthy palette (distinct, no reds).
     static let palette: [Color] = [
-        .benAccent, .washAmberFg, .washSkyFg, .washClayFg,
-        .benAccentDeep, .washEucalyptusFg, .benInkMuted
+        .chartreuse, .amber, .lavender, .sky, .clay, .cream,
+        Color.forestInk.opacity(0.45)
     ]
 
     private var breakdown: (slices: [CategorySlice], total: Decimal) {
@@ -37,17 +37,22 @@ struct InsightsView: View {
                 BenCanvas()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
+                        Text("Insights")
+                            .font(.benTitle)
+                            .foregroundStyle(Color.chartreuse)
+                            .padding(.top, 18)
+                            .accessibilityAddTraits(.isHeader)
                         periodChips
 
                         // Above the fold — toggling it visibly changes the chart.
                         HStack {
                             Text("Include unpaid bills")
                                 .font(.benLabel)
-                                .foregroundStyle(Color.benInkSecondary)
+                                .foregroundStyle(Color.forestInk.opacity(0.65))
                             Spacer()
                             Toggle("Include unpaid bills", isOn: $includeUnpaid)
                                 .labelsHidden()
-                                .tint(.benAccent)
+                                .tint(.chartreuse)
                         }
                         .padding(.horizontal, 4)
                         .padding(.top, -4)
@@ -59,9 +64,8 @@ struct InsightsView: View {
                             donut(result: result)
                             if let line = InsightsMath.headline(slices: result.slices, period: period) {
                                 HStack(alignment: .top, spacing: 12) {
-                                    BenAvatar(size: 40)
                                     BenVoiceText(text: line, quiet: true)
-                                        .foregroundStyle(Color.benInkSecondary)
+                                        .foregroundStyle(Color.forestInk.opacity(0.65))
                                 }
                                 .padding(.vertical, 4)
                             }
@@ -72,17 +76,16 @@ struct InsightsView: View {
                              ? "Showing money paid in the window plus everything still owing."
                              : "Showing only money already paid.")
                             .font(.benMeta)
-                            .foregroundStyle(Color.benInkMuted)
+                            .foregroundStyle(Color.forestInk.opacity(0.5))
                             .padding(.horizontal, 4)
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 40)
                 }
             }
-            .navigationTitle("Insights")
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar(.hidden, for: .navigationBar)
         }
-        .tint(.benAccent)
+        .tint(.chartreuse)
         .sheet(item: $drillCategory) { target in
             CategoryBillsSheet(
                 category: target.category,
@@ -91,7 +94,7 @@ struct InsightsView: View {
             )
             .presentationDetents([.medium, .large])
             .presentationCornerRadius(28)
-            .presentationBackground(Color.benCanvas)
+            .presentationBackground(Color.forestBottom)
         }
     }
 
@@ -108,13 +111,14 @@ struct InsightsView: View {
                         .font(.benLabel)
                         .lineLimit(1)
                         .fixedSize()
-                        .foregroundStyle(isSelected ? .white : Color.benInk)
+                        .foregroundStyle(isSelected ? Color.onChartreuse : Color.forestInk)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 9)
-                        .background(isSelected ? Color.benAccent : Color.benCard, in: Capsule())
+                        .background(isSelected ? Color.chartreuse : Color.rowFill, in: Capsule())
+                        .overlay(Capsule().strokeBorder(isSelected ? Color.clear : Color.rowStroke, lineWidth: 1.5))
                 }
                 .buttonStyle(BenPressable())
-                .benShadow(.card)
+                .benShadow(.floating)
                 .accessibilityLabel(option.label)
             }
         }
@@ -134,14 +138,14 @@ struct InsightsView: View {
         .chartBackground { _ in
             VStack(spacing: 2) {
                 Text(result.total.formatted(.currency(code: "AUD")))
-                    .font(.system(size: 32, weight: .bold, design: .serif))
+                    .font(.baloo("Baloo2-ExtraBold", 32, relativeTo: .largeTitle))
                     .monospacedDigit()
-                    .foregroundStyle(Color.benInk)
+                    .foregroundStyle(Color.forestInk)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                 Text(period == .all ? "all time" : "last \(period.label.lowercased())")
                     .font(.benMeta)
-                    .foregroundStyle(Color.benInkMuted)
+                    .foregroundStyle(Color.forestInk.opacity(0.5))
             }
             .padding(.horizontal, 60)
         }
@@ -161,44 +165,43 @@ struct InsightsView: View {
                         VStack(alignment: .leading, spacing: 1) {
                             Text(BillCategory.label(for: slice.category))
                                 .font(.benLabel)
-                                .foregroundStyle(Color.benInk)
+                                .foregroundStyle(Color.forestInk)
                             Text(slice.billCount == 1 ? "1 bill" : "\(slice.billCount) bills")
                                 .font(.benMeta)
-                                .foregroundStyle(Color.benInkMuted)
+                                .foregroundStyle(Color.forestInk.opacity(0.5))
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 1) {
                             Text(slice.total.formatted(.currency(code: "AUD")))
                                 .font(.benLabel)
                                 .monospacedDigit()
-                                .foregroundStyle(Color.benInk)
+                                .foregroundStyle(Color.forestInk)
                             Text("\(Int((slice.share * 100).rounded()))%")
                                 .font(.benMeta)
-                                .foregroundStyle(Color.benInkMuted)
+                                .foregroundStyle(Color.forestInk.opacity(0.5))
                         }
                         Image(systemName: "chevron.right")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(Color.benInkMuted)
+                            .foregroundStyle(Color.forestInk.opacity(0.5))
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.benCard, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(BenPressable())
-                .benShadow(.card)
+                .benRowSurface(radius: 22)
             }
         }
     }
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            BenAvatar(size: 44)
+            BenCharacter(size: 120)
             BenVoiceText(
                 text: "Nothing due in this window yet. Once a few bills land, I'll show you where the money goes.",
                 quiet: true
             )
-            .foregroundStyle(Color.benInkSecondary)
+            .foregroundStyle(Color.forestInk.opacity(0.65))
             .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -228,11 +231,12 @@ struct CategoryBillsSheet: View {
                 HStack(spacing: 12) {
                     BenIconCircle(
                         systemName: BillCategory.symbol(for: category),
-                        wash: BillCategory.wash(for: category)
+                        fill: BillCategory.wash(for: category).bg,
+                        iconColor: BillCategory.wash(for: category).fg
                     )
                     Text(BillCategory.label(for: category))
                         .font(.benTitle)
-                        .foregroundStyle(Color.benInk)
+                        .foregroundStyle(Color.forestInk)
                 }
                 .padding(.top, 28)
 

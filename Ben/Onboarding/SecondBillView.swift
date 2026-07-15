@@ -72,19 +72,18 @@ struct SecondBillView: View {
     var body: some View {
         BenScreen(title: "One bill down") {
             HStack(alignment: .top, spacing: 12) {
-                BenAvatar(size: 40)
                 BenVoiceText(
                     text: "Got internet or insurance floating around an inbox somewhere? "
                         + "Add it now, forward it later, or leave it with me.",
                     quiet: true
                 )
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.forestInk.opacity(0.65))
             }
             .padding(.bottom, 12)
 
             Text("People tracking \(firstCategory) usually also track")
                 .font(.benMeta)
-                .foregroundStyle(Color.benInkMuted)
+                .foregroundStyle(Color.forestInk.opacity(0.5))
 
             HStack(spacing: 10) {
                 ForEach(suggestions, id: \.self) { category in
@@ -97,13 +96,13 @@ struct SecondBillView: View {
                             Text(category)
                         }
                         .font(.benLabel)
-                        .foregroundStyle(Color.benInk)
+                        .foregroundStyle(Color.forestInk)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(Color.benCard, in: Capsule())
+                        .background(Color.cream, in: Capsule())
                     }
                     .buttonStyle(BenPressable())
-                    .benShadow(.card)
+                    .benShadow(.floating)
                 }
             }
             .padding(.bottom, 12)
@@ -111,14 +110,14 @@ struct SecondBillView: View {
             // HUMAN: email forwarding ingestion backend — this card is display-only.
             BenCard {
                 HStack(spacing: 14) {
-                    BenIconCircle(systemName: "envelope.fill", wash: (.washSkyBg, .washSkyFg))
+                    BenIconCircle(systemName: "envelope.fill", fill: .sky, iconColor: .onSky)
                     VStack(alignment: .leading, spacing: 3) {
                         Text("bills@ben.app")
                             .font(.benCardTitle)
-                            .foregroundStyle(Color.benInk)
+                            .foregroundStyle(Color.forestInk)
                         Text("Forward any bill email and I'll do the rest. Live once your account backend is up.")
                             .font(.benMeta)
-                            .foregroundStyle(Color.benInkSecondary)
+                            .foregroundStyle(Color.forestInk.opacity(0.65))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }

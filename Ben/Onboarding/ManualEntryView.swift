@@ -19,13 +19,12 @@ struct ManualEntryView: View {
 
     var body: some View {
         BenScreen {
-            HStack(alignment: .top, spacing: 12) {
-                BenAvatar(size: 40)
+            HStack(alignment: .top, spacing: 14) {
+                BenCharacter(size: 64)
                 BenVoiceText(
                     text: "That one's hard to read — happens a lot. Type the basics and I've got it from here.",
                     quiet: true
                 )
-                .foregroundStyle(Color.benInkSecondary)
             }
             .padding(.top, 28)
             .padding(.bottom, 12)

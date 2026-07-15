@@ -14,6 +14,7 @@
 		1E24678AEFC6092472C4446E /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933DFE07AE932F586707E638 /* OnboardingFlow.swift */; };
 		23371D1F4E0CDEEF5C103A0F /* InsightsMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880CE6FA14E78D37DC9B2C79 /* InsightsMath.swift */; };
 		2424357ADAFDA991392B5BC9 /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8141350D969191D98384F2 /* InsightsView.swift */; };
+		2724569FD26CFD971ABBB546 /* Baloo2-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = AFB59CB04E7AE7B9C1F20E17 /* Baloo2-OFL.txt */; };
 		290840CB65F5A8112D7FFD04 /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB8FDDA1965289582EAB498 /* CategoryPickerSheet.swift */; };
 		29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */; };
 		2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE7D358CE9DD7567DEE507 /* Analytics.swift */; };
@@ -27,6 +28,7 @@
 		5613F23E5A323A873602191A /* InsightsMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED87CEAFE8744C32F2865013 /* InsightsMathTests.swift */; };
 		562C91F66D13F6E04C1C5A42 /* UploadBillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1211F816584B17BEC264ACE5 /* UploadBillView.swift */; };
 		5A9F0D122828DFCFB76B4CED /* BenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F620063485E9C32AEFFFCA9A /* BenApp.swift */; };
+		6445D6286C3B9BF72F793618 /* AddBillDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = E641C46D03C05D69E76D5A32 /* AddBillDial.swift */; };
 		6CF9AFD7C4E657043F50410D /* IntentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA80A2E4EC074A63F77B8FB /* IntentView.swift */; };
 		6E6325C97725B0530643010F /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D0752B06B1ED76E3AFB27 /* OnboardingCoordinator.swift */; };
 		6EBF5D2863D4F4ECC3FBD993 /* BenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FE0778C4F862592E060A1C /* BenUITests.swift */; };
@@ -39,7 +41,9 @@
 		9425425482A268F9D66DC440 /* OnboardingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB845796FD03BDFDDD41226 /* OnboardingModels.swift */; };
 		A5FECF5DF2FEB2F6BA58AF19 /* SubscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87989AA43748F65C5431A8CE /* SubscriptionTests.swift */; };
 		B73D5BF7903077D2126AAA7C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C802D7582126B6B88B5F56 /* HomeView.swift */; };
+		B77A3042488E55AD145ADA3B /* BillRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */; };
 		BE2374539EE478AA4F5117E3 /* ReminderSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D853ACCC7A4596D8497D055A /* ReminderSetupView.swift */; };
+		C6EB0CA3E086923A21F03DF9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A9BD2482F4FD2847F694570 /* Assets.xcassets */; };
 		C83F2969FBB5DDCE18516427 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9069EEDC762F738D1DD7364 /* Subscription.swift */; };
 		DA60403A82CC67C52C700F96 /* OverdueStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4535C1B1625A80EB6FE213A /* OverdueStyleView.swift */; };
 		DAFCADDE714E9897DD707429 /* BillParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9769B6A1AEB1C0DEBF878E71 /* BillParsing.swift */; };
@@ -49,6 +53,7 @@
 		EB3D74E6A9DEC1DF8D542037 /* AppServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C5EEE4FD3295DC04F51F56 /* AppServices.swift */; };
 		F04198C1E1B530F8DCABDEDB /* BenComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F2CCEE2A9C323E66090979 /* BenComponents.swift */; };
 		F1A82F76A2224F6A757539AB /* BillHeuristicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3B26863D9E8B7D3C9F88DA /* BillHeuristicsTests.swift */; };
+		FE5C73B74554461B38F1C992 /* Baloo2-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F536126BA06D59B1DC3B13FA /* Baloo2-Variable.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,10 +74,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillRow.swift; sourceTree = "<group>"; };
 		10FE0778C4F862592E060A1C /* BenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenUITests.swift; sourceTree = "<group>"; };
 		1211F816584B17BEC264ACE5 /* UploadBillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadBillView.swift; sourceTree = "<group>"; };
 		1BD436987B9E9BD9F0777E62 /* BillDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillDetailView.swift; sourceTree = "<group>"; };
 		2841117AF82C3AB361A867C2 /* VisionBillParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBillParser.swift; sourceTree = "<group>"; };
+		2A9BD2482F4FD2847F694570 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F8141350D969191D98384F2 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
 		3BA6AFC020BECE9B79402CCC /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		483D07784F323ACB8F0F4838 /* BenTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +108,7 @@
 		A51D11383F8442B847789DB6 /* SecondBillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondBillView.swift; sourceTree = "<group>"; };
 		A7C779C656ACED8336E46F91 /* SetStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetStateView.swift; sourceTree = "<group>"; };
 		ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillStatusTests.swift; sourceTree = "<group>"; };
+		AFB59CB04E7AE7B9C1F20E17 /* Baloo2-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Baloo2-OFL.txt"; sourceTree = "<group>"; };
 		BE3694F56DE31849A2C2C49A /* ReminderSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSchedulerTests.swift; sourceTree = "<group>"; };
 		CAB845796FD03BDFDDD41226 /* OnboardingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModels.swift; sourceTree = "<group>"; };
 		CBE7532AE49874607299953C /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
@@ -108,11 +116,13 @@
 		D5F2CCEE2A9C323E66090979 /* BenComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenComponents.swift; sourceTree = "<group>"; };
 		D853ACCC7A4596D8497D055A /* ReminderSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSetupView.swift; sourceTree = "<group>"; };
 		D9744BD8828BD4119D2EC87F /* CaptureExtractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureExtractView.swift; sourceTree = "<group>"; };
+		E641C46D03C05D69E76D5A32 /* AddBillDial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBillDial.swift; sourceTree = "<group>"; };
 		E711747696076530D8DDE297 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		E9069EEDC762F738D1DD7364 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		ED87CEAFE8744C32F2865013 /* InsightsMathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsMathTests.swift; sourceTree = "<group>"; };
 		EFB8FDDA1965289582EAB498 /* CategoryPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerSheet.swift; sourceTree = "<group>"; };
 		F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
+		F536126BA06D59B1DC3B13FA /* Baloo2-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-Variable.ttf"; sourceTree = "<group>"; };
 		F620063485E9C32AEFFFCA9A /* BenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenApp.swift; sourceTree = "<group>"; };
 		F6372B46A46205B936B03CED /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -141,6 +151,7 @@
 		1DF6F029037C95B2933EC8D7 /* Ben */ = {
 			isa = PBXGroup;
 			children = (
+				2A9BD2482F4FD2847F694570 /* Assets.xcassets */,
 				F620063485E9C32AEFFFCA9A /* BenApp.swift */,
 				7A884086B3F417CFBD382BA0 /* ContentView.swift */,
 				D1FEB6A681D22FBFC5617414 /* Info.plist */,
@@ -149,6 +160,7 @@
 				0A189D815590F1831DFB2971 /* Models */,
 				BB64688B185AC3EE1078140E /* Navigation */,
 				F1FFFA422FAC3BF762AF5BFB /* Onboarding */,
+				A043F9229D25B89BAD9F50E2 /* Resources */,
 				C40324C4FA75F9BF83E65728 /* Services */,
 				63DD75080B989B7ACFD4CEC8 /* Theme */,
 			);
@@ -167,7 +179,9 @@
 		4933FDDE8FEF95385269C564 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				E641C46D03C05D69E76D5A32 /* AddBillDial.swift */,
 				1BD436987B9E9BD9F0777E62 /* BillDetailView.swift */,
+				0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */,
 				EFB8FDDA1965289582EAB498 /* CategoryPickerSheet.swift */,
 				93C802D7582126B6B88B5F56 /* HomeView.swift */,
 			);
@@ -183,6 +197,15 @@
 			path = Theme;
 			sourceTree = "<group>";
 		};
+		99E1A0B4D9653EF9A2993589 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				AFB59CB04E7AE7B9C1F20E17 /* Baloo2-OFL.txt */,
+				F536126BA06D59B1DC3B13FA /* Baloo2-Variable.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		A0193D1AF4C8C9F6CED103DA /* BenTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,6 +218,14 @@
 				87989AA43748F65C5431A8CE /* SubscriptionTests.swift */,
 			);
 			path = BenTests;
+			sourceTree = "<group>";
+		};
+		A043F9229D25B89BAD9F50E2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				99E1A0B4D9653EF9A2993589 /* Fonts */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		B91433100B73C4D99FF80C9D /* Insights */ = {
@@ -266,6 +297,7 @@
 			buildConfigurationList = 274B578A90C0995B1EFB9D20 /* Build configuration list for PBXNativeTarget "Ben" */;
 			buildPhases = (
 				22CD437722A6190564E81B61 /* Sources */,
+				DB40E72A3CA0396FB317EB6C /* Resources */,
 			);
 			buildRules = (
 			);
@@ -356,11 +388,25 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		DB40E72A3CA0396FB317EB6C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6EB0CA3E086923A21F03DF9 /* Assets.xcassets in Resources */,
+				2724569FD26CFD971ABBB546 /* Baloo2-OFL.txt in Resources */,
+				FE5C73B74554461B38F1C992 /* Baloo2-Variable.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		22CD437722A6190564E81B61 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6445D6286C3B9BF72F793618 /* AddBillDial.swift in Sources */,
 				2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */,
 				EB3D74E6A9DEC1DF8D542037 /* AppServices.swift in Sources */,
 				5A9F0D122828DFCFB76B4CED /* BenApp.swift in Sources */,
@@ -370,6 +416,7 @@
 				15916B09963465496E88A1FF /* BillCategory.swift in Sources */,
 				8E6EDD43CBD558F9A5024043 /* BillDetailView.swift in Sources */,
 				DAFCADDE714E9897DD707429 /* BillParsing.swift in Sources */,
+				B77A3042488E55AD145ADA3B /* BillRow.swift in Sources */,
 				1BF35BEC62CBA34E9491D64C /* CaptureExtractView.swift in Sources */,
 				290840CB65F5A8112D7FFD04 /* CategoryPickerSheet.swift in Sources */,
 				EB27BCBAFB7274AA519D35DB /* ConfirmBillView.swift in Sources */,

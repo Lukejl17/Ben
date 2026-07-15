@@ -11,13 +11,13 @@ struct UploadBillView: View {
         BenScreen(title: coordinator.isAddingSubsequentBill ? "Add a bill" : "Your first bill") {
             BenCard {
                 VStack(alignment: .leading, spacing: 16) {
-                    trustRow(symbol: "doc.text.viewfinder", wash: (.washSkyBg, .washSkyFg),
+                    trustRow(symbol: "doc.text.viewfinder", fill: .sky, iconColor: .onSky,
                              text: "I read the issuer, amount and due date — nothing else.")
-                    trustRow(symbol: "checkmark.seal", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                    trustRow(symbol: "checkmark.seal", fill: .chartreuse, iconColor: .onChartreuse,
                              text: "You confirm everything before it's saved.")
-                    trustRow(symbol: "trash", wash: (.washAmberBg, .washAmberFg),
+                    trustRow(symbol: "trash", fill: .amber, iconColor: .onAmber,
                              text: "Delete any bill, any time.")
-                    trustRow(symbol: "lock", wash: (.washClayBg, .washClayFg),
+                    trustRow(symbol: "lock", fill: .clay, iconColor: .onClay,
                              text: "You pay for Ben, so your data is never the product.")
                 }
             }
@@ -25,23 +25,23 @@ struct UploadBillView: View {
 
             Text("How do you want to hand it over?")
                 .font(.benCardTitle)
-                .foregroundStyle(Color.benInk)
+                .foregroundStyle(Color.forestInk)
 
             VStack(spacing: 12) {
                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                    methodCard(symbol: "camera.fill", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                    methodCard(symbol: "camera.fill", chip: (.chartreuse, .onChartreuse),
                                label: "Take a photo", detail: "Point it at the bill — I'll do the reading", method: .camera)
                 }
-                methodCard(symbol: "photo.on.rectangle.angled", wash: (.washEucalyptusBg, .washEucalyptusFg),
+                methodCard(symbol: "photo.on.rectangle.angled", chip: (.chartreuse, .onChartreuse),
                            label: "Choose a photo", detail: "From your photo library", method: .photo)
-                methodCard(symbol: "doc.fill", wash: (.washSkyBg, .washSkyFg),
+                methodCard(symbol: "doc.fill", chip: (.sky, .onSky),
                            label: "PDF or file", detail: "Straight from an email attachment", method: .pdf)
                 emailMethodRow
             }
 
             if tonightNudgeScheduled {
                 HStack(spacing: 10) {
-                    BenIconCircle(systemName: "moon.fill", wash: (.washAmberBg, .washAmberFg), size: 36)
+                    BenIconCircle(systemName: "moon.fill", fill: .amber, iconColor: .onAmber, size: 36)
                     BenVoiceText(text: "Done — I'll give you a nudge tonight. No rush.", quiet: true)
                 }
                 .padding(.top, 4)
@@ -58,22 +58,22 @@ struct UploadBillView: View {
             NoBillSheet(tonightNudgeScheduled: $tonightNudgeScheduled)
                 .presentationDetents([.height(320)])
                 .presentationCornerRadius(28)
-                .presentationBackground(Color.benCanvas)
+                .presentationBackground(Color.forestBottom)
         }
     }
 
-    private func trustRow(symbol: String, wash: (Color, Color), text: String) -> some View {
+    private func trustRow(symbol: String, fill: Color, iconColor: Color, text: String) -> some View {
         HStack(alignment: .center, spacing: 12) {
-            BenIconCircle(systemName: symbol, wash: wash, size: 38)
+            BenIconCircle(systemName: symbol, fill: fill, iconColor: iconColor, size: 38)
             Text(text)
                 .font(.benBody)
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.onCream)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
 
     private func methodCard(
-        symbol: String, wash: (Color, Color), label: String, detail: String, method: UploadMethod
+        symbol: String, chip: (fill: Color, icon: Color), label: String, detail: String, method: UploadMethod
     ) -> some View {
         Button {
             coordinator.uploadMethod = method
@@ -81,46 +81,46 @@ struct UploadBillView: View {
             coordinator.advance(to: .capture)
         } label: {
             HStack(spacing: 14) {
-                BenIconCircle(systemName: symbol, wash: wash)
+                BenIconCircle(systemName: symbol, fill: chip.fill, iconColor: chip.icon)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
                         .font(.benCardTitle)
-                        .foregroundStyle(Color.benInk)
+                        .foregroundStyle(Color.onCream)
                     Text(detail)
                         .font(.benMeta)
-                        .foregroundStyle(Color.benInkMuted)
+                        .foregroundStyle(Color.onCreamMuted)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color.benInkMuted)
+                    .foregroundStyle(Color.onCreamMuted)
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.benCard, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(Color.cream, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
         .buttonStyle(BenPressable())
-        .benShadow(.card)
+        .benShadow(.floating)
         .accessibilityIdentifier(label)
     }
 
     private var emailMethodRow: some View {
         HStack(spacing: 14) {
-            BenIconCircle(systemName: "envelope.fill", wash: (.washClayBg, .washClayFg))
+            BenIconCircle(systemName: "envelope.fill", fill: .clay, iconColor: .onClay)
                 .opacity(0.55)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Forward an email")
                     .font(.benCardTitle)
-                    .foregroundStyle(Color.benInkMuted)
+                    .foregroundStyle(Color.forestInk.opacity(0.5))
                 Text("Available after setup")
                     .font(.benMeta)
-                    .foregroundStyle(Color.benInkMuted)
+                    .foregroundStyle(Color.forestInk.opacity(0.5))
             }
             Spacer()
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.benCard.opacity(0.55), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .background(Color.cream.opacity(0.55), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 }
 

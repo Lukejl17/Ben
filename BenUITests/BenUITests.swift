@@ -95,7 +95,7 @@ final class BenUITests: XCTestCase {
         later.tap()
 
         // Home — the tracked bill is there
-        XCTAssertTrue(app.navigationBars["Bills"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["Bills"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["AGL"].waitForExistence(timeout: 5))
     }
 }

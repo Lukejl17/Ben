@@ -44,5 +44,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(OnboardingCoordinator())
-        .tint(.benAccent)
+        .tint(.chartreuse)
 }

@@ -10,7 +10,7 @@ struct IntentView: View {
         BenScreen(title: "What brings you in?") {
             Text("Helps me pitch things right — no wrong answers.")
                 .font(.benBody)
-                .foregroundStyle(Color.benInkSecondary)
+                .foregroundStyle(Color.forestInk.opacity(0.65))
                 .padding(.bottom, 10)
 
             VStack(spacing: 12) {
