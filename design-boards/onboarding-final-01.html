@@ -121,9 +121,14 @@
   .planrow .said{font-size:12px; color:#F8F1DE80; font-style:italic}
   .planrow .does{font-family:"Baloo 2"; font-weight:700; font-size:14px; color:#F8F1DE; margin-top:1px}
 
-  .buildbar{display:flex; flex-wrap:wrap; gap:4px; flex:none; padding:0 19px; min-height:26px}
-  .buildbar .bchip{font-family:"Baloo 2"; font-weight:700; font-size:11px; color:#22361B; background:#D3E97A;
-    border-radius:99px; padding:3px 10px; animation:pop .3s}
+  .buildbar{display:flex; flex-wrap:nowrap; gap:4px; flex:none; padding:7px 19px 0; min-height:29px;
+    align-items:center; overflow:hidden}
+  .buildbar .blabel{font-family:"Baloo 2"; font-weight:700; font-size:10px; letter-spacing:.12em;
+    text-transform:uppercase; color:#F8F1DE59; flex:none; margin-right:3px}
+  .buildbar .bchip{font-family:"Baloo 2"; font-weight:700; font-size:11px; color:#F8F1DEcc;
+    background:#F8F1DE12; border:1px solid #F8F1DE26; border-radius:99px; padding:2.5px 10px;
+    animation:pop .3s; white-space:nowrap}
+  .buildbar .bmore{font-family:"Baloo 2"; font-weight:700; font-size:11px; color:#D3E97A; flex:none}
   .echo{background:#FAF3E3; color:#293223; border-radius:20px; padding:12px 15px; display:flex; gap:10px;
     align-items:flex-start; animation:pop .35s}
   .echar{position:relative; flex:none}
@@ -299,15 +304,23 @@ function progress(){
   return `<div class="progress">${FLOW.map((_,i) =>
     `<i class="${i<=idx?"done":""} ${i===idx?"newest":""}"></i>`).join("")}</div>`;
 }
+const MOMENT_SHORT = { home:"new home", moved:"new household", pile:"the pile", tidy:"getting tidy" };
+const FEELING_SHORT = { dread:"due-date dread", load:"mental load", fights:"arguments", mess:"the mess" };
+const FEE_SHORT = { never:"fees: never", once:"fees: once", few:"fees: a few", norather:"fees: noted" };
+const REMIND_SHORT = { early:"early nudge", due:"day-of nudge", both:"both nudges" };
 function buildbar(){
   const chips = [];
-  if (A.moment) chips.push(MOMENTS[A.moment].label);
-  if ((A.sources||[]).length) chips.push((A.sources.length)+" bill source"+(A.sources.length>1?"s":""));
+  if (A.moment) chips.push(MOMENT_SHORT[A.moment]);
+  if ((A.sources||[]).length) chips.push((A.sources.length)+" source"+(A.sources.length>1?"s":""));
   if (A.volume) chips.push(VOLUMES[A.volume].label+" bills");
-  if (A.latefees) chips.push("fees: "+LATEFEES[A.latefees].label.toLowerCase());
-  if (A.feeling) chips.push(FEELINGS[A.feeling].label.toLowerCase());
-  if (A.reminders) chips.push("reminds: "+REMINDERS[A.reminders].label.toLowerCase());
-  return `<div class="buildbar">${chips.map(c=>`<span class="bchip">${esc(c)}</span>`).join("")}</div>`;
+  if (A.latefees) chips.push(FEE_SHORT[A.latefees]);
+  if (A.feeling) chips.push(FEELING_SHORT[A.feeling]);
+  if (A.reminders) chips.push(REMIND_SHORT[A.reminders]);
+  if (!chips.length) return `<div class="buildbar"></div>`;
+  const shown = chips.slice(-2), hidden = chips.length - shown.length;
+  return `<div class="buildbar"><span class="blabel">Ben's noted</span>
+    ${shown.map(c=>`<span class="bchip">${esc(c)}</span>`).join("")}
+    ${hidden ? `<span class="bmore">+${hidden}</span>` : ""}</div>`;
 }
 function echo(text, emote){
   return A._lastPick ? `<div class="echo"><span class="echar"><img src="${CHAR}" alt="">
