@@ -443,11 +443,11 @@ const S = {
       ? "You've dodged them so far. Let's make that permanent."
       : "You told me they've caught you before. That stops today.";
     return ({
-      title:"Stat \u00b7 1 in 3", note:"The population stat, flipped personal, placed straight after the mirror. Source: EY Customer Experience Series, Utilities survey (nearly 1 in 3 Australians missed an electricity bill payment in the prior 12 months; 649 customers). Caveat: that survey is from 2014. Fresher alternative if we want it: Energy Consumers Australia, June 2025, found 1 in 5 households in energy hardship.",
+      title:"Stat \u00b7 1 in 3", note:"The population stat, flipped personal, placed straight after the mirror. The reel spins down 1 in 9, 8, 7 and ticks to a stop on 3. Source: EY Customer Experience Series, Utilities survey (nearly 1 in 3 Australians missed an electricity bill payment in the prior 12 months; 649 customers). Caveat: that survey is from 2014. Fresher alternative if we want it: Energy Consumers Australia, June 2025, found 1 in 5 households in energy hardship.",
       html:`${SP}<div class="title">The bit nobody plans for.</div>
         <div class="wcard" style="text-align:center; padding:26px 18px">
           <div class="ey">Missed bills, nationally</div>
-          <div class="big" style="font-size:56px; margin-top:6px">1 in 3</div>
+          <div class="big" style="font-size:56px; margin-top:6px" id="spinnum" data-target="3" data-mode="down" data-from="9" data-prefix="1 in ">1 in 9</div>
           <div class="sub">Australians have missed a power bill payment</div>
         </div>
         <div class="voice" style="text-align:center">${esc(voice)}</div>
@@ -463,11 +463,13 @@ const S = {
     const voice = lost ? "Sounds about right for lost count. We'll pin down your real number as bills land. Mine either way."
                        : "From today: zero. I hold every one of them.";
     return ({
-      title:"Playback \u00b7 Your maths", note:"Sits directly after the volume question: they give a number, Ben instantly shows what it costs them. The big figure is their monthly answer multiplied out to a year (midpoint x 12), so it is always true and needs no external source. 'Lost count' assumes the average household, roughly 8 a month, and says so.",
+      title:"Playback \u00b7 Your maths", note:"Sits directly after the volume question: they give a number, Ben instantly shows what it costs them. The big figure is their monthly answer multiplied out to a year (midpoint x 12), so it is always true and needs no external source. 'Lost count' assumes the average household, roughly 8 a month, and says so. The number spins up odometer-style and ticks to a stop.",
       html:`${SP}<div class="title">Here's what that means.</div>
         <div class="wcard" style="text-align:center; padding:26px 18px">
           <div class="ey">Due dates a year, roughly</div>
-          <div class="big" style="font-size:56px; margin-top:6px">${n}</div>
+          ${lost || DUE_YEAR[A.volume]
+            ? `<div class="big" style="font-size:56px; margin-top:6px" id="spinnum" data-target="${lost ? 100 : DUE_YEAR[A.volume]}" data-suffix="${lost ? "+" : ""}">0${lost ? "+" : ""}</div>`
+            : `<div class="big" style="font-size:56px; margin-top:6px">?</div>`}
           <div class="sub">${sub}</div>
         </div>
         <div class="voice" style="text-align:center">${esc(voice)}</div>
@@ -591,6 +593,27 @@ window.pick = (key, val, multi) => {
 };
 window.next = () => { A._lastPick=false; A._lastEcho=null; if (idx < FLOW.length-1){ idx++; render(); } else { idx=0; render(); } };
 
+function runSpin(){
+  const el = document.getElementById("spinnum");
+  if (!el) return;
+  const target = parseInt(el.dataset.target, 10);
+  const prefix = el.dataset.prefix || "", suffix = el.dataset.suffix || "";
+  const show = v => { el.textContent = prefix + v + suffix; };
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { show(target); return; }
+  if (el.dataset.mode === "down") {
+    let t = 0;
+    for (let v = parseInt(el.dataset.from, 10), i = 0; v >= target; v--, i++) {
+      t += 60 + i * i * 14;
+      setTimeout(() => show(v), t);
+    }
+  } else {
+    const T = 1500, N = 26;
+    for (let i = 1; i <= N; i++) {
+      const p = i / N;
+      setTimeout(() => show(Math.round(target * p)), T * Math.pow(p, 2.6));
+    }
+  }
+}
 function render(){
   idx = Math.min(idx, FLOW.length-1);
   const screen = S[FLOW[idx]]();
@@ -606,6 +629,7 @@ function render(){
     `<h3>This screen's job</h3><p>${screen.note}</p>
      <div class="why"><h3>The flow's bet</h3><p>${FLOW_NOTE}</p></div>`;
   document.getElementById("stepnum").textContent = `${idx+1} / ${FLOW.length}`;
+  runSpin();
 }
 document.getElementById("back").addEventListener("click", ()=>{ if(idx>0){ idx--; A._lastPick=false; A._lastEcho=null; render(); } });
 document.getElementById("restart").addEventListener("click", ()=>{
