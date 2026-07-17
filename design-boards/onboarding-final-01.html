@@ -399,6 +399,54 @@ const S = {
         ${SP}${cta("That's me")}`
     });
   },
+  statOdds: () => {
+    const voice = A.latefees==="never"
+      ? "You've dodged them so far. Let's make that permanent."
+      : "You told me they've caught you before. That stops today.";
+    return ({
+      title:"Stat A \u00b7 National odds", note:"Concept A: a population stat, then flip it personal. The number needs a sourced Australian figure (ACCC, Finder or similar) before shipping; the ~ marks it as placeholder. Strongest emotional punch, weakest data story until sourced.",
+      html:`${SP}<div class="title">The bit nobody plans for.</div>
+        <div class="wcard" style="text-align:center; padding:26px 18px">
+          <div class="ey">Late fees, nationally</div>
+          <div class="big" style="font-size:56px; margin-top:6px">1 in 3</div>
+          <div class="sub">Australian households paid at least one late fee last year~</div>
+        </div>
+        <div class="voice" style="text-align:center">${esc(voice)}</div>
+        ${SP}${cta("Not me anymore")}`
+    });
+  },
+  statMaths: () => {
+    const DUE_YEAR = {"1-3":12, "4-7":26, "8-12":44};
+    const n = DUE_YEAR[A.volume];
+    let voice = "From today: zero. I hold every one of them.";
+    if (A.latefees==="once" || A.latefees==="few") voice += " And the late fees go with them.";
+    return ({
+      title:"Stat B \u00b7 Your maths", note:"Concept B (recommended): the big number is derived from THEIR volume answer, so it is always true and needs no external source. 8-12 bills becomes roughly 44 due dates a year held in their head. 'Lost count' gets its own gentler version.",
+      html:`${SP}<div class="title">Here's what that means.</div>
+        <div class="wcard" style="text-align:center; padding:26px 18px">
+          <div class="ey">Due dates a year, roughly</div>
+          <div class="big" style="font-size:56px; margin-top:6px">${n ?? "?"}</div>
+          <div class="sub">${n ? "currently tracked by memory at your place" : "we'll count them together, then I take over"}</div>
+        </div>
+        <div class="voice" style="text-align:center">${esc(n ? voice : "Step one: we count them. Step two: they're mine.")}</div>
+        ${SP}${cta("Take them off me")}`
+    });
+  },
+  statCohort: () => {
+    const COHORT = {home:"new homeowners", moved:"new households", pile:"people digging out", tidy:"organisers"};
+    const c = COHORT[A.moment] || "new users";
+    return ({
+      title:"Stat C \u00b7 Social proof", note:"Concept C: cohort proof matched to their persona. Needs real numbers from PostHog once the app is live; until then it is a placeholder. Weakest at launch, strongest six months in, and the cohort line personalises off the moment answer.",
+      html:`${SP}<div class="title">You're in good company.</div>
+        <div class="wcard" style="text-align:center; padding:26px 18px">
+          <div class="ey">People like you</div>
+          <div class="big" style="font-size:56px; margin-top:6px">6 bills</div>
+          <div class="sub">is what most ${esc(c)} hand Ben in their first week~</div>
+        </div>
+        <div class="voice" style="text-align:center">Your first one takes about 20 seconds.</div>
+        ${SP}${cta("Make me one of them")}`
+    });
+  },
   qReminders: () => ({
     title:"Q \u00b7 Reminder style", note:"The contract question, kept late in the flow once value is established, so it reads as tailoring rather than setup. Echoed like every other answer, so the rhythm holds to the end.",
     html:`${SP}<div class="title">When should I speak up?</div>
@@ -467,8 +515,8 @@ const S = {
 };
 
 // ---------- flow ----------
-const FLOW = ["welcome","demo","qMoment","qSources","qVolume","qLatefees","qFeeling","mirror","qReminders","plan","capture","paywallRecap","done"];
-const FLOW_NOTE = "<b>Echo As You Go, finalised.</b> C's scan demo up front sets the intention; then Ben reacts to every answer instantly (echo card + emotion badge). Answers are stored silently as user attributes, surfaced only at the mirror, plan and paywall playback beats, then passed to the analytics backend (PostHog) for segmentation. The playback screens reuse the scan's staggered-reveal rhythm so the whole flow feels like one trick: Ben reads things. Bills, and you. 13 screens.";
+const FLOW = ["welcome","demo","qMoment","qSources","qVolume","qLatefees","qFeeling","mirror","statOdds","statMaths","statCohort","qReminders","plan","capture","paywallRecap","done"];
+const FLOW_NOTE = "<b>Echo As You Go, finalised.</b> C's scan demo up front sets the intention; then Ben reacts to every answer instantly (echo card + emotion badge). Answers are stored silently as user attributes, surfaced only at the mirror, plan and paywall playback beats, then passed to the analytics backend (PostHog) for segmentation. The playback screens reuse the scan's staggered-reveal rhythm so the whole flow feels like one trick: Ben reads things. Bills, and you. Screens 9 to 11 are three alternative takes on the one stat beat that follows the mirror; only one ships, so the real flow is 14 screens.";
 
 // ---------- engine ----------
 window.pick = (key, val, multi) => {
