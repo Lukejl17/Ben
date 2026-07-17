@@ -139,6 +139,16 @@
   .bignum{font-family:"Baloo 2"; font-weight:800; font-size:46px; color:#2F4A26; line-height:1;
     text-align:center; padding:4px 0}
 
+  .cmprow{display:flex; align-items:center; gap:10px; padding:7px 0}
+  .cmprow .cl{width:118px; font-size:13px; color:#6B6B57; flex:none; text-align:left}
+  .cmprow .bar{height:26px; border-radius:8px; background:#2F4A2622; position:relative; flex:1;
+    display:flex; align-items:center}
+  .cmprow .fill{height:100%; border-radius:8px; background:#C56A45; min-width:8px;
+    animation:growbar .8s cubic-bezier(.2,.8,.3,1) backwards}
+  .cmprow .fill.ben{background:#2F4A26}
+  @keyframes growbar{from{width:0 !important}}
+  .cmprow .amt{font-family:"Baloo 2"; font-weight:800; font-size:13.5px; color:#293223;
+    padding-left:8px; white-space:nowrap}
   .navrow{display:flex; gap:10px; align-items:center}
   .navbtn{font-family:"Baloo 2"; font-weight:700; font-size:14px; padding:9px 18px; border-radius:99px;
     border:1.5px solid var(--shell-line); background:var(--shell-card); color:var(--shell-ink); cursor:pointer}
@@ -159,7 +169,8 @@
   wired to the account and interview data in the app.</p>
 
   <div class="tabs" role="tablist">
-    <button class="tabbtn on" data-v="A">A &middot; By the book</button>
+    <button class="tabbtn on" data-v="F">F &middot; The pick</button>
+    <button class="tabbtn" data-v="A">A &middot; By the book</button>
     <button class="tabbtn" data-v="B">B &middot; Fast lane</button>
     <button class="tabbtn" data-v="C">C &middot; The maths</button>
   </div>
@@ -185,7 +196,7 @@
 <script>
 // ---------- state ----------
 const params = new URLSearchParams(location.search);
-let version = params.get("v") || "A";
+let version = params.get("v") || "F";
 let idx = parseInt(params.get("s") || "0", 10);
 const NAME = "Luke";  // placeholder: pulled from the account in the app
 
@@ -316,6 +327,34 @@ const S = {
       ${pagedots(dots, on)}${cta("Start for $0.00", "Then US$49.99/yr. Cancel in one tap.")}
       <div class="cta ghost" onclick="next()">Show me other plans</div>`
   }),
+  compare: (dots, on) => ({
+    title:"Late fees vs Ben", note:"The maths gets its own screen so no big number ever sits next to the CTA looking like a price. Typical single late fees per bill type against Ben's monthly equivalent, drawn to scale. Figures are typical AU fees and need a sourcing pass before ship; the Finder yearly average sits as the quiet footnote.",
+    html:`${SP}<div class="title">One late fee buys<br>months of Ben.</div>
+      <div class="wcard" style="padding:16px 18px">
+        <div class="ey">The going rate for being late</div>
+        <div style="margin-top:8px">
+          <div class="cmprow"><span class="cl">Credit card</span><span class="bar"><span class="fill" style="width:100%"></span><span class="amt">~$30</span></span></div>
+          <div class="cmprow"><span class="cl">Electricity</span><span class="bar"><span class="fill" style="width:50%; animation-delay:.12s"></span><span class="amt">~$15</span></span></div>
+          <div class="cmprow"><span class="cl">Phone or internet</span><span class="bar"><span class="fill" style="width:50%; animation-delay:.24s"></span><span class="amt">~$15</span></span></div>
+          <div style="border-top:1.5px dashed #2F4A2633; margin:8px 0 2px"></div>
+          <div class="cmprow"><span class="cl" style="font-family:'Baloo 2'; font-weight:800; color:#2F4A26">Ben, per month</span><span class="bar"><span class="fill ben" style="width:14%; animation-delay:.4s"></span><span class="amt">$4.17</span></span></div>
+        </div>
+      </div>
+      <div class="body">The average Aussie who cops fees paid $119 of them last year (Finder).</div>
+      ${SP}${pagedots(dots, on)}${cta("Fair enough")}`
+  }),
+  offerFinal: (dots, on) => ({
+    title:"The offer (your pick)", note:"A's layout with the swaps you called: C's tick lines, and the what-you're-solving chips moved above the ticks so the personal recap lands before the feature proof. Countdown chip, name hero, one annual card, single CTA. Same honesty flag: the countdown needs a real RevenueCat intro offer behind it.",
+    html:`${offerChip()}
+      <div class="title" style="font-size:26px">G'day ${NAME}.<br>Keep Ben on the job.</div>
+      <div class="wcard" style="padding:12px 14px"><div class="ey">What you're solving</div>${recapChips()}</div>
+      ${ticks(["Every bill tracked and reminded, calmly",
+               "Payment details ready to copy and pay",
+               "$0 due today. 7 days free first"])}
+      ${annualCard()}
+      ${SP}${pagedots(dots, on)}${cta("Start for $0.00", "7 days free, then US$49.99/yr. About the cost of two late fees.")}
+      <div class="cta ghost" onclick="next()">Show me other plans</div>`
+  }),
   done: () => ({
     title:"Done", note:"End of prototype. In the app the trial starts and S10 second bill takes over.",
     html:`${SP}<img src="${CHAR}" alt="Ben" style="width:150px; height:150px; margin:0 auto; display:block">
@@ -327,11 +366,13 @@ const S = {
 
 // ---------- flows ----------
 const FLOWS = {
+  F: [s => S.outcome(5, 0), s => S.gift(5, 1), s => S.timeline(5, 2), s => S.compare(5, 3), s => S.offerFinal(5, 4), s => S.plans(), s => S.done()],
   A: [s => S.outcome(4, 0), s => S.gift(4, 1), s => S.timeline(4, 2), s => S.offerA(4, 3), s => S.plans(), s => S.done()],
   B: [s => S.outcome(3, 0), s => S.giftRail(3, 1), s => S.offerA(3, 2), s => S.plans(), s => S.done()],
   C: [s => S.outcome(4, 0), s => S.gift(4, 1), s => S.timeline(4, 2), s => S.offerMaths(4, 3), s => S.plans(), s => S.done()],
 };
 const FLOW_NOTES = {
+  F:"<b>The pick.</b> A's flow with your swaps: a dedicated comparison screen before the offer (so the late-fee number never reads as the price), then the offer with C's tick lines and the what-you're-solving chips above them. 7 screens with the plans page.",
   A:"<b>By the book.</b> The reference flow rebuilt in Ben's world: outcome, gift + bell, trial rail, then the countdown offer with benefit ticks and the interview chips. Four beats before the price, each doing one job. 6 screens with the plans page.",
   B:"<b>Fast lane.</b> Same ingredients, one less screen: the bell and the rail share a page, so the price arrives a beat sooner. For ad traffic that has already sat through 14 onboarding screens, fewer taps may win. 5 screens.",
   C:"<b>The maths.</b> Identical to A until the offer, where the hero swaps to the late-fee anchor: $119 average fee bill against $4.17 a month. The countdown goes quiet and the number does the selling. Strongest for the fee-burned personas. 6 screens.",
