@@ -161,6 +161,22 @@
   .thumb .tick{font-size:40px; font-weight:900; color:#22361B; font-family:"Baloo 2"}
   .thumb.done{border:none; background:#D3E97A; animation:stamp .5s; box-shadow:0 0 34px #d3e97a80}
   @keyframes stamp{0%{transform:scale(.65); opacity:.4} 55%{transform:scale(1.14)} 100%{transform:scale(1)}}
+  .thumb.onforest{border-color:#F8F1DE59; cursor:default;
+    background:repeating-radial-gradient(circle at 50% 58%, transparent 0 5px, #F8F1DE26 5px 7px)}
+  .thumb.onforest::after{content:""; position:absolute; inset:-9px; border-radius:50%;
+    border:3px solid transparent; border-top-color:#D3E97A; animation:spin .9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .commitsheet{margin:auto -19px -20px; flex:none; background:#FAF3E3; color:#293223;
+    border-radius:34px 34px 45px 45px; padding:24px 24px 30px; text-align:center;
+    animation:sheetup .5s cubic-bezier(.2,.8,.3,1) backwards}
+  @keyframes sheetup{from{transform:translateY(105%)}}
+  .commitsheet .hint{font-family:"Baloo 2"; font-weight:700; font-size:14.5px; color:#2F4A26}
+  .commitsheet .hintsub{font-size:12.5px; color:#6B6B57; margin-top:2px}
+  .billsnip{background:#FAF3E3; border-radius:20px; padding:13px 17px; display:flex;
+    justify-content:space-between; align-items:center; gap:12px; animation:rise .45s backwards}
+  .billsnip .bn{font-family:"Baloo 2"; font-weight:700; font-size:14.5px; color:#293223; text-align:left}
+  .billsnip .bd{font-size:12px; color:#6B6B57; text-align:left}
+  .billsnip .ba{font-family:"Baloo 2"; font-weight:800; font-size:20px; color:#2F4A26}
   .navrow{display:flex; gap:10px; align-items:center}
   .navbtn{font-family:"Baloo 2"; font-weight:700; font-size:14px; padding:9px 18px; border-radius:99px;
     border:1.5px solid var(--shell-line); background:var(--shell-card); color:var(--shell-ink); cursor:pointer}
@@ -495,21 +511,39 @@ const S = {
       <div class="planrow"><span class="ic">\ud83d\udcf8</span><span><div class="does">Photo, PDF or email. About 20 seconds</div></span></div>
       ${cta("(Existing flow) continue")}`
   }),
-  commit: () => ({
-    title:"Commit \u00b7 Thumb on it", note:"The commitment device, straight after their first bill and right before the price. Public-pledge psychology: people who make a small physical commitment convert and retain better. In the app this is press-and-hold with haptic build-up, then the stamp animation. The CTA stays disabled until they press, and the commitment is stored as a user attribute.",
-    html:`${SP}<div class="title">${A.committed ? "Locked in." : "Put your thumb on it."}</div>
-      ${A.committed ? "" : `<div class="body">Your first bill's in. Now the pact: this one gets paid on time.</div>`}
-      <div class="wcard" style="text-align:center; padding:24px 18px">
-        <div class="ey">The Ben pact</div>
-        <div class="sub" style="margin-top:8px">This bill gets paid on time.<br>I do the remembering, you do the paying.</div>
-        <div class="thumb ${A.committed ? "done" : ""}" onclick="A.committed=true; render()">
-          ${A.committed ? `<span class="tick">\u2713</span>` : ""}
-        </div>
-        <div class="sub" style="margin-top:12px">${A.committed ? "Commitment made." : "Press to commit"}</div>
-      </div>
-      ${A.committed ? `<div class="voice" style="text-align:center">Done. This one gets paid on time. Both of us on the hook now.</div>` : ""}
-      ${SP}${cta("Keep it that way", !!A.committed)}`
-  }),
+  commit: () => {
+    const stage = A.commitStage || "pact";
+    let inner;
+    if (stage === "pact") {
+      inner = `${SP}
+        <div class="billsnip"><span><div class="bn">AGL Electricity</div>
+          <div class="bd">Due 24 July</div></span><span class="ba">$243.00</span></div>
+        <div class="title" style="font-size:31px; margin-top:10px">This bill gets<br>paid on time.</div>
+        <div class="voice" style="text-align:center; font-size:16.5px">I do the remembering.<br>You do the paying. That's the pact.</div>
+        ${SP}
+        <div class="commitsheet">
+          <div class="hint">Press to commit</div>
+          <div class="hintsub">A promise made physical. It works, oddly.</div>
+          <div class="thumb" style="margin-top:14px" onclick="A.commitStage='sealing'; render(); setTimeout(() => { if (A.commitStage==='sealing'){ A.commitStage='done'; A.committed=true; render(); } }, 1700)"></div>
+        </div>`;
+    } else if (stage === "sealing") {
+      inner = `${SP}
+        <div class="title" style="font-size:29px">Sealing the pact&hellip;</div>
+        <div class="voice" style="text-align:center">Filing it under things that are now my problem.</div>
+        ${SP}
+        <div class="thumb onforest" style="margin-bottom:26px"></div>`;
+    } else {
+      inner = `${SP}
+        <div class="thumb done"><span class="tick">\u2713</span></div>
+        <div class="title" style="font-size:31px; margin-top:14px">Commitment done.</div>
+        <div class="voice" style="text-align:center">This one gets paid on time.<br>Both of us on the hook now.</div>
+        ${SP}${cta("Keep it that way")}`;
+    }
+    return ({
+      title:"Commit \u00b7 The pact", note:"Three beats, Headway-style: the pact copy carries the screen with the actual bill snippet above it (the thing they're committing to), the thumbprint lives on a bottom half-sheet, then a sealing moment before the payoff. In the app: press-and-hold with haptic build-up, sheet slides up, spinner ring while sealing. Commitment stored as a user attribute.",
+      html: inner
+    });
+  },
   paywallRecap: () => {
     const fee = feeMaths();
     return ({
