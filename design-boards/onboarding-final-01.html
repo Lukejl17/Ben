@@ -126,6 +126,7 @@
   .echoslot{min-height:84px; margin-top:6px; flex:none}
   .echo{background:#FAF3E3; color:#293223; border-radius:20px; padding:13px 15px; display:flex; gap:10px;
     align-items:flex-start; animation:pop .35s}
+  .echo.still, .echo.still .emo{animation:none}
   .echar{position:relative; flex:none}
   .echar img{width:40px; height:40px; display:block}
   .echar .emo{position:absolute; right:-7px; bottom:-4px; font-size:14px; background:#FFFDF4;
@@ -310,10 +311,12 @@ function progress(){
     `<i class="${i<=idx?"done":""} ${i===idx?"newest":""}"></i>`).join("")}</div>`;
 }
 function echo(text, emote){
-  const card = A._lastPick ? `<div class="echo"><span class="echar"><img src="${CHAR}" alt="">
+  if (!A._lastPick || !text) return `<div class="echoslot"></div>`;
+  const still = text === A._lastEcho;
+  A._lastEcho = text;
+  return `<div class="echoslot"><div class="echo ${still?"still":""}"><span class="echar"><img src="${CHAR}" alt="">
     ${emote?`<span class="emo">${emote}</span>`:""}</span>
-    <span class="etext">${text}</span></div>` : "";
-  return `<div class="echoslot">${card}</div>`;
+    <span class="etext">${text}</span></div></div>`;
 }
 
 // ---------- screens ----------
@@ -362,7 +365,7 @@ const S = {
         const picks = A.sources||[];
         if (!picks.length) return '<div class="echoslot"></div>';
         if (picks.length === 1) return echo(SOURCE_ECHO[picks[0]].line, SOURCE_ECHO[picks[0]].emo);
-        return echo("However they arrive, they all funnel into one place: photo, PDF, or straight from the inbox.", "\u26a1");
+        return echo("However they arrive, they all funnel into Ben: photo, PDF, or straight from the inbox.", "\u26a1");
       })()}
       ${SP}${cta("Continue", (A.sources||[]).length>0)}`
   }),
@@ -543,7 +546,7 @@ window.pick = (key, val, multi) => {
   A._lastPick = true;
   render();
 };
-window.next = () => { if (idx < FLOW.length-1){ idx++; A._lastPick=false; render(); } else { idx=0; render(); } };
+window.next = () => { A._lastPick=false; A._lastEcho=null; if (idx < FLOW.length-1){ idx++; render(); } else { idx=0; render(); } };
 
 function render(){
   idx = Math.min(idx, FLOW.length-1);
@@ -561,7 +564,7 @@ function render(){
      <div class="why"><h3>The flow's bet</h3><p>${FLOW_NOTE}</p></div>`;
   document.getElementById("stepnum").textContent = `${idx+1} / ${FLOW.length}`;
 }
-document.getElementById("back").addEventListener("click", ()=>{ if(idx>0){idx--; render();} });
+document.getElementById("back").addEventListener("click", ()=>{ if(idx>0){ idx--; A._lastPick=false; A._lastEcho=null; render(); } });
 document.getElementById("restart").addEventListener("click", ()=>{
   idx=0; Object.keys(A).forEach(k=>delete A[k]); render();
 });
