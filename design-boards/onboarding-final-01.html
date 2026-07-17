@@ -218,6 +218,7 @@ const SOURCES = {
   email:  {label:"Buried in my email", emoji:"\ud83d\udce7"},
   apps:   {label:"Scattered across apps", emoji:"\ud83d\udcf1"},
   partner:{label:"My partner handles some", emoji:"\ud83d\udc65"},
+  dog:    {label:"The dog eats them", emoji:"\ud83d\udc15"},
 };
 const VOLUMES = {
   "1-3":{label:"1\u20133", d:"Just the basics"},
@@ -348,9 +349,9 @@ const S = {
   qSources: () => ({
     title:"Q \u00b7 Where bills live", note:"Multi-select. It maps their chaos and sets up the capture pitch, since photo, PDF and email-in each answer one source. Multi-select feels like being understood, not interrogated. The echo confirms every source has a fast lane.",
     html:`${SP}<div class="title">Where do your bills end up?</div>
-      <div class="body">Pick all that's true. No judgement, everyone's is messy.</div>
+      <div class="body">Pick all that's true. No judgement.</div>
       ${pills(SOURCES,"sources",true)}
-      ${echo((A.sources||[]).length ? "Every one of those has a fast lane into Ben: photo, PDF, or straight from the inbox." : "", "\u26a1")}
+      ${echo((A.sources||[]).length ? ((A.sources||[]).includes("dog") ? "Snap them before the dog does. Photo, PDF or inbox, they all beat him." : "Every one of those has a fast lane into Ben: photo, PDF, or straight from the inbox.") : "", "\u26a1")}
       ${SP}${cta("Continue", (A.sources||[]).length>0)}`
   }),
   qVolume: () => ({
