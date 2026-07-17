@@ -155,6 +155,12 @@
   .notif .nt{font-family:"Baloo 2"; font-weight:700; font-size:13px}
   .notif .nb{font-size:12.5px; color:#55523F}
 
+  .thumb{width:112px; height:112px; border-radius:50%; margin:6px auto 0; cursor:pointer;
+    display:grid; place-items:center; border:2.5px dashed #2F4A2659; position:relative;
+    background:repeating-radial-gradient(circle at 50% 58%, transparent 0 5px, #2F4A261f 5px 7px)}
+  .thumb .tick{font-size:40px; font-weight:900; color:#22361B; font-family:"Baloo 2"}
+  .thumb.done{border:none; background:#D3E97A; animation:stamp .5s; box-shadow:0 0 34px #d3e97a80}
+  @keyframes stamp{0%{transform:scale(.65); opacity:.4} 55%{transform:scale(1.14)} 100%{transform:scale(1)}}
   .navrow{display:flex; gap:10px; align-items:center}
   .navbtn{font-family:"Baloo 2"; font-weight:700; font-size:14px; padding:9px 18px; border-radius:99px;
     border:1.5px solid var(--shell-line); background:var(--shell-card); color:var(--shell-ink); cursor:pointer}
@@ -489,6 +495,21 @@ const S = {
       <div class="planrow"><span class="ic">\ud83d\udcf8</span><span><div class="does">Photo, PDF or email. About 20 seconds</div></span></div>
       ${cta("(Existing flow) continue")}`
   }),
+  commit: () => ({
+    title:"Commit \u00b7 Thumb on it", note:"The commitment device, straight after their first bill and right before the price. Public-pledge psychology: people who make a small physical commitment convert and retain better. In the app this is press-and-hold with haptic build-up, then the stamp animation. The CTA stays disabled until they press, and the commitment is stored as a user attribute.",
+    html:`${SP}<div class="title">${A.committed ? "Locked in." : "Put your thumb on it."}</div>
+      ${A.committed ? "" : `<div class="body">Your first bill's in. Now the pact: this one gets paid on time.</div>`}
+      <div class="wcard" style="text-align:center; padding:24px 18px">
+        <div class="ey">The Ben pact</div>
+        <div class="sub" style="margin-top:8px">This bill gets paid on time.<br>I do the remembering, you do the paying.</div>
+        <div class="thumb ${A.committed ? "done" : ""}" onclick="A.committed=true; render()">
+          ${A.committed ? `<span class="tick">\u2713</span>` : ""}
+        </div>
+        <div class="sub" style="margin-top:12px">${A.committed ? "Commitment made." : "Press to commit"}</div>
+      </div>
+      ${A.committed ? `<div class="voice" style="text-align:center">Done. This one gets paid on time. Both of us on the hook now.</div>` : ""}
+      ${SP}${cta("Keep it that way", !!A.committed)}`
+  }),
   paywallRecap: () => {
     const fee = feeMaths();
     return ({
@@ -520,8 +541,8 @@ const S = {
 };
 
 // ---------- flow ----------
-const FLOW = ["welcome","demo","qMoment","qSources","qVolume","statMaths","qLatefees","qFeeling","mirror","statOdds","qReminders","plan","capture","paywallRecap","done"];
-const FLOW_NOTE = "<b>Echo As You Go, finalised.</b> C's scan demo up front sets the intention; then Ben reacts to every answer instantly (echo card + emotion badge). Answers are stored silently as user attributes, surfaced only at the mirror, plan and paywall playback beats, then passed to the analytics backend (PostHog) for segmentation. The playback screens reuse the scan's staggered-reveal rhythm so the whole flow feels like one trick: Ben reads things. Bills, and you. Two value beats are locked in: their own maths right after the volume question, and the sourced 1-in-3 stat right after the mirror. 15 screens.";
+const FLOW = ["welcome","demo","qMoment","qSources","qVolume","statMaths","qLatefees","qFeeling","mirror","statOdds","qReminders","plan","capture","commit","paywallRecap","done"];
+const FLOW_NOTE = "<b>Echo As You Go, finalised.</b> C's scan demo up front sets the intention; then Ben reacts to every answer instantly (echo card + emotion badge). Answers are stored silently as user attributes, surfaced only at the mirror, plan and paywall playback beats, then passed to the analytics backend (PostHog) for segmentation. The playback screens reuse the scan's staggered-reveal rhythm so the whole flow feels like one trick: Ben reads things. Bills, and you. Two value beats are locked in: their own maths right after the volume question, and the sourced 1-in-3 stat right after the mirror, plus a thumbprint commitment pact between the first bill and the paywall. 16 screens.";
 
 // ---------- engine ----------
 window.pick = (key, val, multi) => {
