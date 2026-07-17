@@ -81,7 +81,7 @@ struct SetStateView: View {
             }
 
             BenPrimaryButton(title: "Continue") {
-                coordinator.advance(to: .paywall)
+                coordinator.advance(to: .commit)
             }
         }
         .sheet(isPresented: $showAccountSheet) {

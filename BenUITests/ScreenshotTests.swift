@@ -11,6 +11,7 @@ final class ScreenshotTests: XCTestCase {
     }
 
     private func snap(_ app: XCUIApplication, _ name: String) {
+        usleep(400_000)  // let taps and pop animations settle
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
@@ -36,19 +37,80 @@ final class ScreenshotTests: XCTestCase {
         }
         app.launch()
 
-        let start = app.buttons["Set up my first bill"]
+        walkInterview(app)
+        walkFirstBill(app)
+        walkCommitAndPaywall(app)
+        walkHomeAndTabs(app)
+    }
+
+    private func walkInterview(_ app: XCUIApplication) {
+        let start = app.buttons["Watch Ben work"]
         XCTAssertTrue(start.waitForExistence(timeout: 10))
-        snap(app, "s1-welcome")
+        snap(app, "s01-welcome")
         start.tap()
 
-        app.buttons["Just bought a home"].tap()
-        snap(app, "s2-intent")
+        let demoCTA = app.buttons["That, but for my bills"]
+        XCTAssertTrue(demoCTA.waitForExistence(timeout: 5))
+        sleep(3)  // let the scan reveal play out before the shot
+        snap(app, "s02-demo-scan")
+        demoCTA.tap()
+
+        app.buttons["Moved in with someone"].tap()
+        snap(app, "s03-moment")
         app.buttons["Continue"].tap()
 
-        XCTAssertTrue(app.staticTexts["A few days early"].waitForExistence(timeout: 5))
-        snap(app, "s3-reminder-style")
+        XCTAssertTrue(app.buttons["Buried in my email"].waitForExistence(timeout: 5))
+        app.buttons["Buried in my email"].tap()
+        app.buttons["Scattered across apps"].tap()
+        snap(app, "s04-sources")
         app.buttons["Continue"].tap()
 
+        XCTAssertTrue(app.buttons["8–12"].waitForExistence(timeout: 5))
+        app.buttons["8–12"].tap()
+        snap(app, "s05-volume")
+        app.buttons["Continue"].tap()
+
+        let mathsCTA = app.buttons["Take them off me"]
+        XCTAssertTrue(mathsCTA.waitForExistence(timeout: 5))
+        sleep(2)  // let the odometer settle
+        snap(app, "s06-stat-maths")
+        mathsCTA.tap()
+
+        XCTAssertTrue(app.buttons["A few times"].waitForExistence(timeout: 5))
+        app.buttons["A few times"].tap()
+        snap(app, "s07-late-fees")
+        app.buttons["Continue"].tap()
+
+        XCTAssertTrue(app.buttons["It's always in the back of my mind"].waitForExistence(timeout: 5))
+        app.buttons["It's always in the back of my mind"].tap()
+        snap(app, "s08-feeling")
+        app.buttons["Continue"].tap()
+
+        let mirrorCTA = app.buttons["That's me"]
+        XCTAssertTrue(mirrorCTA.waitForExistence(timeout: 5))
+        sleep(2)  // chips stagger in
+        snap(app, "s09-mirror")
+        mirrorCTA.tap()
+
+        let oddsCTA = app.buttons["Not me anymore"]
+        XCTAssertTrue(oddsCTA.waitForExistence(timeout: 5))
+        sleep(3)  // reel ticks to a stop
+        snap(app, "s10-stat-odds")
+        oddsCTA.tap()
+
+        XCTAssertTrue(app.buttons["A few days early"].waitForExistence(timeout: 5))
+        app.buttons["A few days early"].tap()
+        snap(app, "s11-reminder-style")
+        app.buttons["Continue"].tap()
+
+        let planCTA = app.buttons["Let's do the first bill"]
+        XCTAssertTrue(planCTA.waitForExistence(timeout: 5))
+        sleep(2)  // ledger rows rise in
+        snap(app, "s12-plan")
+        planCTA.tap()
+    }
+
+    private func walkFirstBill(_ app: XCUIApplication) {
         XCTAssertTrue(app.staticTexts["You confirm everything before it's saved."].waitForExistence(timeout: 5))
         snap(app, "s4-trust-upload")
         app.buttons["Choose a photo"].tap()
@@ -76,26 +138,39 @@ final class ScreenshotTests: XCTestCase {
 
         let s8Continue = app.buttons["Continue"]
         XCTAssertTrue(s8Continue.waitForExistence(timeout: 15))
-        snap(app, "s8-set-state")
+        snap(app, "s13-set-state")
         s8Continue.tap()
+    }
+
+    private func walkCommitAndPaywall(_ app: XCUIApplication) {
+        let thumb = app.buttons["Press to commit"]
+        XCTAssertTrue(thumb.waitForExistence(timeout: 5))
+        snap(app, "s14-commit-pact")
+        thumb.tap()
+        let sealed = app.buttons["Keep it that way"]
+        XCTAssertTrue(sealed.waitForExistence(timeout: 10))
+        snap(app, "s14-commit-done")
+        sealed.tap()
 
         XCTAssertTrue(app.staticTexts["Never get surprised by a bill again — and never hear from Ben otherwise."]
             .waitForExistence(timeout: 5))
-        snap(app, "s9-paywall-outcome")
+        snap(app, "s15-paywall-outcome")
         app.buttons["Continue"].tap()
         XCTAssertTrue(app.staticTexts["How the trial works"].waitForExistence(timeout: 5))
-        snap(app, "s9-paywall-timeline")
+        snap(app, "s15-paywall-timeline")
         app.buttons["Continue"].tap()
         let startTrial = app.buttons["Start my 7-day trial"]
         XCTAssertTrue(startTrial.waitForExistence(timeout: 5))
-        snap(app, "s9-paywall-price")
+        snap(app, "s15-paywall-price")
         startTrial.tap()
 
         let later = app.buttons["Later's fine"]
         XCTAssertTrue(later.waitForExistence(timeout: 5))
-        snap(app, "s10-second-bill")
+        snap(app, "s16-second-bill")
         later.tap()
+    }
 
+    private func walkHomeAndTabs(_ app: XCUIApplication) {
         XCTAssertTrue(app.staticTexts["Bills"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["AGL"].waitForExistence(timeout: 5))
         snap(app, "home")

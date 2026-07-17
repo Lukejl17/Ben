@@ -15,6 +15,15 @@ enum IntentContext: String, CaseIterable, Codable, Sendable {
         case .gettingOrganised: "Just getting organised"
         }
     }
+
+    var emoji: String {
+        switch self {
+        case .justBoughtHome: "🏡"
+        case .movedInTogether: "💚"
+        case .billsPilingUp: "🌊"
+        case .gettingOrganised: "✨"
+        }
+    }
 }
 
 /// S3 — when Ben speaks up.

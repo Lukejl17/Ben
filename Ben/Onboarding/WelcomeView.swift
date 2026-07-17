@@ -21,7 +21,7 @@ struct WelcomeView: View {
                     .padding(.bottom, 14)
 
                 BenVoiceText(
-                    text: "Give me your bills and I'll tell you when they matter. The rest of the time, you won't hear from me."
+                    text: "Give me your bills and I'll tell you when they matter. First, watch me read one."
                 )
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 12)
@@ -31,9 +31,9 @@ struct WelcomeView: View {
             .frame(maxWidth: .infinity)
             .frame(minHeight: 560)
         } cta: {
-            BenPrimaryButton(title: "Set up my first bill") {
+            BenPrimaryButton(title: "Watch Ben work") {
                 services.analytics.track(.onboardingStarted)
-                coordinator.advance(to: .intent)
+                coordinator.advance(to: .demoScan)
             }
         }
     }

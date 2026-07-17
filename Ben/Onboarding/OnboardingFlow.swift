@@ -10,8 +10,18 @@ struct OnboardingFlow: View {
             Group {
                 switch coordinator.step {
                 case .welcome: WelcomeView()
+                case .demoScan: DemoScanView()
                 case .intent: IntentView()
+                case .sources: SourcesView()
+                case .volume: VolumeView()
+                case .statMaths: StatMathsView()
+                case .lateFees: LateFeesView()
+                case .feeling: FeelingView()
+                case .mirror: MirrorView()
+                case .statOdds: StatOddsView()
                 case .reminderStyle: ReminderStyleView()
+                case .plan: PlanView()
+                case .commit: CommitView()
                 case .upload: UploadBillView()
                 case .capture: CaptureExtractView()
                 case .manualEntry: ManualEntryView()

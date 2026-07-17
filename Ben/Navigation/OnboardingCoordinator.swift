@@ -5,18 +5,28 @@ import Observation
 @Observable @MainActor
 final class OnboardingCoordinator {
     enum Step: Equatable {
-        case welcome          // S1
-        case intent           // S2
-        case reminderStyle    // S3
-        case upload           // S4 (+ B1 sheet)
-        case capture          // S5
-        case manualEntry      // B2
-        case confirm          // S6
-        case reminderSetup    // S7
-        case overdueStyle     // S7b — cadence for bills that slip
-        case setState         // S8
-        case paywall          // S9
-        case secondBill       // S10
+        case welcome          // 1  — the handshake
+        case demoScan         // 2  — watch Ben read a sample bill
+        case intent           // 3  — life moment
+        case sources          // 4  — where bills live
+        case volume           // 5  — how many a month
+        case statMaths        // 6  — their number, multiplied out
+        case lateFees         // 7  — the money question
+        case feeling          // 8  — what the stress feels like
+        case mirror           // 9  — here's what I heard
+        case statOdds         // 10 — 1 in 3, flipped personal
+        case reminderStyle    // 11 — when Ben speaks
+        case plan             // 12 — you said, Ben does
+        case upload           // 13 — first bill (S4, + B1 sheet)
+        case capture          //    — S5
+        case manualEntry      //    — B2
+        case confirm          //    — S6
+        case reminderSetup    //    — S7
+        case overdueStyle     //    — S7b, cadence for bills that slip
+        case setState         //    — S8
+        case commit           // 14 — the pact, thumb on it
+        case paywall          // 15 — S9
+        case secondBill       // 16 — S10
         /// Terminal for the add-a-bill flow launched from home.
         case done
     }
@@ -25,6 +35,11 @@ final class OnboardingCoordinator {
 
     // Collected along the way
     var intent: IntentContext?
+    var sources: Set<BillSource> = []
+    var volume: BillVolume?
+    var lateFees: LateFeeHistory?
+    var feeling: BillFeeling?
+    var committed = false
     var reminderStyle: ReminderStyle = .fewDaysEarly
     var uploadMethod: UploadMethod = .photo
     var pendingImageData: Data?
@@ -41,6 +56,20 @@ final class OnboardingCoordinator {
 
     func advance(to next: Step) {
         step = next
+    }
+
+    /// Persists the interview answers as user attributes. Called whenever an
+    /// answer lands so a drop-off mid-flow still leaves useful segmentation.
+    func saveAttributes() {
+        OnboardingAttributes.save(.init(
+            moment: intent,
+            sources: sources,
+            volume: volume,
+            lateFees: lateFees,
+            feeling: feeling,
+            reminderStyle: reminderStyle,
+            committed: committed
+        ))
     }
 
     func startSampleWalkthrough() {

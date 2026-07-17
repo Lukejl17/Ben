@@ -236,12 +236,16 @@ struct BenPressable: ButtonStyle {
 struct SelectablePill: View {
     let label: String
     var detail: String?
+    var emoji: String?
     let isSelected: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
+                if let emoji {
+                    Text(emoji).font(.system(size: 20))
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
                         .font(.benCardTitle)

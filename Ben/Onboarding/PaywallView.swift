@@ -179,6 +179,8 @@ struct PaywallView: View {
                     .foregroundStyle(Color.chartreuse)
                     .padding(.top, 24)
 
+                recapCard
+
                 PriceCard(
                     plan: .init(title: "Yearly", badge: "Best value", price: "US$49.99",
                                 cadence: "/yr", detail: "≈ US$4.17 a month"),
@@ -204,6 +206,34 @@ struct PaywallView: View {
                 }
             }
             .padding(.horizontal, 24)
+        }
+    }
+
+    /// The interview, replayed one last time — the price lands against their
+    /// problem, not a feature list.
+    private var recapCard: some View {
+        let fee = OnboardingCopy.feeMaths(coordinator.lateFees)
+        var chips: [String] = []
+        if let intent = coordinator.intent { chips.append(intent.label) }
+        if let volume = coordinator.volume { chips.append("\(volume.label) bills a month") }
+        if let feeling = coordinator.feeling { chips.append(feeling.label) }
+        return BenCard {
+            VStack(alignment: .leading, spacing: 10) {
+                BenEyebrow(text: "What you're solving")
+                FlowLayout(spacing: 6) {
+                    ForEach(chips, id: \.self) { chip in
+                        Text(chip)
+                            .font(.baloo("Baloo2-Bold", 12.5, relativeTo: .caption))
+                            .foregroundStyle(Color.onCreamStrong)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 5)
+                            .background(Color.onCreamStrong.opacity(0.08), in: Capsule())
+                    }
+                }
+                Text("Late fees: \(fee.number) · \(fee.line)")
+                    .font(.benMeta)
+                    .foregroundStyle(Color.onCreamMuted)
+            }
         }
     }
 
