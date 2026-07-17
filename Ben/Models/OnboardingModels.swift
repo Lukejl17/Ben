@@ -42,7 +42,7 @@ enum ReminderStyle: String, CaseIterable, Codable, Sendable {
 
     var detail: String {
         switch self {
-        case .fewDaysEarly: "A heads-up three days out — time to sort it without rushing."
+        case .fewDaysEarly: "A heads-up three days out, time to sort it without rushing."
         case .justBefore: "One mention on the day it's due."
         case .both: "Three days out and again on the day."
         }
@@ -70,7 +70,7 @@ enum OverdueCadence: String, CaseIterable, Codable, Sendable {
 
     var detail: String {
         switch self {
-        case .everyDay: "A daily mention until it's sorted — for the must-not-miss."
+        case .everyDay: "A daily mention until it's sorted, for the must-not-miss."
         case .everySecondDay: "Persistent without being a pest."
         case .weekly: "A gentle weekly check-in."
         case .once: "One mention the day after, then silence."

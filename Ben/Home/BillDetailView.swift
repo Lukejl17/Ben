@@ -44,8 +44,8 @@ struct BillDetailView: View {
                                 .font(.benCardTitle)
                                 .foregroundStyle(Color.onCream)
                             Text(bill.hasNotification
-                                 ? "Reminder set — I'll mention it when it matters."
-                                 : "No reminder for this one — it stays visible here.")
+                                 ? "Reminder set. I'll mention it when it matters."
+                                 : "No reminder for this one. It stays visible here.")
                                 .font(.benMeta)
                                 .foregroundStyle(Color.onCreamMuted)
                         }
@@ -70,7 +70,7 @@ struct BillDetailView: View {
                             Text(BillCategory.label(for: bill.resolvedCategory))
                                 .font(.benCardTitle)
                                 .foregroundStyle(Color.onCream)
-                            Text("Category — used in Insights")
+                            Text("Category, used in Insights")
                                 .font(.benMeta)
                                 .foregroundStyle(Color.onCreamMuted)
                         }

@@ -27,7 +27,7 @@ struct AccountSheet: View {
                 benefitRow(symbol: "arrow.triangle.2.circlepath", fill: .chartreuse, iconColor: .onChartreuse,
                            title: "Sync & backup", detail: "Your bills follow you to any device.")
                 benefitRow(symbol: "envelope.fill", fill: .sky, iconColor: .onSky,
-                           title: "Email bills in", detail: "Forward any bill — Ben does the typing.")
+                           title: "Email bills in", detail: "Forward any bill and Ben does the typing.")
                 benefitRow(symbol: "lock.fill", fill: .amber, iconColor: .onAmber,
                            title: "Still yours", detail: "You pay for Ben, so your data is never the product.")
 

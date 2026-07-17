@@ -22,7 +22,7 @@ struct ManualEntryView: View {
             HStack(alignment: .top, spacing: 14) {
                 BenCharacter(size: 64)
                 BenVoiceText(
-                    text: "That one's hard to read — happens a lot. Type the basics and I've got it from here.",
+                    text: "That one's hard to read, happens a lot. Type the basics and I've got it from here.",
                     quiet: true
                 )
             }

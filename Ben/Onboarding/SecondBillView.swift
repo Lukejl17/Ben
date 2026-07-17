@@ -119,7 +119,7 @@ struct SecondBillView: View {
                             Text("Email bills in")
                                 .font(.benCardTitle)
                                 .foregroundStyle(Color.onCreamStrong)
-                            Text("Get your own forwarding address — send any bill email, Ben does the rest.")
+                            Text("Get your own forwarding address. Send any bill email, Ben does the rest.")
                                 .font(.benMeta)
                                 .foregroundStyle(Color.onCreamMuted)
                                 .fixedSize(horizontal: false, vertical: true)

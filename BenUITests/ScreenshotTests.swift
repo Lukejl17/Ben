@@ -115,12 +115,12 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "s4-trust-upload")
         app.buttons["Choose a photo"].tap()
 
-        let confirmCTA = app.buttons["Looks right — track it"]
+        let confirmCTA = app.buttons["Looks right, track it"]
         XCTAssertTrue(confirmCTA.waitForExistence(timeout: 10))
         snap(app, "s6-confirm")
         confirmCTA.tap()
 
-        let setUp = app.buttons["Sounds right — set it up"]
+        let setUp = app.buttons["Sounds right, set it up"]
         XCTAssertTrue(setUp.waitForExistence(timeout: 10))
         snap(app, "s7-reminder-setup")
         setUp.tap()
@@ -152,7 +152,7 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "s14-commit-done")
         sealed.tap()
 
-        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again — and never hear from Ben otherwise."]
+        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again, and never hear from Ben otherwise."]
             .waitForExistence(timeout: 5))
         snap(app, "s15-paywall-outcome")
         app.buttons["Continue"].tap()

@@ -47,7 +47,7 @@ struct ReminderSetupView: View {
                                         Text(date.formatted(.dateTime.weekday(.wide).day().month(.wide)))
                                             .font(.benCardTitle)
                                             .foregroundStyle(Color.onCream)
-                                        Text("9:00 am — one mention, that's all")
+                                        Text("9:00 am, one mention, that's all")
                                             .font(.benMeta)
                                             .foregroundStyle(Color.onCreamMuted)
                                     }
@@ -56,13 +56,13 @@ struct ReminderSetupView: View {
                         }
                     }
                 } else {
-                    Text("That due date is close — reminders would already have passed, so I'll just keep it visible in here.")
+                    Text("That due date is close. Reminders would already have passed, so I'll just keep it visible in here.")
                         .font(.benMeta)
                         .foregroundStyle(Color.forestInk.opacity(0.65))
                 }
             }
         } cta: {
-            BenPrimaryButton(title: denied ? "Continue" : "Sounds right — set it up") {
+            BenPrimaryButton(title: denied ? "Continue" : "Sounds right, set it up") {
                 if denied {
                     // B3: no permission means no overdue mentions either — skip S7b.
                     coordinator.advance(to: coordinator.isAddingSubsequentBill ? .done : .setState)
@@ -97,12 +97,12 @@ struct ReminderSetupView: View {
     private var benLine: String {
         guard let bill else { return "Let's set your reminder." }
         if denied {
-            return "No worries — I'll keep everything ready in here instead."
+            return "No worries, I'll keep everything ready in here instead."
         }
         let due = bill.dueDate.formatted(.dateTime.day().month(.wide))
         if let first = plannedDates.first {
             let mention = first.formatted(.dateTime.day().month(.wide))
-            return "Your \(bill.issuer) bill is due \(due). I'll mention it on \(mention) — sound right? "
+            return "Your \(bill.issuer) bill is due \(due). I'll mention it on \(mention). Sound right? "
                 + "After that, silence until it matters."
         }
         return "Your \(bill.issuer) bill is due \(due)."
@@ -173,7 +173,7 @@ private struct PrePermissionSheet: View {
         VStack(alignment: .leading, spacing: 22) {
             HStack(alignment: .top, spacing: 12) {
                 BenVoiceText(
-                    text: "iOS will ask if I'm allowed to notify you. It's only ever about a bill needing you — nothing else, I promise.",
+                    text: "iOS will ask if I'm allowed to notify you. It's only ever about a bill needing you. Nothing else, I promise.",
                     quiet: true
                 )
             }

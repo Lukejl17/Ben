@@ -172,7 +172,7 @@ struct SettingsView: View {
         let line: (String, String) = switch services.subscriptions.state() {
         case .notStarted: ("Trial not started", "The paywall must have been kind to you.")
         case .active(let days): (
-            days == 1 ? "Trial — last day" : "Trial — \(days) days left",
+            days == 1 ? "Trial: last day" : "Trial: \(days) days left",
             "Full access. Cancel anytime in one tap."
         )
         case .lapsed: ("Trial ended", "Bills stay visible; reminders are off.")

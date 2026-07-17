@@ -104,7 +104,7 @@ struct ReminderScheduler: Sendable {
         formatter.calendar = calendar
         formatter.timeZone = calendar.timeZone
         formatter.dateFormat = "d MMMM"
-        return "Ben here — \(issuer) was due \(formatter.string(from: dueDate)) and still needs a look."
+        return "Ben here. \(issuer) was due \(formatter.string(from: dueDate)) and still needs a look."
     }
 
     /// B1 "remind me tonight": 7pm today, or 9am tomorrow if 7pm has passed.
@@ -143,14 +143,14 @@ struct ReminderScheduler: Sendable {
             to: calendar.startOfDay(for: dueDate)
         ).day ?? 0
         switch daysAway {
-        case 0: return "Ben here — \(issuer) is due today."
-        case 1: return "Ben here — \(issuer) is due tomorrow."
+        case 0: return "Ben here. \(issuer) is due today."
+        case 1: return "Ben here. \(issuer) is due tomorrow."
         case 2...6:
             formatter.dateFormat = "EEEE"
-            return "Ben here — \(issuer) is due \(formatter.string(from: dueDate))."
+            return "Ben here. \(issuer) is due \(formatter.string(from: dueDate))."
         default:
             formatter.dateFormat = "d MMMM"
-            return "Ben here — \(issuer) is due \(formatter.string(from: dueDate))."
+            return "Ben here. \(issuer) is due \(formatter.string(from: dueDate))."
         }
     }
 
@@ -252,7 +252,7 @@ extension ReminderScheduler {
         let center = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
         content.title = "Ben"
-        content.body = "Ben here — got that bill handy now? Takes about a minute."
+        content.body = "Ben here. Got that bill handy now? Takes about a minute."
         content.sound = .default
         content.userInfo = ["kind": "resume_upload"]
         let trigger = Self.tonightTrigger(now: now, calendar: calendar)
@@ -277,7 +277,7 @@ extension ReminderScheduler {
         let center = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
         content.title = "Ben"
-        content.body = "Ben here — mentioned I'd ask once: any other bills for me?"
+        content.body = "Ben here. Mentioned I'd ask once: any other bills for me?"
         content.sound = .default
         content.userInfo = ["kind": "second_bill_nudge"]
         let trigger = Self.dayFourNudgeTrigger(now: now, calendar: calendar)
@@ -318,7 +318,7 @@ extension ReminderScheduler {
         )
         let content = UNMutableNotificationContent()
         content.title = "Ben"
-        content.body = "Ben here — \(expectation.issuer) usually lands about now. I'll keep an eye out."
+        content.body = "Ben here. \(expectation.issuer) usually lands about now. I'll keep an eye out."
         content.sound = .default
         content.userInfo = ["kind": "expected_bill"]
         let identifier = "expect-\(expectation.sourceBillUUID)"

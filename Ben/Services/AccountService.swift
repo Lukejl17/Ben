@@ -27,7 +27,7 @@ enum AccountError: Error, LocalizedError {
     case signInFailed
 
     var errorDescription: String? {
-        "That didn't go through — no drama, try again in a tick."
+        "That didn't go through. No drama, try again in a tick."
     }
 }
 

@@ -50,13 +50,13 @@ final class BenUITests: XCTestCase {
         app.buttons["Choose a photo"].tap()
 
         // S5 auto-captures via the mock parser → S6 confirm shows the AGL fixture
-        let confirmCTA = app.buttons["Looks right — track it"]
+        let confirmCTA = app.buttons["Looks right, track it"]
         XCTAssertTrue(confirmCTA.waitForExistence(timeout: 10))
         XCTAssertTrue(app.textFields["confirm-issuer"].value as? String == "AGL")
         confirmCTA.tap()
 
         // S7 — reminder setup
-        let setUp = app.buttons["Sounds right — set it up"]
+        let setUp = app.buttons["Sounds right, set it up"]
         XCTAssertTrue(setUp.waitForExistence(timeout: 10))
         setUp.tap()
 
@@ -80,7 +80,7 @@ final class BenUITests: XCTestCase {
         s8Continue.tap()
 
         // S9 — paywall, three pages
-        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again — and never hear from Ben otherwise."]
+        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again, and never hear from Ben otherwise."]
             .waitForExistence(timeout: 5))
         app.buttons["Continue"].tap()
         XCTAssertTrue(app.staticTexts["How the trial works"].waitForExistence(timeout: 5))

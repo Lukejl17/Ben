@@ -82,7 +82,7 @@ struct PaywallView: View {
     private var outcomePage: some View {
         VStack(alignment: .leading, spacing: 18) {
             Spacer()
-            Text("Never get surprised by a bill again — and never hear from Ben otherwise.")
+            Text("Never get surprised by a bill again, and never hear from Ben otherwise.")
                 .font(.baloo("Baloo2-ExtraBold", 36, relativeTo: .largeTitle))
                 .foregroundStyle(Color.chartreuse)
                 .lineSpacing(2)
@@ -113,7 +113,7 @@ struct PaywallView: View {
                                     detail: "Full access. Every feature, no card charged.")
                         timelineRow(symbol: "bell.fill", fill: .amber, iconColor: .onAmber,
                                     title: "Day \(StubSubscriptionService.trialLengthDays - reminderDaysBeforeEnd)",
-                                    detail: "I remind you the trial is ending — before any charge.")
+                                    detail: "I remind you the trial is ending, before any charge.")
                         timelineRow(symbol: "creditcard.fill", fill: .sky, iconColor: .onSky,
                                     title: "Day 7",
                                     detail: "Billed, unless you've cancelled. One tap, no hoops.")

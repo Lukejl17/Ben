@@ -77,14 +77,14 @@ struct ConfirmBillView: View {
             }
 
             if coordinator.isSampleWalkthrough {
-                Text("This is a sample bill — nothing is saved.")
+                Text("This is a sample bill. Nothing is saved.")
                     .font(.benMeta)
                     .foregroundStyle(Color.forestInk.opacity(0.5))
                     .frame(maxWidth: .infinity)
             }
         } cta: {
             BenPrimaryButton(
-                title: coordinator.isSampleWalkthrough ? "Got it — back to my own bills" : "Looks right — track it"
+                title: coordinator.isSampleWalkthrough ? "Got it, back to my own bills" : "Looks right, track it"
             ) {
                 coordinator.isSampleWalkthrough ? coordinator.endSampleWalkthrough() : confirm()
             }

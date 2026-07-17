@@ -13,7 +13,7 @@ struct WelcomeView: View {
                 BenCharacter(size: 190)
                     .padding(.bottom, 22)
 
-                Text("G'day —\nI'm Ben.")
+                Text("G'day,\nI'm Ben.")
                     .font(.baloo("Baloo2-ExtraBold", 44, relativeTo: .largeTitle))
                     .foregroundStyle(Color.chartreuse)
                     .multilineTextAlignment(.center)

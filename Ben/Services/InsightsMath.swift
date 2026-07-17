@@ -126,6 +126,6 @@ enum InsightsMath {
         guard let top = slices.first, slices.count > 1 else { return nil }
         let percent = Int((top.share * 100).rounded())
         let periodPhrase = period == .all ? "overall" : "of the last \(period.label.lowercased())"
-        return "\(BillCategory.label(for: top.category)) is your biggest — about \(percent)% \(periodPhrase)."
+        return "\(BillCategory.label(for: top.category)) is your biggest, about \(percent)% \(periodPhrase)."
     }
 }

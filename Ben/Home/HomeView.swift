@@ -189,7 +189,7 @@ struct HomeView: View {
                 )
 
                 if case .lapsed = services.subscriptions.state() {
-                    Text("Your trial has ended — bills stay visible here, reminders are off.")
+                    Text("Your trial has ended. Bills stay visible here, reminders are off.")
                         .font(.benMeta)
                         .foregroundStyle(Color.forestInk.opacity(0.65))
                         .padding(14)

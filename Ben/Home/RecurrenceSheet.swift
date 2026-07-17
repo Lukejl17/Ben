@@ -19,7 +19,7 @@ struct RecurrenceSheet: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text(context == .afterPaid ? "Nice — that's sorted" : "How often?")
+                Text(context == .afterPaid ? "Nice, that's sorted" : "How often?")
                     .font(.benTitle)
                     .foregroundStyle(Color.chartreuse)
                     .padding(.top, 28)

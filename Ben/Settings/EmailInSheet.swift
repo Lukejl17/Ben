@@ -20,7 +20,7 @@ struct EmailInSheet: View {
                 if let account {
                     addressCard(for: account)
                     stepsCard
-                    Text("Forwarding goes live with your account backend — your address won't change.")
+                    Text("Forwarding goes live with your account backend. Your address won't change.")
                         .font(.benMeta)
                         .foregroundStyle(Color.forestInk.opacity(0.5))
                 } else {
@@ -80,9 +80,9 @@ struct EmailInSheet: View {
     private var stepsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             stepRow(number: "1", title: "Forward the email",
-                    detail: "Any bill that lands in your inbox — send it to your address.")
+                    detail: "Send any bill that lands in your inbox to your address.")
             stepRow(number: "2", title: "Ben reads it",
-                    detail: "Issuer, amount, due date — same as a photo, no typing.")
+                    detail: "Issuer, amount, due date. Same as a photo, no typing.")
             stepRow(number: "3", title: "You confirm",
                     detail: "Nothing is saved until you give it a once-over in here.")
         }
@@ -113,7 +113,7 @@ struct EmailInSheet: View {
     private var signedOutState: some View {
         VStack(alignment: .leading, spacing: 14) {
             BenVoiceText(
-                text: "Your email-in address belongs to your account — one tap and it's yours.",
+                text: "Your email-in address belongs to your account. One tap and it's yours.",
                 quiet: true
             )
             stepsCard

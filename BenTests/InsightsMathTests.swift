@@ -101,7 +101,7 @@ struct InsightsMathTests {
         ]
         #expect(
             InsightsMath.headline(slices: slices, period: .threeMonths)
-                == "Electricity is your biggest — about 60% of the last 3 months."
+                == "Electricity is your biggest, about 60% of the last 3 months."
         )
     }
 

@@ -30,7 +30,7 @@ struct ReminderOverrideSheet: View {
                     }
                 }
 
-                Text("Just this bill — everything else keeps your usual setup. "
+                Text("Just this bill. Everything else keeps your usual setup. "
                      + "Delivered at your chosen time from Settings.")
                     .font(.benMeta)
                     .foregroundStyle(Color.forestInk.opacity(0.5))
