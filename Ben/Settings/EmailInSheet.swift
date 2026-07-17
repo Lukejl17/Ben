@@ -39,6 +39,7 @@ struct EmailInSheet: View {
             .presentationCornerRadius(28)
             .presentationBackground(Color.forestBottom)
         }
+        .benSheetClose()
     }
 
     /// The star widget: your address, one tap to copy.

@@ -75,6 +75,7 @@ struct CategoryPickerSheet: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
         }
+        .benSheetClose()
     }
 
     private func select(_ category: String) {

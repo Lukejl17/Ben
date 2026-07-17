@@ -70,9 +70,16 @@ struct SetStateView: View {
                 .foregroundStyle(Color.forestInk.opacity(0.5))
         } cta: {
             if !accountSaved {
-                BenSecondaryButton(title: "Save my setup", systemImage: "person.crop.circle.badge.plus") {
+                BenSecondaryButton(
+                    title: "Create a free account",
+                    systemImage: "person.crop.circle.badge.plus"
+                ) {
                     showAccountSheet = true
                 }
+                Text("Backs up your bills and settings if you change phones. Optional.")
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.55))
+                    .frame(maxWidth: .infinity)
             } else {
                 Text("Setup saved to your account.")
                     .font(.benMeta)

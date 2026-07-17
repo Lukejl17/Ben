@@ -18,7 +18,7 @@ struct UploadBillView: View {
                     trustRow(symbol: "trash", fill: .amber, iconColor: .onAmber,
                              text: "Delete any bill, any time.")
                     trustRow(symbol: "lock", fill: .clay, iconColor: .onClay,
-                             text: "You pay for Ben, so your data is never the product.")
+                             text: "Your bills stay yours. Your data is never the product.")
                 }
             }
             .padding(.bottom, 12)

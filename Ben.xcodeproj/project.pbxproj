@@ -19,6 +19,7 @@
 		2724569FD26CFD971ABBB546 /* Baloo2-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = AFB59CB04E7AE7B9C1F20E17 /* Baloo2-OFL.txt */; };
 		290840CB65F5A8112D7FFD04 /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB8FDDA1965289582EAB498 /* CategoryPickerSheet.swift */; };
 		29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */; };
+		2A9870AAD1857D8FB07CACE9 /* ConfettiBurst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D10B48F7915788B42436D5 /* ConfettiBurst.swift */; };
 		2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE7D358CE9DD7567DEE507 /* Analytics.swift */; };
 		30C0567FBE22A4A470816003 /* ReminderSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3694F56DE31849A2C2C49A /* ReminderSchedulerTests.swift */; };
 		3306C19B21C87B4D1CB6B5BA /* BenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C98855D95537CDA714CA2 /* BenTests.swift */; };
@@ -131,6 +132,7 @@
 		7EBCD7F4F8044A5C00421325 /* BenUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		802742BF58D4B5F84095413C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		80B76F4C029AF4124C7FBB17 /* PaymentDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDetailsTests.swift; sourceTree = "<group>"; };
+		83D10B48F7915788B42436D5 /* ConfettiBurst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiBurst.swift; sourceTree = "<group>"; };
 		85AAFF1EA8A85A8657AF1413 /* ConfirmBillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmBillView.swift; sourceTree = "<group>"; };
 		87989AA43748F65C5431A8CE /* SubscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionTests.swift; sourceTree = "<group>"; };
 		880CE6FA14E78D37DC9B2C79 /* InsightsMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsMath.swift; sourceTree = "<group>"; };
@@ -252,6 +254,7 @@
 			children = (
 				D5F2CCEE2A9C323E66090979 /* BenComponents.swift */,
 				48D4F001318AA2CE3A5FE684 /* BenTheme.swift */,
+				83D10B48F7915788B42436D5 /* ConfettiBurst.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -511,6 +514,7 @@
 				1BF35BEC62CBA34E9491D64C /* CaptureExtractView.swift in Sources */,
 				290840CB65F5A8112D7FFD04 /* CategoryPickerSheet.swift in Sources */,
 				DDF0B27A443760BC4F922D3B /* CommitView.swift in Sources */,
+				2A9870AAD1857D8FB07CACE9 /* ConfettiBurst.swift in Sources */,
 				EB27BCBAFB7274AA519D35DB /* ConfirmBillView.swift in Sources */,
 				7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */,
 				332B27E45AC2F1C476C88B21 /* DemoScanView.swift in Sources */,

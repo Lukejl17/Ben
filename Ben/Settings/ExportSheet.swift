@@ -145,6 +145,7 @@ struct ExportSheet: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 12)
         }
+        .benSheetClose()
     }
 
     private func chip(_ option: Selection) -> some View {

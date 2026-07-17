@@ -48,6 +48,7 @@ struct ReminderOverrideSheet: View {
         .onAppear {
             selected = ReminderStyle(rawValue: bill.reminderStyleRaw) ?? .fewDaysEarly
         }
+        .benSheetClose()
     }
 
     private func save() {

@@ -11,6 +11,7 @@ struct BillDetailView: View {
     @State private var showRecurrence = false
     @State private var showReminderOverride = false
     @State private var askCadenceAfterPaid = false
+    @State private var showConfetti = false
 
     var body: some View {
         ScrollView {
@@ -141,21 +142,35 @@ struct BillDetailView: View {
         )
         .safeAreaInset(edge: .bottom) {
             if bill.status != .paid {
-                BenPrimaryButton(title: "Mark as paid", systemImage: "checkmark") {
-                    bill.paidAt = .now
-                    services.scheduler.cancel(identifiers: bill.notificationIDs)
-                    bill.notificationIDs = []
-                    bill.hasNotification = false
-                    try? modelContext.save()
-                    // The natural moment to ask about cadence — once.
-                    if bill.recurrence == BillRecurrence.none.rawValue {
-                        askCadenceAfterPaid = true
-                    } else {
-                        dismiss()
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 12)
+                BenPrimaryButton(title: "Mark as paid", systemImage: "checkmark") { markPaid() }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
+            }
+        }
+        .overlay {
+            if showConfetti {
+                ConfettiBurst()
+            }
+        }
+        .benSheetClose()
+    }
+
+    /// Paid is a small win — confetti, a success haptic, then the cadence ask.
+    private func markPaid() {
+        bill.paidAt = .now
+        services.scheduler.cancel(identifiers: bill.notificationIDs)
+        bill.notificationIDs = []
+        bill.hasNotification = false
+        try? modelContext.save()
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        withAnimation { showConfetti = true }
+        Task {
+            try? await Task.sleep(for: .seconds(1.15))
+            // The natural moment to ask about cadence — once.
+            if bill.recurrence == BillRecurrence.none.rawValue {
+                askCadenceAfterPaid = true
+            } else {
+                dismiss()
             }
         }
     }

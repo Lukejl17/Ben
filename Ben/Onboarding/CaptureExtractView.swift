@@ -88,10 +88,12 @@ struct CaptureExtractView: View {
                             label: "Choose a PDF or file") { showFileImporter = true }
             }
         } cta: {
-            BenTextButton(title: "Back") {
-                coordinator.advance(to: .upload)
+            if !coordinator.isAddingSubsequentBill {
+                BenTextButton(title: "Back") {
+                    coordinator.advance(to: .upload)
+                }
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
         }
     }
 

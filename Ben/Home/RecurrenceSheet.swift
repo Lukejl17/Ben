@@ -63,6 +63,7 @@ struct RecurrenceSheet: View {
         .onAppear {
             selected = BillRecurrence(rawValue: bill.recurrence) ?? .none
         }
+        .benSheetClose()
     }
 
     private var nextDate: Date? {

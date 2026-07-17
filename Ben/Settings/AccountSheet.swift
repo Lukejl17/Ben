@@ -63,6 +63,7 @@ struct AccountSheet: View {
                     .tint(.chartreuse)
             }
         }
+        .benSheetClose()
     }
 
     private func benefitRow(

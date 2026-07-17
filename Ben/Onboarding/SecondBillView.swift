@@ -86,7 +86,7 @@ struct SecondBillView: View {
                 .font(.benMeta)
                 .foregroundStyle(Color.forestInk.opacity(0.5))
 
-            HStack(spacing: 10) {
+            FlowLayout(spacing: 10) {
                 ForEach(suggestions, id: \.self) { category in
                     Button {
                         addSecondBill()
@@ -95,6 +95,7 @@ struct SecondBillView: View {
                             Image(systemName: BillCategories.symbol(forCategory: category))
                                 .font(.footnote)
                             Text(category)
+                                .fixedSize()
                         }
                         .font(.benLabel)
                         .foregroundStyle(Color.onCream)

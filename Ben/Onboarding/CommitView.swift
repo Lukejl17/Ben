@@ -82,13 +82,13 @@ struct CommitView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 24)
-        .padding(.bottom, 44)
-        .background(
-            Color.cream,
-            in: UnevenRoundedRectangle(topLeadingRadius: 34, topTrailingRadius: 34)
-        )
+        .padding(.bottom, 10)
+        .background {
+            UnevenRoundedRectangle(topLeadingRadius: 34, topTrailingRadius: 34)
+                .fill(Color.cream)
+                .ignoresSafeArea(edges: .bottom)
+        }
         .environment(\.colorScheme, .light)
-        .ignoresSafeArea(edges: .bottom)
         .transition(.move(edge: .bottom))
     }
 

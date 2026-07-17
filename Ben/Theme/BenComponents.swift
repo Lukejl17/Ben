@@ -113,6 +113,24 @@ struct BenIconCircle: View {
     }
 }
 
+/// Standard sheet chrome: a close X pinned top-right so every sheet has an
+/// obvious way out.
+private struct BenSheetCloseModifier: ViewModifier {
+    @Environment(\.dismiss) private var dismiss
+
+    func body(content: Content) -> some View {
+        content.overlay(alignment: .topTrailing) {
+            BenCircleButton(systemName: "xmark", accessibilityLabel: "Close") { dismiss() }
+                .padding(.top, 16)
+                .padding(.trailing, 20)
+        }
+    }
+}
+
+extension View {
+    func benSheetClose() -> some View { modifier(BenSheetCloseModifier()) }
+}
+
 /// Widget eyebrow: tiny tracked uppercase label.
 struct BenEyebrow: View {
     let text: String
@@ -250,6 +268,8 @@ struct SelectablePill: View {
                     Text(label)
                         .font(.benCardTitle)
                         .foregroundStyle(isSelected ? Color.onCream : Color.forestInk)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                     if let detail {
                         Text(detail)
                             .font(.benMeta)

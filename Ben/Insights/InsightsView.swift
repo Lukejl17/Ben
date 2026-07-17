@@ -9,6 +9,9 @@ struct InsightsView: View {
     @State private var period: InsightsPeriod = .threeMonths
     @State private var includeUnpaid = true
     @State private var drillCategory: DrillTarget?
+    @State private var selectedAngle: Double?
+    @State private var calloutSlice: CategorySlice?
+    @State private var calloutHideTask: Task<Void, Never>?
 
     struct DrillTarget: Identifiable {
         let category: String
@@ -134,6 +137,21 @@ struct InsightsView: View {
             .cornerRadius(6)
             .foregroundStyle(Self.palette[index % Self.palette.count])
         }
+        .chartAngleSelection(value: $selectedAngle)
+        .onChange(of: selectedAngle) { _, angle in
+            guard let angle else { return }
+            showCallout(for: angle, in: result.slices)
+        }
+        .overlay(alignment: .top) {
+            if let slice = calloutSlice,
+               let index = result.slices.firstIndex(where: { $0.category == slice.category }) {
+                donutCallout(slice: slice, total: result.total,
+                             color: Self.palette[index % Self.palette.count])
+                    .offset(y: -10)
+                    .transition(.scale(scale: 0.8, anchor: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(duration: 0.3), value: calloutSlice?.category)
         .frame(height: 240)
         .chartBackground { _ in
             // The hole is ~64% of the 240pt chart: keep the number inside it
@@ -194,6 +212,49 @@ struct InsightsView: View {
                 .benRowSurface(radius: 22)
             }
         }
+    }
+
+    /// Maps a tapped angle back to its slice and shows the mini callout.
+    private func showCallout(for angle: Double, in slices: [CategorySlice]) {
+        var running = 0.0
+        for slice in slices {
+            running += (slice.total as NSDecimalNumber).doubleValue
+            if angle <= running {
+                calloutSlice = slice
+                break
+            }
+        }
+        calloutHideTask?.cancel()
+        calloutHideTask = Task {
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeOut(duration: 0.25)) { calloutSlice = nil }
+        }
+    }
+
+    /// The little widget that pops over the donut when a segment is tapped.
+    private func donutCallout(slice: CategorySlice, total: Decimal, color: Color) -> some View {
+        let share = (total as NSDecimalNumber).doubleValue > 0
+            ? (slice.total as NSDecimalNumber).doubleValue / (total as NSDecimalNumber).doubleValue
+            : 0
+        return HStack(spacing: 8) {
+            Circle().fill(color).frame(width: 10, height: 10)
+            Text(BillCategory.label(for: slice.category))
+                .font(.baloo("Baloo2-Bold", 14, relativeTo: .footnote))
+                .foregroundStyle(Color.onCream)
+            Text(slice.total.formatted(.currency(code: "AUD")))
+                .font(.benLabel)
+                .monospacedDigit()
+                .foregroundStyle(Color.onCreamStrong)
+            Text(share.formatted(.percent.precision(.fractionLength(0))))
+                .font(.benMeta)
+                .foregroundStyle(Color.onCreamMuted)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 9)
+        .background(Color.cream, in: Capsule())
+        .benShadow(.cream)
+        .environment(\.colorScheme, .light)
     }
 
     private var emptyState: some View {
