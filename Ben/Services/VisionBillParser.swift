@@ -90,7 +90,14 @@ struct MockBillParser: BillParsing {
             issuer: "AGL",
             amount: Decimal(string: "243.00"),
             dueDate: Calendar.current.date(from: components),
-            confidence: 1.0
+            confidence: 1.0,
+            payment: PaymentDetails(
+                bpayBillerCode: "93880",
+                bpayReference: "204344556677",
+                bsb: "062000",
+                accountNumber: "13579246",
+                eftReference: "204344556677"
+            )
         )
     }
 

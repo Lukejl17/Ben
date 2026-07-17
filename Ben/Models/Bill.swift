@@ -26,6 +26,12 @@ final class Bill {
     var recurrence: String = "none"
     /// The reminder style chosen for this bill (raw ReminderStyle), for rescheduling.
     var reminderStyleRaw: String = ""
+    /// Payment details approved at confirm time, stored as bare digits.
+    var bpayBillerCode: String = ""
+    var bpayReference: String = ""
+    var bankBSB: String = ""
+    var bankAccount: String = ""
+    var eftReference: String = ""
 
     init(
         issuer: String,
@@ -49,6 +55,12 @@ final class Bill {
         self.uploadMethod = uploadMethod
         self.hasNotification = hasNotification
         self.notificationIDs = notificationIDs
+    }
+
+    /// True when any payment detail survived the confirm once-over.
+    var hasPaymentDetails: Bool {
+        !bpayBillerCode.isEmpty || !bpayReference.isEmpty
+            || !bankBSB.isEmpty || !bankAccount.isEmpty || !eftReference.isEmpty
     }
 
     var status: BillStatus {

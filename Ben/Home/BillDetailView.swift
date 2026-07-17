@@ -51,6 +51,10 @@ struct BillDetailView: View {
                     }
                 }
 
+                if bill.hasPaymentDetails {
+                    PaymentDetailsCard(bill: bill)
+                }
+
                 Button {
                     showCategoryPicker = true
                 } label: {

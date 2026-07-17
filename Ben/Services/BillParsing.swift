@@ -6,6 +6,8 @@ struct ParsedBill: Equatable, Sendable {
     var dueDate: Date?
     /// 0–1: fraction of the three fields we found, discounted when fallbacks fired.
     var confidence: Double
+    /// BPAY and EFT details found on the bill, for the copy-to-pay card.
+    var payment = PaymentDetails()
 
     var isUsable: Bool { issuer != nil || amount != nil || dueDate != nil }
 }
@@ -63,7 +65,11 @@ struct BillTextHeuristics: Sendable {
         if issuer != nil { percent += 30 }
         if amount != nil { percent += 35 }
         if dueDate != nil { percent += 35 }
-        return ParsedBill(issuer: issuer, amount: amount, dueDate: dueDate, confidence: Double(percent) / 100)
+        return ParsedBill(
+            issuer: issuer, amount: amount, dueDate: dueDate,
+            confidence: Double(percent) / 100,
+            payment: PaymentDetailsExtractor.extract(from: cleaned)
+        )
     }
 
     // MARK: Amount

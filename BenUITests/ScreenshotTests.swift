@@ -190,6 +190,8 @@ final class ScreenshotTests: XCTestCase {
         app.staticTexts["AGL"].firstMatch.tap()
         let markPaid = app.buttons["Mark as paid"]
         XCTAssertTrue(markPaid.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["copy-BPAY biller code"].exists)
+        snap(app, "bill-detail-pay")
         markPaid.tap()
         XCTAssertTrue(app.buttons["Quarterly"].waitForExistence(timeout: 5))
         snap(app, "cadence-ask")
