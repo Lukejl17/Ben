@@ -238,6 +238,13 @@ const FEELINGS = {
   fights:{label:"It causes arguments at home", emoji:"\u26a1"},
   mess:{label:"It's just\u2026 messy", emoji:"\ud83c\udf00"},
 };
+const SOURCE_ECHO = {
+  paper:  {line:"That drawer's retired. One photo and the paper's my problem.", emo:"\ud83d\udcf8"},
+  email:  {line:"Forward them straight in. Your inbox stops being a filing cabinet.", emo:"\ud83d\udce5"},
+  apps:   {line:"One place instead of five apps. That's the whole point of me.", emo:"\ud83d\udcf1"},
+  partner:{line:"Both of you see the same picture, whoever's name it's in.", emo:"\ud83d\udc9a"},
+  dog:    {line:"Snap them before the dog does. Photo, PDF or inbox, they all beat him.", emo:"\ud83d\udc15"},
+};
 const REMINDERS = {
   early:{label:"A few days early", d:"Time to sort it without rushing"},
   due:{label:"Just before it's due", d:"One mention on the day"},
@@ -347,11 +354,16 @@ const S = {
       ${SP}${cta("Continue", !!A.moment)}`
   }),
   qSources: () => ({
-    title:"Q \u00b7 Where bills live", note:"Multi-select. It maps their chaos and sets up the capture pitch, since photo, PDF and email-in each answer one source. Multi-select feels like being understood, not interrogated. The echo confirms every source has a fast lane.",
+    title:"Q \u00b7 Where bills live", note:"Multi-select. It maps their chaos and sets up the capture pitch, since photo, PDF and email-in each answer one source. One pick gets a source-specific echo; two or more switches to a catch-all line so the echo never fixates on the first tap.",
     html:`${SP}<div class="title">Where do your bills end up?</div>
       <div class="body">Pick all that's true. No judgement.</div>
       ${pills(SOURCES,"sources",true)}
-      ${echo((A.sources||[]).length ? ((A.sources||[]).includes("dog") ? "Snap them before the dog does. Photo, PDF or inbox, they all beat him." : "Every one of those has a fast lane into Ben: photo, PDF, or straight from the inbox.") : "", "\u26a1")}
+      ${(() => {
+        const picks = A.sources||[];
+        if (!picks.length) return '<div class="echoslot"></div>';
+        if (picks.length === 1) return echo(SOURCE_ECHO[picks[0]].line, SOURCE_ECHO[picks[0]].emo);
+        return echo("However they arrive, they all funnel into one place: photo, PDF, or straight from the inbox.", "\u26a1");
+      })()}
       ${SP}${cta("Continue", (A.sources||[]).length>0)}`
   }),
   qVolume: () => ({
