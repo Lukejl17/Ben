@@ -273,9 +273,9 @@ function feeMaths(){
 }
 function volumeLine(){
   switch(A.volume){
-    case "1-3": return "Even 3 bills is 3 things you shouldn't have to remember.";
-    case "4-7": return "5-ish bills means something's due roughly every week. No wonder it hums.";
-    case "8-12": return "10 bills is a part-time job you never applied for.";
+    case "1-3": return "Even 3 bills a month is 3 things you shouldn't have to remember.";
+    case "4-7": return "5-ish bills a month means something's due almost every week. No wonder it hums.";
+    case "8-12": return "10 bills a month is a part-time job you never applied for.";
     case "lost": return "Step one: we'll count them. Step two: you stop counting forever.";
     default: return "However many there are, they become my problem.";
   }
@@ -354,8 +354,8 @@ const S = {
       ${SP}${cta("Continue", (A.sources||[]).length>0)}`
   }),
   qVolume: () => ({
-    title:"Q \u00b7 How many", note:"Quantifies the mental load and powers the 'part-time job' echo. 'Lost count' is a first-class, shame-free answer with its own gentler echo.",
-    html:`${SP}<div class="title">How many bills does your household juggle?</div>
+    title:"Q \u00b7 How many", note:"Quantifies the mental load, now time-boxed to a month so the yearly maths on the stat screen is defensible. Powers the 'part-time job' echo. 'Lost count' is a first-class, shame-free answer with its own gentler echo.",
+    html:`${SP}<div class="title">How many bills land at your place each month?</div>
       ${pills(VOLUMES,"volume")}
       ${echo(A.volume ? volumeLine() : "", A.volume==="lost" ? "\ud83e\udd1d" : "\ud83e\uddee")}
       ${SP}${cta("Continue", !!A.volume)}`
@@ -383,7 +383,7 @@ const S = {
     const chips = [
       A.moment && MOMENTS[A.moment].label,
       ...(A.sources||[]).map(s=>SOURCES[s].label.split(",")[0]),
-      A.volume && VOLUMES[A.volume].label+" bills",
+      A.volume && VOLUMES[A.volume].label+" bills a month",
       A.latefees && "Fees: "+LATEFEES[A.latefees].label,
       A.feeling && FEELINGS[A.feeling].label,
     ].filter(Boolean);
@@ -416,12 +416,12 @@ const S = {
     });
   },
   statMaths: () => {
-    const DUE_YEAR = {"1-3":12, "4-7":26, "8-12":44};
+    const DUE_YEAR = {"1-3":24, "4-7":66, "8-12":120};
     const n = DUE_YEAR[A.volume];
     let voice = "From today: zero. I hold every one of them.";
     if (A.latefees==="once" || A.latefees==="few") voice += " And the late fees go with them.";
     return ({
-      title:"Stat B \u00b7 Your maths", note:"Concept B (recommended): the big number is derived from THEIR volume answer, so it is always true and needs no external source. 8-12 bills becomes roughly 44 due dates a year held in their head. 'Lost count' gets its own gentler version.",
+      title:"Stat B \u00b7 Your maths", note:"Concept B (recommended): the big number is their monthly volume answer multiplied out to a year (midpoint x 12), so it is always true and needs no external source. 8 to 12 bills a month becomes roughly 120 due dates a year held in their head. 'Lost count' gets its own gentler version.",
       html:`${SP}<div class="title">Here's what that means.</div>
         <div class="wcard" style="text-align:center; padding:26px 18px">
           <div class="ey">Due dates a year, roughly</div>
@@ -493,7 +493,7 @@ const S = {
           <div class="ey">What you're solving</div>
           <div style="margin-top:6px">
             ${A.moment?`<span class="mirror-chip" style="animation-delay:0s">${esc(MOMENTS[A.moment].label)}</span>`:""}
-            ${A.volume?`<span class="mirror-chip" style="animation-delay:.12s">${esc(VOLUMES[A.volume].label)} bills</span>`:""}
+            ${A.volume?`<span class="mirror-chip" style="animation-delay:.12s">${esc(VOLUMES[A.volume].label)} bills a month</span>`:""}
             ${A.feeling?`<span class="mirror-chip" style="animation-delay:.24s">${esc(FEELINGS[A.feeling].label)}</span>`:""}
           </div>
           <div class="sub" style="margin-top:10px">Late fees: <b>${fee.n}</b> \u00b7 ${esc(fee.line)}</div>
