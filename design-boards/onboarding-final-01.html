@@ -354,8 +354,9 @@ const S = {
       ${SP}${cta("Continue", (A.sources||[]).length>0)}`
   }),
   qVolume: () => ({
-    title:"Q \u00b7 How many", note:"Quantifies the mental load, now time-boxed to a month so the yearly maths on the stat screen is defensible. Powers the 'part-time job' echo. 'Lost count' is a first-class, shame-free answer with its own gentler echo.",
+    title:"Q \u00b7 How many", note:"Quantifies the mental load, time-boxed to a month so the yearly maths on the stat screen is defensible. The subtext pulls direct-debit subscriptions into the definition of a bill, which widens what people hand Ben and seeds the streaming use case. 'Lost count' stays first-class and shame-free.",
     html:`${SP}<div class="title">How many bills land at your place each month?</div>
+      <div class="body">Count the sneaky ones too. Netflix, Kayo, the gym you swear you'll use. If it leaves your account, it's a bill.</div>
       ${pills(VOLUMES,"volume")}
       ${echo(A.volume ? volumeLine() : "", A.volume==="lost" ? "\ud83e\udd1d" : "\ud83e\uddee")}
       ${SP}${cta("Continue", !!A.volume)}`
