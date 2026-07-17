@@ -434,17 +434,21 @@ const S = {
   },
   statMaths: () => {
     const DUE_YEAR = {"1-3":24, "4-7":66, "8-12":120};
-    const n = DUE_YEAR[A.volume];
-    const voice = "From today: zero. I hold every one of them.";
+    const lost = A.volume === "lost";
+    const n = lost ? "100+" : (DUE_YEAR[A.volume] ?? "?");
+    const sub = lost ? "a year at the average Aussie household, give or take"
+                     : "currently tracked by memory at your place";
+    const voice = lost ? "Sounds about right for lost count. We'll pin down your real number as bills land. Mine either way."
+                       : "From today: zero. I hold every one of them.";
     return ({
-      title:"Playback \u00b7 Your maths", note:"Sits directly after the volume question: they give a number, Ben instantly shows what it costs them. The big figure is their monthly answer multiplied out to a year (midpoint x 12), so it is always true and needs no external source. 'Lost count' gets its own gentler version.",
+      title:"Playback \u00b7 Your maths", note:"Sits directly after the volume question: they give a number, Ben instantly shows what it costs them. The big figure is their monthly answer multiplied out to a year (midpoint x 12), so it is always true and needs no external source. 'Lost count' assumes the average household, roughly 8 a month, and says so.",
       html:`${SP}<div class="title">Here's what that means.</div>
         <div class="wcard" style="text-align:center; padding:26px 18px">
           <div class="ey">Due dates a year, roughly</div>
-          <div class="big" style="font-size:56px; margin-top:6px">${n ?? "?"}</div>
-          <div class="sub">${n ? "currently tracked by memory at your place" : "we'll count them together, then I take over"}</div>
+          <div class="big" style="font-size:56px; margin-top:6px">${n}</div>
+          <div class="sub">${sub}</div>
         </div>
-        <div class="voice" style="text-align:center">${esc(n ? voice : "Step one: we count them. Step two: they're mine.")}</div>
+        <div class="voice" style="text-align:center">${esc(voice)}</div>
         ${SP}${cta("Take them off me")}`
     });
   },
