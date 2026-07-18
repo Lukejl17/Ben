@@ -157,6 +157,12 @@
     font-size:11.5px; color:#F8F1DE73; padding-top:2px}
   .legal span{cursor:pointer}
   .legal i{font-style:normal; color:#F8F1DE40}
+  .assure{display:flex; gap:7px; justify-content:center; align-items:center; flex:none;
+    font-family:"Baloo 2"; font-weight:700; font-size:13.5px; color:#F8F1DE; margin-bottom:2px}
+  .assure .atick{color:#22361B; background:#D3E97A; width:18px; height:18px; border-radius:50%;
+    display:grid; place-items:center; font-size:11px; flex:none}
+  .pd s{color:#8B8B76; font-weight:600; margin-right:4px}
+  .plancard.dim .pd s{color:#F8F1DE59}
   .navrow{display:flex; gap:10px; align-items:center}
   .navbtn{font-family:"Baloo 2"; font-weight:700; font-size:14px; padding:9px 18px; border-radius:99px;
     border:1.5px solid var(--shell-line); background:var(--shell-card); color:var(--shell-ink); cursor:pointer}
@@ -209,6 +215,8 @@ let idx = parseInt(params.get("s") || "0", 10);
 const NAME = "Luke";  // placeholder: pulled from the account in the app
 
 // live countdown, shared across screens
+let planMonthly = false;
+window.pickPlan = m => { planMonthly = m; render(); };
 let remain = 59 * 60 + 12;
 function fmtCd(){
   const m = Math.floor(remain / 60), s = remain % 60;
@@ -279,7 +287,7 @@ const S = {
     html:`${SP}<div class="title">Your first 7 days<br>are on Ben.</div>
       <div class="voice">I want you to get the best out of me, so the trial is free.</div>
       ${bell()}
-      <div class="body" style="margin-top:6px"><b style="color:#F8F1DE">I'll nudge you before it ends.</b><br>Turn notifications off anytime.</div>
+      <div class="body" style="margin-top:6px"><b style="color:#F8F1DE">I'll nudge you before it ends.</b></div>
       ${SP}${pagedots(dots, on)}${cta("Sounds fair")}`
   }),
   timeline: (dots, on) => ({
@@ -301,16 +309,25 @@ const S = {
       ${SP}${pagedots(dots, on)}${cta("Start for $0.00", "7 days free, then US$49.99/yr. About the cost of two late fees.")}
       <div class="cta ghost" onclick="next()">Show me other plans</div>`
   }),
-  plans: () => ({
-    title:"Other plans", note:"The decline path: yearly stays selected with the trial badge, monthly sits underneath without one. The footer keeps Ben honest about what lapsing means. In the app, declining entirely lands in view-only mode, same as today.",
-    html:`${SP}<div class="title" style="font-size:26px">Plans, plainly.</div>
-      ${annualCard()}
-      <div class="plancard dim"><div class="pt">Monthly <span class="pp">US$5.99<span style="font-weight:700; font-size:12px; color:#F8F1DE8C">/mo</span></span></div>
-      <div class="pd">No trial. Cancel anytime.</div></div>
-      <div class="body">If the trial lapses, your bills stay visible. Reminders stop, that's all.</div>
-      ${SP}${cta("Start for $0.00", "Yearly, 7 days free first")}
-      <div class="cta ghost" onclick="next()">Back to the offer</div>`
-  }),
+  plans: () => {
+    const monthly = planMonthly;
+    return ({
+      title:"Other plans", note:"The decline path, now with selection: tapping a card switches the assurance line and the CTA. Annual is framed as the standing offer, usually US$69.99 and US$49.99 with the welcome deal, with the per-month equivalent as the hero number. The footer keeps Ben honest about what lapsing means.",
+      html:`${SP}<div class="title" style="font-size:26px">Plans, plainly.</div>
+        <div style="height:8px"></div>
+        <div class="plancard ${monthly ? "dim" : ""}" onclick="pickPlan(false)" style="cursor:pointer"><span class="planbadge">Free trial + 29% off</span>
+          <div class="pt">Annual <span class="pp">US$4.17<span style="font-weight:700; font-size:12px; color:${monthly ? "#F8F1DE8C" : "#6B6B57"}">/month</span></span></div>
+          <div class="pd"><s>US$69.99</s>US$49.99/year</div></div>
+        <div class="plancard ${monthly ? "" : "dim"}" onclick="pickPlan(true)" style="cursor:pointer">
+          <div class="pt">Monthly <span class="pp">US$5.99<span style="font-weight:700; font-size:12px; color:${monthly ? "#6B6B57" : "#F8F1DE8C"}">/mo</span></span></div>
+          <div class="pd">No trial. Cancel anytime.</div></div>
+        <div class="body">If the trial lapses, your bills stay visible. Reminders stop, that's all.</div>
+        ${SP}
+        <div class="assure"><span class="atick">\u2713</span>${monthly ? "No commitment, cancel anytime" : "No payment due now. Cancel anytime"}</div>
+        ${cta(monthly ? "Subscribe monthly" : "Start for $0.00")}
+        <div class="cta ghost" onclick="next()">Back to the offer</div>`
+    });
+  },
   giftRail: (dots, on) => ({
     title:"Gift + rail, one screen", note:"B merges the bell and the timeline: gift line up top, swinging bell, compressed rail underneath. One less tap between the outcome and the price.",
     html:`<div class="title" style="font-size:25px">Your first 7 days<br>are on Ben.</div>
@@ -348,7 +365,7 @@ const S = {
           <div class="cmprow"><span class="cl" style="font-family:'Baloo 2'; font-weight:800; color:#2F4A26">Ben, per month</span><span class="bar"><span class="fill ben" style="width:14%; animation-delay:.4s"></span><span class="amt">$4.17</span></span></div>
         </div>
       </div>
-      <div class="body">The average Aussie who cops fees paid $119 of them last year (Finder).</div>
+      <div class="body">The average Aussie copped $119 in overdue fees last year (Finder).</div>
       ${SP}${pagedots(dots, on)}${cta("Fair enough")}`
   }),
   offerFinal: (dots, on) => ({
@@ -357,12 +374,14 @@ const S = {
       <div style="height:10px"></div>
       ${offerChip()}
       ${SP}
+      <img src="${CHAR}" alt="Ben" style="width:78px; height:78px; margin:0 auto -6px; display:block">
       <div class="title" style="font-size:26px">G'day ${NAME}.<br>Keep Ben on the job.</div>
       <div class="wcard" style="padding:12px 14px"><div class="ey">What you're solving</div>${recapChips()}</div>
       ${ticks(["Unlimited bills tracked and reminded, calmly",
                "Payment details ready to copy and pay",
                "$0 due today. 7 days free first"])}
       ${SP}
+      <div class="assure"><span class="atick">\u2713</span>No payment due now. Cancel anytime</div>
       ${cta("Start for $0.00")}
       <div class="equiv">Equivalent to <b>US$4.17</b>/month</div>
       <div class="ctasub">7 days free, then US$49.99/yr</div>
