@@ -97,7 +97,7 @@ struct AccountServiceTests {
         #expect(account.provider == .apple)
         #expect(service.account == account)
         #expect(account.forwardingAddress.hasPrefix("bills-"))
-        #expect(account.forwardingAddress.hasSuffix("@ben.app"))
+        #expect(account.forwardingAddress.hasSuffix("@in.benandbill.app"))
     }
 
     @Test func repeatSignInReturnsSameAccount() async throws {
@@ -116,6 +116,6 @@ struct AccountServiceTests {
 
     @Test func forwardingAddressIsDeterministicAndClean() {
         let address = StubAccountService.forwardingAddress(for: "ABCD-1234-EF56-7890")
-        #expect(address == "bills-abcd1234@ben.app")
+        #expect(address == "bills-abcd1234@in.benandbill.app")
     }
 }

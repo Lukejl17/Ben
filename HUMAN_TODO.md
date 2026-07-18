@@ -30,9 +30,9 @@ Added 15 Jul 2026 (settings/accounts/email-in build):
       (capability + entitlement — same item as above) AND Google Sign-In SDK
       (OAuth client ID in Google Cloud console). Protocol + all call sites stay.
 - [ ] Email ingestion backend: provision per-account addresses matching
-      StubAccountService.forwardingAddress format (bills-<8 chars>@ben.app),
+      StubAccountService.forwardingAddress format (bills-<8 chars>@in.benandbill.app),
       parse inbound MIME → ParsedBill → push to app for S6 confirm.
-      Requires owning ben.app inbound mail (e.g. SES/Postmark inbound).
+      Domain benandbill.app is owned; inbound mail on the in. subdomain via Postmark.
 
 ## Paywall (flow F)
 - [ ] RevenueCat: annual US$49.99/yr with 7-day intro trial, monthly US$5.99/mo, and a real time-boxed welcome intro offer to back the countdown chip. If no real offer exists, cut the countdown.

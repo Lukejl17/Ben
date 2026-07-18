@@ -1,0 +1,12 @@
+# Ben inbound email worker. Deploy: `npx wrangler deploy` (needs a Cloudflare
+# API token in the environment or `npx wrangler login` once).
+name = "ben-email-in"
+main = "src/worker.js"
+compatibility_date = "2026-07-01"
+
+[[r2_buckets]]
+binding = "INBOUND"
+bucket_name = "ben-inbound-bills"
+
+# Set with: npx wrangler secret put WEBHOOK_SECRET
+# and give the same value to Postmark's webhook URL as ?secret=...

@@ -89,9 +89,9 @@ final class StubAccountService: AccountService, @unchecked Sendable {
         }
     }
 
-    /// Deterministic personal address: bills-<8 chars of the account id>@ben.app.
+    /// Deterministic personal address: bills-<8 chars of the account id>@in.benandbill.app.
     static func forwardingAddress(for accountID: String) -> String {
         let slug = accountID.lowercased().replacingOccurrences(of: "-", with: "").prefix(8)
-        return "bills-\(slug)@ben.app"
+        return "bills-\(slug)@in.benandbill.app"
     }
 }
