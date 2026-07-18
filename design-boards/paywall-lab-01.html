@@ -285,9 +285,8 @@ const S = {
   gift: (dots, on) => ({
     title:"The gift + the bell", note:"The reference's bell screen in Ben's voice: the trial framed as a gift first, then the promise that Ben nudges before it ends. The bell swings and the badge pops on a loop. In the app: a tighter one-shot animation with a soft haptic when the badge lands.",
     html:`${SP}<div class="title">Your first 7 days<br>are on Ben.</div>
-      <div class="voice">I want you to get the best out of me, so the trial is free.</div>
       ${bell()}
-      <div class="body" style="margin-top:6px"><b style="color:#F8F1DE">I'll nudge you before it ends.</b></div>
+      <div class="body" style="margin-top:6px"><b style="color:#F8F1DE">I'll nudge you before it ends.</b><br>Turn notifications off anytime.</div>
       ${SP}${pagedots(dots, on)}${cta("Sounds fair")}`
   }),
   timeline: (dots, on) => ({
