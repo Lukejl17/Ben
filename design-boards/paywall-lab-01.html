@@ -345,14 +345,18 @@ const S = {
   }),
   offerFinal: (dots, on) => ({
     title:"The offer (your pick)", note:"A's layout with the swaps you called: C's tick lines, and the what-you're-solving chips moved above the ticks so the personal recap lands before the feature proof. Countdown chip, name hero, one annual card, single CTA. Same honesty flag: the countdown needs a real RevenueCat intro offer behind it.",
-    html:`${offerChip()}
+    html:`${pagedots(dots, on)}
+      <div style="height:10px"></div>
+      ${offerChip()}
+      ${SP}
       <div class="title" style="font-size:26px">G'day ${NAME}.<br>Keep Ben on the job.</div>
       <div class="wcard" style="padding:12px 14px"><div class="ey">What you're solving</div>${recapChips()}</div>
       ${ticks(["Every bill tracked and reminded, calmly",
                "Payment details ready to copy and pay",
                "$0 due today. 7 days free first"])}
+      ${SP}
       ${annualCard()}
-      ${SP}${pagedots(dots, on)}${cta("Start for $0.00", "7 days free, then US$49.99/yr. About the cost of two late fees.")}
+      ${cta("Start for $0.00", "7 days free, then US$49.99/yr. About the cost of two late fees.")}
       <div class="cta ghost" onclick="next()">Show me other plans</div>`
   }),
   done: () => ({
