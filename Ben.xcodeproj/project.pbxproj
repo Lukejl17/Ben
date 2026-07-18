@@ -61,6 +61,8 @@
 		A1BF2CB391D822994EE18DDF /* Figtree-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 43AF552C6BAC3A2CC56C0173 /* Figtree-Variable.ttf */; };
 		A5FECF5DF2FEB2F6BA58AF19 /* SubscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87989AA43748F65C5431A8CE /* SubscriptionTests.swift */; };
 		A75B995659576B43C5F1A02E /* AnticipationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24EAF25735D4F80555F66635 /* AnticipationTests.swift */; };
+		B221C501C6ABF92D0A8B863E /* PaywallOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD6CA4F6004BDB6C938C7D5 /* PaywallOfferView.swift */; };
+		B568E3F6647BA4CD595433A1 /* PaywallJourneyViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86163BAE8EDAB64F8C977C72 /* PaywallJourneyViews.swift */; };
 		B73D5BF7903077D2126AAA7C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C802D7582126B6B88B5F56 /* HomeView.swift */; };
 		B77A3042488E55AD145ADA3B /* BillRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */; };
 		BE2374539EE478AA4F5117E3 /* ReminderSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D853ACCC7A4596D8497D055A /* ReminderSetupView.swift */; };
@@ -119,6 +121,7 @@
 		483D07784F323ACB8F0F4838 /* BenTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D4F001318AA2CE3A5FE684 /* BenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenTheme.swift; sourceTree = "<group>"; };
 		4D653B3B22406BC54F1F235F /* BillCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCategory.swift; sourceTree = "<group>"; };
+		4DD6CA4F6004BDB6C938C7D5 /* PaywallOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallOfferView.swift; sourceTree = "<group>"; };
 		50A75E32DF28C87EAF49B530 /* Ben.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ben.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		633D0752B06B1ED76E3AFB27 /* OnboardingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCoordinator.swift; sourceTree = "<group>"; };
 		6353B4FB81BB1A738EC61C57 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
@@ -134,6 +137,7 @@
 		80B76F4C029AF4124C7FBB17 /* PaymentDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDetailsTests.swift; sourceTree = "<group>"; };
 		83D10B48F7915788B42436D5 /* ConfettiBurst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiBurst.swift; sourceTree = "<group>"; };
 		85AAFF1EA8A85A8657AF1413 /* ConfirmBillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmBillView.swift; sourceTree = "<group>"; };
+		86163BAE8EDAB64F8C977C72 /* PaywallJourneyViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallJourneyViews.swift; sourceTree = "<group>"; };
 		87989AA43748F65C5431A8CE /* SubscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionTests.swift; sourceTree = "<group>"; };
 		880CE6FA14E78D37DC9B2C79 /* InsightsMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsMath.swift; sourceTree = "<group>"; };
 		89B00220C2C43C3F9F65A140 /* ReminderOverrideSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderOverrideSheet.swift; sourceTree = "<group>"; };
@@ -366,6 +370,8 @@
 				933DFE07AE932F586707E638 /* OnboardingFlow.swift */,
 				F76653553158ABD93AA95A68 /* OnboardingV2Components.swift */,
 				A4535C1B1625A80EB6FE213A /* OverdueStyleView.swift */,
+				86163BAE8EDAB64F8C977C72 /* PaywallJourneyViews.swift */,
+				4DD6CA4F6004BDB6C938C7D5 /* PaywallOfferView.swift */,
 				6353B4FB81BB1A738EC61C57 /* PaywallView.swift */,
 				3A8AEFB7E570CCB9CE557BF6 /* PlaybackViews.swift */,
 				D853ACCC7A4596D8497D055A /* ReminderSetupView.swift */,
@@ -538,6 +544,8 @@
 				DA60403A82CC67C52C700F96 /* OverdueStyleView.swift in Sources */,
 				A0A2BCDA34ACE2275B47C4D3 /* PaymentDetails.swift in Sources */,
 				D57ADCF0997C262F711681B5 /* PaymentDetailsCard.swift in Sources */,
+				B568E3F6647BA4CD595433A1 /* PaywallJourneyViews.swift in Sources */,
+				B221C501C6ABF92D0A8B863E /* PaywallOfferView.swift in Sources */,
 				3D0F58212161D83A3DC41F7A /* PaywallView.swift in Sources */,
 				4012B9FFF55B0968337CB919 /* PlaybackViews.swift in Sources */,
 				7F951AF38A942A27521B9023 /* RecurrenceSheet.swift in Sources */,

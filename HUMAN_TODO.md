@@ -33,3 +33,9 @@ Added 15 Jul 2026 (settings/accounts/email-in build):
       StubAccountService.forwardingAddress format (bills-<8 chars>@ben.app),
       parse inbound MIME → ParsedBill → push to app for S6 confirm.
       Requires owning ben.app inbound mail (e.g. SES/Postmark inbound).
+
+## Paywall (flow F)
+- [ ] RevenueCat: annual US$49.99/yr with 7-day intro trial, monthly US$5.99/mo, and a real time-boxed welcome intro offer to back the countdown chip. If no real offer exists, cut the countdown.
+- [ ] App Store Connect: the US$69.99 anchor behind "FREE TRIAL + 29% OFF" must be a genuine standing price (App Review and the ACCC both check was-prices).
+- [ ] Wire Restore purchase (RevenueCat restore), Privacy Policy and T&Cs URLs on the offer screen (currently no-ops).
+- [ ] Source the fee-comparison figures (credit card ~$30, utility ~$15, telco ~$15) properly before ads go live; the $119 Finder yearly average is already cited.

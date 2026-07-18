@@ -152,16 +152,35 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "s14-commit-done")
         sealed.tap()
 
-        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again, and never hear from Ben otherwise."]
+        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again. And never hear from Ben otherwise."]
             .waitForExistence(timeout: 5))
         snap(app, "s15-paywall-outcome")
         app.buttons["Continue"].tap()
-        XCTAssertTrue(app.staticTexts["How the trial works"].waitForExistence(timeout: 5))
-        snap(app, "s15-paywall-timeline")
+
+        let giftCTA = app.buttons["Sounds fair"]
+        XCTAssertTrue(giftCTA.waitForExistence(timeout: 5))
+        sleep(1)  // bell swings, badge pops
+        snap(app, "s15-paywall-gift")
+        giftCTA.tap()
+
+        XCTAssertTrue(app.staticTexts["How your 7 free\ndays work"].waitForExistence(timeout: 5))
+        snap(app, "s15-paywall-rail")
         app.buttons["Continue"].tap()
-        let startTrial = app.buttons["Start my 7-day trial"]
+
+        let compareCTA = app.buttons["Fair enough"]
+        XCTAssertTrue(compareCTA.waitForExistence(timeout: 5))
+        sleep(2)  // bars grow in
+        snap(app, "s15-paywall-compare")
+        compareCTA.tap()
+
+        let startTrial = app.buttons["Start for $0.00"]
         XCTAssertTrue(startTrial.waitForExistence(timeout: 5))
-        snap(app, "s15-paywall-price")
+        snap(app, "s15-paywall-offer")
+        app.buttons["Show me other plans"].tap()
+        XCTAssertTrue(app.staticTexts["Plans, plainly."].waitForExistence(timeout: 5))
+        snap(app, "s15-paywall-plans")
+        app.buttons["Back to the offer"].tap()
+        XCTAssertTrue(startTrial.waitForExistence(timeout: 5))
         startTrial.tap()
 
         let later = app.buttons["Later's fine"]
