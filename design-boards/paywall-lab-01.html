@@ -82,8 +82,9 @@
 
   .title{font-family:"Baloo 2"; font-weight:800; font-size:28px; line-height:1.12; color:#D3E97A;
     text-align:center; text-wrap:balance; padding:6px 6px 0}
-  .voice{font-family:"Baloo 2"; font-weight:500; font-size:15.5px; color:#EFE8D2; line-height:1.45; text-align:center}
-  .body{font-size:14.5px; color:#F8F1DEa6; text-align:center; padding:0 8px}
+  .voice{font-family:"Baloo 2"; font-weight:500; font-size:15.5px; color:#EFE8D2; line-height:1.45;
+    text-align:center; text-wrap:balance}
+  .body{font-size:14.5px; color:#F8F1DEa6; text-align:center; padding:0 8px; text-wrap:balance}
 
   .cta{margin-top:auto; flex:none; font-family:"Baloo 2"; font-weight:800; font-size:16px; text-align:center;
     background:#D3E97A; color:#22361B; padding:16px; border-radius:99px; cursor:pointer;
@@ -149,6 +150,13 @@
   @keyframes growbar{from{width:0 !important}}
   .cmprow .amt{font-family:"Baloo 2"; font-weight:800; font-size:13.5px; color:#293223;
     padding-left:8px; white-space:nowrap}
+  .equiv{font-family:"Baloo 2"; font-weight:700; font-size:14.5px; color:#F8F1DE; text-align:center;
+    margin-top:-4px; flex:none}
+  .equiv b{color:#D3E97A}
+  .legal{display:flex; gap:8px; justify-content:center; align-items:center; flex:none;
+    font-size:11.5px; color:#F8F1DE73; padding-top:2px}
+  .legal span{cursor:pointer}
+  .legal i{font-style:normal; color:#F8F1DE40}
   .navrow{display:flex; gap:10px; align-items:center}
   .navbtn{font-family:"Baloo 2"; font-weight:700; font-size:14px; padding:9px 18px; border-radius:99px;
     border:1.5px solid var(--shell-line); background:var(--shell-card); color:var(--shell-ink); cursor:pointer}
@@ -351,13 +359,15 @@ const S = {
       ${SP}
       <div class="title" style="font-size:26px">G'day ${NAME}.<br>Keep Ben on the job.</div>
       <div class="wcard" style="padding:12px 14px"><div class="ey">What you're solving</div>${recapChips()}</div>
-      ${ticks(["Every bill tracked and reminded, calmly",
+      ${ticks(["Unlimited bills tracked and reminded, calmly",
                "Payment details ready to copy and pay",
                "$0 due today. 7 days free first"])}
       ${SP}
-      ${annualCard()}
-      ${cta("Start for $0.00", "7 days free, then US$49.99/yr. About the cost of two late fees.")}
-      <div class="cta ghost" onclick="next()">Show me other plans</div>`
+      ${cta("Start for $0.00")}
+      <div class="equiv">Equivalent to <b>US$4.17</b>/month</div>
+      <div class="ctasub">7 days free, then US$49.99/yr</div>
+      <div class="cta ghost" style="font-size:13.5px; padding:4px" onclick="next()">Show me other plans</div>
+      <div class="legal"><span>Restore purchase</span><i>|</i><span>Privacy Policy</span><i>|</i><span>T&amp;Cs</span></div>`
   }),
   done: () => ({
     title:"Done", note:"End of prototype. In the app the trial starts and S10 second bill takes over.",
