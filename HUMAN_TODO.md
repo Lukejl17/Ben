@@ -26,13 +26,22 @@ Added overnight (14 Jul 2026):
 
 Added 15 Jul 2026 (settings/accounts/email-in build):
 
-- [ ] Replace StubAccountService internals with real auth: Sign in with Apple
-      (capability + entitlement — same item as above) AND Google Sign-In SDK
-      (OAuth client ID in Google Cloud console). Protocol + all call sites stay.
-- [ ] Email ingestion backend: provision per-account addresses matching
-      StubAccountService.forwardingAddress format (bills-<8 chars>@in.benandbill.app),
-      parse inbound MIME → ParsedBill → push to app for S6 confirm.
-      Domain benandbill.app is owned; inbound mail on the in. subdomain via Postmark.
+- [x] Real auth — DONE 19 Jul via Firebase Authentication (FirebaseAccountService):
+      email/password + Google (web flow) live now; Apple button is wired but needs
+      the Developer membership + Sign in with Apple capability to light up (below).
+- [x] Email ingestion backend — DONE 19 Jul: Postmark → Worker → R2, D1 maps
+      Firebase uid → forwarding token, app polls /pending and feeds S6 confirm.
+
+Added 19 Jul 2026 (Firebase + email-in production build):
+
+- [ ] Apple Developer membership (enrolment started 19 Jul). When approved:
+      set DEVELOPMENT_TEAM in project.yml, add the Sign in with Apple capability
+      to com.repertoirestudio.Ben, and configure the Apple provider in
+      Firebase Console → Authentication → Sign-in method.
+- [ ] Verify Firebase Console has Email/Password + Google + Apple providers enabled
+      (project: repertoirestudio-ben).
+- [ ] Postmark: move off the sandbox/test tier when real user mail should flow
+      (request approval in their dashboard).
 
 ## Paywall (flow F)
 - [ ] RevenueCat: annual US$49.99/yr with 7-day intro trial, monthly US$5.99/mo, and a real time-boxed welcome intro offer to back the countdown chip. If no real offer exists, cut the countdown.

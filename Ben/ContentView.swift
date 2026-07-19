@@ -4,6 +4,7 @@ struct ContentView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(NotificationRouter.self) private var notificationRouter
+    @State private var selectedTab = 0
 
     init() {
         // UI-test hook: a clean run every launch.
@@ -16,16 +17,20 @@ struct ContentView: View {
         ZStack {
             BenCanvas()
             if hasCompletedOnboarding {
-                TabView {
-                    Tab("Bills", systemImage: "doc.text.fill") {
+                TabView(selection: $selectedTab) {
+                    Tab("Bills", systemImage: "doc.text.fill", value: 0) {
                         HomeView()
                     }
-                    Tab("Insights", systemImage: "chart.pie.fill") {
+                    Tab("Insights", systemImage: "chart.pie.fill", value: 1) {
                         InsightsView()
                     }
-                    Tab("Settings", systemImage: "gearshape.fill") {
+                    Tab("Settings", systemImage: "gearshape.fill", value: 2) {
                         SettingsView()
                     }
+                }
+                .onChange(of: notificationRouter.confirmEmailBillRequested) { _, requested in
+                    // The confirm sheet lives on the Bills tab — land there first.
+                    if requested { selectedTab = 0 }
                 }
             } else {
                 OnboardingFlow()

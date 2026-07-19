@@ -1,15 +1,16 @@
 import Foundation
 
 /// A Ben account: enables sync, email forwarding, and backup. Local-first —
-/// the account is a promise the backend will honour later.
+/// the account is a promise the backend honours via the email-in Worker.
 struct BenAccount: Codable, Equatable, Sendable {
     enum Provider: String, Codable, Sendable {
-        case apple, google
+        case apple, google, password
 
         var label: String {
             switch self {
             case .apple: "Apple"
             case .google: "Google"
+            case .password: "Email"
             }
         }
     }
@@ -25,9 +26,24 @@ struct BenAccount: Codable, Equatable, Sendable {
 
 enum AccountError: Error, LocalizedError {
     case signInFailed
+    case cancelled
+    case weakPassword
+    case emailInUse
+    case wrongCredentials
 
     var errorDescription: String? {
-        "That didn't go through. No drama, try again in a tick."
+        switch self {
+        case .signInFailed:
+            "That didn't go through. No drama, try again in a tick."
+        case .cancelled:
+            "No worries — sign in whenever you're ready."
+        case .weakPassword:
+            "That password's a bit short. Eight characters or more does it."
+        case .emailInUse:
+            "That email already has a Ben account. Try signing in instead."
+        case .wrongCredentials:
+            "Email or password didn't match. Have another go."
+        }
     }
 }
 
@@ -35,13 +51,15 @@ protocol AccountService: AnyObject, Sendable {
     var account: BenAccount? { get }
     @discardableResult
     func signIn(with provider: BenAccount.Provider) async throws -> BenAccount
+    @discardableResult
+    func signIn(email: String, password: String, creating: Bool) async throws -> BenAccount
     func signOut()
+    /// Proof-of-login for backend calls; nil when signed out.
+    func idToken() async throws -> String?
 }
 
-/// Local stub: creates and persists a simulated account.
-/// HUMAN: replace internals with real Sign in with Apple (capability +
-/// entitlement) and Google Sign-In SDK (OAuth client ID). The protocol,
-/// call sites, and stored shape stay as-is.
+/// Local stub: creates and persists a simulated account. Used by previews and
+/// UI tests; the live app uses FirebaseAccountService.
 final class StubAccountService: AccountService, @unchecked Sendable {
     private let defaults: UserDefaults
     private let key = "benAccount"
@@ -75,10 +93,30 @@ final class StubAccountService: AccountService, @unchecked Sendable {
         return account
     }
 
+    @discardableResult
+    func signIn(email: String, password: String, creating: Bool) async throws -> BenAccount {
+        if let existing = account { return existing }
+        let id = UUID().uuidString
+        let account = BenAccount(
+            id: id,
+            name: email.components(separatedBy: "@").first ?? "Ben Tester",
+            email: email,
+            provider: .password,
+            createdAt: .now,
+            forwardingAddress: Self.forwardingAddress(for: id)
+        )
+        persist(account)
+        return account
+    }
+
     func signOut() {
         lock.lock()
         defer { lock.unlock() }
         defaults.removeObject(forKey: key)
+    }
+
+    func idToken() async throws -> String? {
+        account == nil ? nil : "stub-token"
     }
 
     private func persist(_ account: BenAccount) {

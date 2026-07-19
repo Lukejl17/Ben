@@ -17,7 +17,7 @@ final class BenUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = [
             "-resetOnboarding", "-inMemoryStore", "-mockParser",
-            "-nullAnalytics", "-freshTrial", "-autoCapture"
+            "-nullAnalytics", "-freshTrial", "-autoCapture", "-stubAccount"
         ]
 
         // The OS notification prompt appears mid-flow; allow it when it does.

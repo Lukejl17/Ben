@@ -44,6 +44,8 @@ final class OnboardingCoordinator {
     var uploadMethod: UploadMethod = .photo
     var pendingImageData: Data?
     var parsed: ParsedBill?
+    /// R2 key of the emailed bill being confirmed — claimed (deleted) on save.
+    var pendingEmailKey: String?
     /// True while walking the B1 sample bill — nothing is saved.
     var isSampleWalkthrough = false
     /// Set by S6 confirm; S7/S8 read it.
@@ -91,6 +93,7 @@ final class OnboardingCoordinator {
         parsed = nil
         confirmedBill = nil
         uploadMethod = .photo
+        pendingEmailKey = nil
         step = .upload
     }
 }

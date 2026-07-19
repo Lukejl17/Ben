@@ -1,9 +1,13 @@
 name: Ben
 options:
-  bundleIdPrefix: com.lukelongworth
+  bundleIdPrefix: com.repertoirestudio
   deploymentTarget:
     iOS: "26.0"
   createIntermediateGroups: true
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: "12.16.0"
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -13,6 +17,9 @@ targets:
     type: application
     platform: iOS
     sources: [Ben]
+    dependencies:
+      - package: Firebase
+        product: FirebaseAuth
     info:
       path: Ben/Info.plist
       properties:
@@ -24,6 +31,12 @@ targets:
         NSCameraUsageDescription: "Ben uses the camera to read your bill so you don't have to type it."
         NSPhotoLibraryUsageDescription: "Ben reads bill photos you choose so you don't have to type them."
         UIBackgroundModes: []
+        # Firebase web sign-in (Google) calls back into the app on this scheme
+        # (the "encoded app id" from GoogleService-Info.plist).
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Editor
+            CFBundleURLSchemes:
+              - app-1-1003553134186-ios-02e99c812002e72c695c13
     settings:
       base:
         INFOPLIST_KEY_UIUserInterfaceStyle: Automatic

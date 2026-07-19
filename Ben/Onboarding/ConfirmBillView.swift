@@ -139,6 +139,18 @@ struct ConfirmBillView: View {
             )
         )
 
+        // An emailed bill is confirmed — clear it off the mailroom shelf.
+        if let key = coordinator.pendingEmailKey {
+            coordinator.pendingEmailKey = nil
+            let accounts = services.accounts
+            let emailIn = services.emailIn
+            Task {
+                if let token = try? await accounts.idToken() {
+                    try? await emailIn.claim(key: key, idToken: token)
+                }
+            }
+        }
+
         coordinator.confirmedBill = bill
         coordinator.advance(to: .reminderSetup)
     }

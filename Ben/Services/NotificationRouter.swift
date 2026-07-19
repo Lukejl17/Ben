@@ -11,6 +11,8 @@ final class NotificationRouter {
     var resumeUploadRequested = false
     /// Day-4 nudge tapped — open the add-bill flow.
     var addBillRequested = false
+    /// An emailed bill is staged on the coordinator — open the confirm flow.
+    var confirmEmailBillRequested = false
 }
 
 /// UNUserNotificationCenter delegate: foreground presentation + tap routing.

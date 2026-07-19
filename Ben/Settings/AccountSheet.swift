@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Create or sign in to a Ben account — unlocks sync, backup, and the
-/// email-in address. Stub providers today; real SDKs are HUMAN-gated.
+/// email-in address. Real Firebase providers; Apple lights up once the
+/// Developer membership is approved (HUMAN).
 struct AccountSheet: View {
     @Environment(\.services) private var services
     @Environment(\.dismiss) private var dismiss
@@ -9,6 +10,10 @@ struct AccountSheet: View {
 
     @State private var isWorking = false
     @State private var errorLine: String?
+    @State private var showEmailForm = false
+    @State private var email = ""
+    @State private var password = ""
+    @State private var isCreatingAccount = true
 
     var body: some View {
         ScrollView {
@@ -44,10 +49,18 @@ struct AccountSheet: View {
                     providerButton(
                         title: "Continue with Google", systemImage: "g.circle.fill", provider: .google
                     )
+                    BenSecondaryButton(title: "Use email instead", systemImage: "envelope") {
+                        withAnimation(.spring(duration: 0.3)) { showEmailForm.toggle() }
+                    }
+                    .accessibilityIdentifier("Use email instead")
                 }
                 .padding(.top, 8)
 
-                Text("No passwords, no spam. Signing in creates your Ben account.")
+                if showEmailForm {
+                    emailForm
+                }
+
+                Text("One account, no spam. Your bills stay yours.")
                     .font(.benMeta)
                     .foregroundStyle(Color.forestInk.opacity(0.5))
                     .frame(maxWidth: .infinity)
@@ -86,9 +99,67 @@ struct AccountSheet: View {
         .benRowSurface(radius: 22)
     }
 
-    /// HUMAN: swap StubAccountService internals for ASAuthorization (Apple,
-    /// needs the Sign in with Apple capability) and GoogleSignIn SDK (needs
-    /// an OAuth client ID). These buttons and the flow stay unchanged.
+    /// Email + password: the manual path for people who skip Apple/Google.
+    private var emailForm: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            TextField("Email", text: $email)
+                .textContentType(.emailAddress)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .padding(14)
+                .background(Color.cream, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .environment(\.colorScheme, .light)
+                .accessibilityIdentifier("account-email")
+            SecureField("Password (8+ characters)", text: $password)
+                .textContentType(isCreatingAccount ? .newPassword : .password)
+                .padding(14)
+                .background(Color.cream, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .environment(\.colorScheme, .light)
+                .accessibilityIdentifier("account-password")
+
+            BenPrimaryButton(title: isCreatingAccount ? "Create account" : "Sign in") {
+                submitEmailForm()
+            }
+            .disabled(email.isEmpty || password.count < 8)
+
+            Button {
+                withAnimation(.spring(duration: 0.3)) { isCreatingAccount.toggle() }
+            } label: {
+                Text(isCreatingAccount ? "Already have an account? Sign in"
+                                        : "New here? Create an account")
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.7))
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.top, 4)
+    }
+
+    private func submitEmailForm() {
+        guard !isWorking else { return }
+        isWorking = true
+        errorLine = nil
+        let accounts = services.accounts
+        let analytics = services.analytics
+        let creating = isCreatingAccount
+        let formEmail = email
+        let formPassword = password
+        Task {
+            do {
+                let account = try await accounts.signIn(
+                    email: formEmail, password: formPassword, creating: creating
+                )
+                analytics.track(.accountCreated)
+                onSignedIn?(account)
+                dismiss()
+            } catch {
+                errorLine = error.localizedDescription
+            }
+            isWorking = false
+        }
+    }
+
     private func providerButton(
         title: String, systemImage: String, provider: BenAccount.Provider
     ) -> some View {

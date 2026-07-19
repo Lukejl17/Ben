@@ -1,3 +1,4 @@
+import FirebaseCore
 import SwiftData
 import SwiftUI
 import UserNotifications
@@ -10,6 +11,11 @@ struct BenApp: App {
     private let notificationDelegate: NotificationDelegate
 
     init() {
+        // Real logins need Firebase; previews/tests run fine without it.
+        if FirebaseApp.app() == nil,
+           Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+        }
         let services = AppServices.fromLaunchArguments()
         let router = NotificationRouter()
         let delegate = NotificationDelegate(router: router, analytics: services.analytics)

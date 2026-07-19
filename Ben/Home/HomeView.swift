@@ -156,6 +156,13 @@ struct HomeView: View {
         }
         .onChange(of: notificationRouter.openBillID) { _, _ in handleDeepLinks() }
         .onChange(of: notificationRouter.addBillRequested) { _, _ in handleDeepLinks() }
+        .onChange(of: notificationRouter.confirmEmailBillRequested) { _, requested in
+            // An emailed bill is already staged on the coordinator — just present.
+            guard requested else { return }
+            notificationRouter.confirmEmailBillRequested = false
+            showEmailIn = false
+            showAddBill = true
+        }
     }
 
     /// A tapped reminder opens the relevant bill; a nudge opens the add flow.
