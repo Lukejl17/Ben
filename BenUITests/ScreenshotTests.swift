@@ -136,10 +136,10 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "s7c-overdue-style")
         overdueCTA.tap()
 
-        let s8Continue = app.buttons["Continue"]
-        XCTAssertTrue(s8Continue.waitForExistence(timeout: 15))
+        let apple = app.buttons["Continue with Apple"]
+        XCTAssertTrue(apple.waitForExistence(timeout: 15))
         snap(app, "s13-set-state")
-        s8Continue.tap()
+        apple.tap()
     }
 
     private func walkCommitAndPaywall(_ app: XCUIApplication) {
@@ -224,9 +224,9 @@ final class ScreenshotTests: XCTestCase {
         XCTAssertTrue(app.buttons["3 months"].waitForExistence(timeout: 5))
         snap(app, "insights")
 
-        // Settings tab
+        // Settings tab — signed in from S8
         app.tabBars.buttons["Settings"].tap()
-        XCTAssertTrue(app.staticTexts["Not signed in"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Sign out"].waitForExistence(timeout: 5))
         snap(app, "settings")
 
         // Export sheet
@@ -237,16 +237,21 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "settings-export")
         app.swipeDown(velocity: .fast)
 
-        // Email-in (signed out) → account sheet → signed in
+        // Email-in: already signed in from S8 — capture signed-in, then sign out for the empty state.
         XCTAssertTrue(app.buttons["Email bills in"].waitForExistence(timeout: 5))
+        app.buttons["Email bills in"].tap()
+        XCTAssertTrue(app.buttons["Copy address"].waitForExistence(timeout: 5))
+        snap(app, "settings-emailin-signedin")
+        app.swipeDown(velocity: .fast)
+
+        XCTAssertTrue(app.buttons["Sign out"].waitForExistence(timeout: 5))
+        app.buttons["Sign out"].tap()
+
         app.buttons["Email bills in"].tap()
         XCTAssertTrue(app.buttons["Set up my address"].waitForExistence(timeout: 5))
         snap(app, "settings-emailin-signedout")
         app.buttons["Set up my address"].tap()
         XCTAssertTrue(app.buttons["Continue with Apple"].waitForExistence(timeout: 5))
         snap(app, "settings-account-sheet")
-        app.buttons["Continue with Apple"].tap()
-        XCTAssertTrue(app.buttons["Copy address"].waitForExistence(timeout: 5))
-        snap(app, "settings-emailin-signedin")
     }
 }

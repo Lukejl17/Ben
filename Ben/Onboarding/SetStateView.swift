@@ -1,11 +1,17 @@
 import SwiftUI
 
-/// S8 — you're set. Calm text, no celebration.
+/// S8 — you're set, then a required account before paywall.
+/// No skip: the trial and purchase need an account to hang off.
 struct SetStateView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
-    @State private var accountSaved = false
-    @State private var showAccountSheet = false
+
+    @State private var isWorking = false
+    @State private var errorLine: String?
+    @State private var showEmailForm = false
+    @State private var email = ""
+    @State private var password = ""
+    @State private var isCreatingAccount = true
 
     private var bill: Bill? { coordinator.confirmedBill }
 
@@ -58,46 +64,50 @@ struct SetStateView: View {
                         }
                     }
                 }
-                .padding(.bottom, 12)
+                .padding(.bottom, 16)
             }
 
-            Text("Nothing else needs your attention.")
-                .font(.benBody)
-                .foregroundStyle(Color.forestInk.opacity(0.65))
+            Text("Save this setup")
+                .font(.benCardTitle)
+                .foregroundStyle(Color.chartreuse)
+                .padding(.bottom, 4)
 
-            Text("1 bill tracked. Most people add 2–3 to stop thinking about bills entirely.")
+            Text("So your bills and your plan stay with you — even if you change phones. Takes a moment, then we can set up your trial.")
                 .font(.benMeta)
-                .foregroundStyle(Color.forestInk.opacity(0.5))
-        } cta: {
-            if !accountSaved {
-                BenSecondaryButton(
-                    title: "Create a free account",
-                    systemImage: "person.crop.circle.badge.plus"
-                ) {
-                    showAccountSheet = true
-                }
-                Text("Backs up your bills and settings if you change phones. Optional.")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.55))
-                    .frame(maxWidth: .infinity)
-            } else {
-                Text("Setup saved to your account.")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.65))
-                    .frame(maxWidth: .infinity)
-            }
+                .foregroundStyle(Color.forestInk.opacity(0.6))
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 8)
 
-            BenPrimaryButton(title: "Continue") {
-                coordinator.advance(to: .commit)
+            if let errorLine {
+                Text(errorLine)
+                    .font(.benMeta)
+                    .foregroundStyle(Color.statusLateFg)
+            }
+        } cta: {
+            AccountSignInControls(
+                isWorking: $isWorking,
+                errorLine: $errorLine,
+                showEmailForm: $showEmailForm,
+                email: $email,
+                password: $password,
+                isCreatingAccount: $isCreatingAccount,
+                onSignedIn: { _ in
+                    coordinator.advance(to: .commit)
+                }
+            )
+            .overlay {
+                if isWorking {
+                    ProgressView()
+                        .controlSize(.regular)
+                        .tint(.chartreuse)
+                }
             }
         }
-        .sheet(isPresented: $showAccountSheet) {
-            AccountSheet { _ in
-                accountSaved = true
+        .onAppear {
+            // Already signed in (e.g. returning) — no need to ask again.
+            if services.accounts.account != nil {
+                coordinator.advance(to: .commit)
             }
-            .presentationDetents([.large])
-            .presentationCornerRadius(28)
-            .presentationBackground(Color.forestBottom)
         }
     }
 

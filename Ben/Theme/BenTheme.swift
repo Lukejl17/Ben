@@ -61,6 +61,12 @@ extension Color {
     // Translucent forest surfaces (rows, secondary widgets)
     static let rowFill        = hex("F8F1DE").opacity(0.07)
     static let rowStroke      = hex("F8F1DE").opacity(0.15)
+
+    // Third-party provider marks (Google "G" only — not Ben palette)
+    static let googleBlue     = hex("4285F4")
+    static let googleGreen    = hex("34A853")
+    static let googleYellow   = hex("FBBC05")
+    static let googleRed      = hex("EA4335")
 }
 
 // MARK: - Canvas

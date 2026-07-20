@@ -30,6 +30,8 @@ enum AccountError: Error, LocalizedError {
     case weakPassword
     case emailInUse
     case wrongCredentials
+    /// Firebase Console → Authentication → Sign-in method: the provider is off.
+    case providerDisabled
 
     var errorDescription: String? {
         switch self {
@@ -43,6 +45,8 @@ enum AccountError: Error, LocalizedError {
             "That email already has a Ben account. Try signing in instead."
         case .wrongCredentials:
             "Email or password didn't match. Have another go."
+        case .providerDisabled:
+            "That sign-in method isn't switched on yet in Firebase."
         }
     }
 }

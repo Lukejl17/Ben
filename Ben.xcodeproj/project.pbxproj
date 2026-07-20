@@ -21,6 +21,7 @@
 		290840CB65F5A8112D7FFD04 /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB8FDDA1965289582EAB498 /* CategoryPickerSheet.swift */; };
 		29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */; };
 		2A9870AAD1857D8FB07CACE9 /* ConfettiBurst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D10B48F7915788B42436D5 /* ConfettiBurst.swift */; };
+		2D28F7F19AA838649A9DF71B /* BenProviderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A73E72637A952F057D3FA2 /* BenProviderButton.swift */; };
 		2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE7D358CE9DD7567DEE507 /* Analytics.swift */; };
 		30C0567FBE22A4A470816003 /* ReminderSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3694F56DE31849A2C2C49A /* ReminderSchedulerTests.swift */; };
 		3306C19B21C87B4D1CB6B5BA /* BenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C98855D95537CDA714CA2 /* BenTests.swift */; };
@@ -186,6 +187,7 @@
 		F2F66AAE2BD688E561016374 /* FirebaseAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAccountService.swift; sourceTree = "<group>"; };
 		F536126BA06D59B1DC3B13FA /* Baloo2-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-Variable.ttf"; sourceTree = "<group>"; };
 		F56833A66BB0AF77CFE00E5C /* DemoScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoScanView.swift; sourceTree = "<group>"; };
+		F5A73E72637A952F057D3FA2 /* BenProviderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenProviderButton.swift; sourceTree = "<group>"; };
 		F620063485E9C32AEFFFCA9A /* BenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenApp.swift; sourceTree = "<group>"; };
 		F6372B46A46205B936B03CED /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		F76653553158ABD93AA95A68 /* OnboardingV2Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingV2Components.swift; sourceTree = "<group>"; };
@@ -276,6 +278,7 @@
 			isa = PBXGroup;
 			children = (
 				D5F2CCEE2A9C323E66090979 /* BenComponents.swift */,
+				F5A73E72637A952F057D3FA2 /* BenProviderButton.swift */,
 				48D4F001318AA2CE3A5FE684 /* BenTheme.swift */,
 				83D10B48F7915788B42436D5 /* ConfettiBurst.swift */,
 			);
@@ -537,6 +540,7 @@
 				EB3D74E6A9DEC1DF8D542037 /* AppServices.swift in Sources */,
 				5A9F0D122828DFCFB76B4CED /* BenApp.swift in Sources */,
 				F04198C1E1B530F8DCABDEDB /* BenComponents.swift in Sources */,
+				2D28F7F19AA838649A9DF71B /* BenProviderButton.swift in Sources */,
 				46861AD8B860C5160C3B7264 /* BenTheme.swift in Sources */,
 				4AC6D2F813D314B4FD139596 /* Bill.swift in Sources */,
 				15916B09963465496E88A1FF /* BillCategory.swift in Sources */,

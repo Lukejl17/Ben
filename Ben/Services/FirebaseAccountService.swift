@@ -42,13 +42,19 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
 
     @discardableResult
     func signIn(with provider: BenAccount.Provider) async throws -> BenAccount {
-        switch provider {
-        case .apple:
-            return try await signInWithApple()
-        case .google:
-            return try await signInWithGoogle()
-        case .password:
-            throw AccountError.signInFailed // use signIn(email:password:creating:)
+        do {
+            switch provider {
+            case .apple:
+                return try await signInWithApple()
+            case .google:
+                return try await signInWithGoogle()
+            case .password:
+                throw AccountError.signInFailed // use signIn(email:password:creating:)
+            }
+        } catch let error as AccountError {
+            throw error
+        } catch {
+            throw mapAnyError(error)
         }
     }
 
@@ -62,8 +68,8 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
                 result = try await Auth.auth().signIn(withEmail: email, password: password)
             }
             return try await finishSignIn(user: result.user, provider: .password)
-        } catch let error as NSError where error.domain == AuthErrorDomain {
-            throw mapAuthError(error)
+        } catch {
+            throw mapAnyError(error)
         }
     }
 
@@ -117,8 +123,8 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
             let credential = try await provider.credential(with: nil)
             let result = try await Auth.auth().signIn(with: credential)
             return try await finishSignIn(user: result.user, provider: .google)
-        } catch let error as NSError where error.domain == AuthErrorDomain {
-            throw mapAuthError(error)
+        } catch {
+            throw mapAnyError(error)
         }
     }
 
@@ -126,7 +132,14 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
 
     private func finishSignIn(user: User, provider: BenAccount.Provider) async throws -> BenAccount {
         let token = try await user.getIDToken()
-        let forwardingAddress = try await emailIn.register(idToken: token)
+        let forwardingAddress: String
+        do {
+            forwardingAddress = try await emailIn.register(idToken: token)
+        } catch {
+            // Firebase login worked; the mailroom handoff failed. Still a sign-in fail.
+            print("Ben register error: \(error)")
+            throw AccountError.signInFailed
+        }
 
         let account = BenAccount(
             id: user.uid,
@@ -148,12 +161,27 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
         }
     }
 
+    private func mapAnyError(_ error: Error) -> AccountError {
+        let ns = error as NSError
+        // Log the raw Firebase code so we can diagnose from the Xcode console.
+        print("Ben auth error domain=\(ns.domain) code=\(ns.code) info=\(ns.userInfo)")
+        if ns.domain == AuthErrorDomain {
+            return mapAuthError(ns)
+        }
+        // finishSignIn / register can fail after Firebase succeeds — surface that too.
+        if ns.domain == NSURLErrorDomain {
+            return .signInFailed
+        }
+        return mapAuthError(ns)
+    }
+
     private func mapAuthError(_ error: NSError) -> AccountError {
         switch AuthErrorCode(rawValue: error.code) {
         case .weakPassword: .weakPassword
         case .emailAlreadyInUse: .emailInUse
         case .wrongPassword, .invalidCredential, .userNotFound, .invalidEmail: .wrongCredentials
         case .webContextCancelled: .cancelled
+        case .operationNotAllowed: .providerDisabled
         default: .signInFailed
         }
     }

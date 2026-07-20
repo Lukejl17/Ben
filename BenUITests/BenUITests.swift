@@ -73,28 +73,44 @@ final class BenUITests: XCTestCase {
         app.buttons["Every second day"].tap()
         overdueCTA.tap()
 
-        // S8 — set state
-        let s8Continue = app.buttons["Continue"]
-        XCTAssertTrue(s8Continue.waitForExistence(timeout: 15))
-        XCTAssertTrue(app.staticTexts["Nothing else needs your attention."].exists)
-        s8Continue.tap()
+        // S8 — account required before paywall (no skip)
+        XCTAssertTrue(app.staticTexts["Save this setup"].waitForExistence(timeout: 15))
+        let apple = app.buttons["Continue with Apple"]
+        XCTAssertTrue(apple.exists)
+        apple.tap()
 
-        // S9 — paywall, three pages
-        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again, and never hear from Ben otherwise."]
+        // Commit pact
+        let thumb = app.buttons["Press to commit"]
+        XCTAssertTrue(thumb.waitForExistence(timeout: 10))
+        thumb.tap()
+        let sealed = app.buttons["Keep it that way"]
+        XCTAssertTrue(sealed.waitForExistence(timeout: 10))
+        sealed.tap()
+
+        // Paywall journey → trial → second-bill → home
+        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again. And never hear from Ben otherwise."]
             .waitForExistence(timeout: 5))
         app.buttons["Continue"].tap()
-        XCTAssertTrue(app.staticTexts["How the trial works"].waitForExistence(timeout: 5))
+
+        let giftCTA = app.buttons["Sounds fair"]
+        XCTAssertTrue(giftCTA.waitForExistence(timeout: 5))
+        giftCTA.tap()
+
+        XCTAssertTrue(app.staticTexts["How your 7 free\ndays work"].waitForExistence(timeout: 5))
         app.buttons["Continue"].tap()
-        let startTrial = app.buttons["Start my 7-day trial"]
+
+        let compareCTA = app.buttons["Fair enough"]
+        XCTAssertTrue(compareCTA.waitForExistence(timeout: 5))
+        compareCTA.tap()
+
+        let startTrial = app.buttons["Start for $0.00"]
         XCTAssertTrue(startTrial.waitForExistence(timeout: 5))
         startTrial.tap()
 
-        // S10 — second-bill bridge, decline is first-class
         let later = app.buttons["Later's fine"]
         XCTAssertTrue(later.waitForExistence(timeout: 5))
         later.tap()
 
-        // Home — the tracked bill is there
         XCTAssertTrue(app.staticTexts["Bills"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["AGL"].waitForExistence(timeout: 5))
     }

@@ -42,23 +42,19 @@ struct AccountSheet: View {
                         .foregroundStyle(Color.statusLateFg)
                 }
 
-                VStack(spacing: 10) {
-                    providerButton(
-                        title: "Continue with Apple", systemImage: "applelogo", provider: .apple
-                    )
-                    providerButton(
-                        title: "Continue with Google", systemImage: "g.circle.fill", provider: .google
-                    )
-                    BenSecondaryButton(title: "Use email instead", systemImage: "envelope") {
-                        withAnimation(.spring(duration: 0.3)) { showEmailForm.toggle() }
+                AccountSignInControls(
+                    isWorking: $isWorking,
+                    errorLine: $errorLine,
+                    showEmailForm: $showEmailForm,
+                    email: $email,
+                    password: $password,
+                    isCreatingAccount: $isCreatingAccount,
+                    onSignedIn: { account in
+                        onSignedIn?(account)
+                        dismiss()
                     }
-                    .accessibilityIdentifier("Use email instead")
-                }
+                )
                 .padding(.top, 8)
-
-                if showEmailForm {
-                    emailForm
-                }
 
                 Text("One account, no spam. Your bills stay yours.")
                     .font(.benMeta)
@@ -98,8 +94,60 @@ struct AccountSheet: View {
         .padding(.vertical, 10)
         .benRowSurface(radius: 22)
     }
+}
 
-    /// Email + password: the manual path for people who skip Apple/Google.
+/// Shared Apple / Google / email controls — used by the account sheet and
+/// the required S8 gate before paywall.
+struct AccountSignInControls: View {
+    @Environment(\.services) private var services
+    @Binding var isWorking: Bool
+    @Binding var errorLine: String?
+    @Binding var showEmailForm: Bool
+    @Binding var email: String
+    @Binding var password: String
+    @Binding var isCreatingAccount: Bool
+    var onSignedIn: (BenAccount) -> Void
+
+    var body: some View {
+        VStack(spacing: 10) {
+            BenProviderButton(provider: .apple) { signIn(with: .apple) }
+            BenProviderButton(provider: .google) { signIn(with: .google) }
+
+            orDivider
+
+            Button {
+                withAnimation(.spring(duration: 0.3)) { showEmailForm.toggle() }
+            } label: {
+                Text("Use email instead")
+                    .font(.benLabel)
+                    .foregroundStyle(Color.forestInk.opacity(0.75))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+            }
+            .buttonStyle(BenPressable())
+            .accessibilityIdentifier("Use email instead")
+
+            if showEmailForm {
+                emailForm
+            }
+        }
+    }
+
+    private var orDivider: some View {
+        HStack(spacing: 12) {
+            Rectangle()
+                .fill(Color.forestInk.opacity(0.15))
+                .frame(height: 1)
+            Text("Or")
+                .font(.benMeta)
+                .foregroundStyle(Color.forestInk.opacity(0.45))
+            Rectangle()
+                .fill(Color.forestInk.opacity(0.15))
+                .frame(height: 1)
+        }
+        .padding(.vertical, 2)
+    }
+
     private var emailForm: some View {
         VStack(alignment: .leading, spacing: 10) {
             TextField("Email", text: $email)
@@ -136,6 +184,24 @@ struct AccountSheet: View {
         .padding(.top, 4)
     }
 
+    private func signIn(with provider: BenAccount.Provider) {
+        guard !isWorking else { return }
+        isWorking = true
+        errorLine = nil
+        let accounts = services.accounts
+        let analytics = services.analytics
+        Task {
+            do {
+                let account = try await accounts.signIn(with: provider)
+                analytics.track(.accountCreated)
+                onSignedIn(account)
+            } catch {
+                errorLine = error.localizedDescription
+            }
+            isWorking = false
+        }
+    }
+
     private func submitEmailForm() {
         guard !isWorking else { return }
         isWorking = true
@@ -151,36 +217,11 @@ struct AccountSheet: View {
                     email: formEmail, password: formPassword, creating: creating
                 )
                 analytics.track(.accountCreated)
-                onSignedIn?(account)
-                dismiss()
+                onSignedIn(account)
             } catch {
                 errorLine = error.localizedDescription
             }
             isWorking = false
         }
-    }
-
-    private func providerButton(
-        title: String, systemImage: String, provider: BenAccount.Provider
-    ) -> some View {
-        BenSecondaryButton(title: title, systemImage: systemImage) {
-            guard !isWorking else { return }
-            isWorking = true
-            errorLine = nil
-            let accounts = services.accounts
-            let analytics = services.analytics
-            Task {
-                do {
-                    let account = try await accounts.signIn(with: provider)
-                    analytics.track(.accountCreated)
-                    onSignedIn?(account)
-                    dismiss()
-                } catch {
-                    errorLine = error.localizedDescription
-                }
-                isWorking = false
-            }
-        }
-        .accessibilityIdentifier(title)
     }
 }
