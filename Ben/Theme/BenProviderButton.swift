@@ -7,32 +7,48 @@ struct BenProviderButton: View {
         case apple, google
     }
 
+    /// Full-width "Continue with…" for account create; compact side-by-side for login.
+    enum Style {
+        case full, compact
+    }
+
     let provider: Provider
+    var style: Style = .full
     let action: () -> Void
 
     private var title: String {
-        switch provider {
-        case .apple: "Continue with Apple"
-        case .google: "Continue with Google"
+        switch (provider, style) {
+        case (.apple, .full): "Continue with Apple"
+        case (.google, .full): "Continue with Google"
+        case (.apple, .compact): "Apple"
+        case (.google, .compact): "Google"
         }
     }
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
+            HStack(spacing: style == .compact ? 8 : 10) {
                 mark
                     .frame(width: 20, height: 20)
                 Text(title)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: style == .compact ? 16 : 17, weight: .semibold))
             }
-            .foregroundStyle(Color.onCreamStrong)
+            .foregroundStyle(style == .compact ? Color.forestInk : Color.onCreamStrong)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
-            .background(Color.cream, in: Capsule())
-            .overlay(Capsule().strokeBorder(Color.onCream.opacity(0.12), lineWidth: 1))
+            .background(fill, in: Capsule())
+            .overlay(Capsule().strokeBorder(stroke, lineWidth: 1))
         }
         .buttonStyle(BenPressable())
-        .accessibilityIdentifier(title)
+        .accessibilityIdentifier(style == .full ? title : "Continue with \(title)")
+    }
+
+    private var fill: Color {
+        style == .compact ? Color.cream.opacity(0.12) : Color.cream
+    }
+
+    private var stroke: Color {
+        style == .compact ? Color.cream.opacity(0.22) : Color.onCream.opacity(0.12)
     }
 
     @ViewBuilder
@@ -41,7 +57,7 @@ struct BenProviderButton: View {
         case .apple:
             Image(systemName: "applelogo")
                 .font(.system(size: 18, weight: .medium))
-                .foregroundStyle(Color.onCreamStrong)
+                .foregroundStyle(style == .compact ? Color.forestInk : Color.onCreamStrong)
         case .google:
             GoogleMark()
         }

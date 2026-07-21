@@ -80,6 +80,23 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
         defaults.removeObject(forKey: key)
     }
 
+    func sendPasswordReset(to email: String) async throws {
+        let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.contains("@") else { throw AccountError.invalidEmail }
+        do {
+            try await Auth.auth().sendPasswordReset(withEmail: trimmed)
+        } catch {
+            // Don't leak whether the address exists — calm confirmation either way.
+            let ns = error as NSError
+            if AuthErrorCode(rawValue: ns.code) == .invalidEmail {
+                throw AccountError.invalidEmail
+            }
+            // userNotFound and friends: still succeed from the UI's point of view.
+            if AuthErrorCode(rawValue: ns.code) == .userNotFound { return }
+            throw mapAnyError(error)
+        }
+    }
+
     // MARK: - Apple
 
     private func signInWithApple() async throws -> BenAccount {

@@ -32,6 +32,7 @@ enum AccountError: Error, LocalizedError {
     case wrongCredentials
     /// Firebase Console → Authentication → Sign-in method: the provider is off.
     case providerDisabled
+    case invalidEmail
 
     var errorDescription: String? {
         switch self {
@@ -47,6 +48,8 @@ enum AccountError: Error, LocalizedError {
             "Email or password didn't match. Have another go."
         case .providerDisabled:
             "That sign-in method isn't switched on yet in Firebase."
+        case .invalidEmail:
+            "That doesn't look like an email. Check the spelling and try again."
         }
     }
 }
@@ -60,6 +63,8 @@ protocol AccountService: AnyObject, Sendable {
     func signOut()
     /// Proof-of-login for backend calls; nil when signed out.
     func idToken() async throws -> String?
+    /// Sends a password-reset email. No-op if the address isn't registered.
+    func sendPasswordReset(to email: String) async throws
 }
 
 /// Local stub: creates and persists a simulated account. Used by previews and
@@ -121,6 +126,12 @@ final class StubAccountService: AccountService, @unchecked Sendable {
 
     func idToken() async throws -> String? {
         account == nil ? nil : "stub-token"
+    }
+
+    func sendPasswordReset(to email: String) async throws {
+        let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.contains("@") else { throw AccountError.invalidEmail }
+        // Stub: pretend the reset email went out.
     }
 
     private func persist(_ account: BenAccount) {
