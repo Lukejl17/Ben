@@ -4,6 +4,8 @@ import SwiftUI
 struct WelcomeView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showSignIn = false
 
     var body: some View {
         BenScreen {
@@ -35,6 +37,26 @@ struct WelcomeView: View {
                 services.analytics.track(.onboardingStarted)
                 coordinator.advance(to: .demoScan)
             }
+            Button {
+                showSignIn = true
+            } label: {
+                Text("I already have an account")
+                    .font(.benLabel)
+                    .foregroundStyle(Color.forestInk.opacity(0.75))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+            }
+            .buttonStyle(BenPressable())
+            .accessibilityIdentifier("I already have an account")
+        }
+        .sheet(isPresented: $showSignIn) {
+            SignInView { _ in
+                // A returning user has bills waiting, not an interview.
+                hasCompletedOnboarding = true
+            }
+            .presentationDetents([.large])
+            .presentationCornerRadius(28)
+            .presentationBackground(Color.forestBottom)
         }
     }
 }

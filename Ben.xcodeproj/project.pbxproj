@@ -61,6 +61,7 @@
 		8E6EDD43CBD558F9A5024043 /* BillDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD436987B9E9BD9F0777E62 /* BillDetailView.swift */; };
 		9212349CAC8481CF08B4FFB8 /* EmailInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DC2CDDA13F7E8F7362DDC9 /* EmailInSheet.swift */; };
 		9425425482A268F9D66DC440 /* OnboardingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB845796FD03BDFDDD41226 /* OnboardingModels.swift */; };
+		9FE7AF576C8809ADDB4A43B7 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2040188720E8DBF3F90D94 /* SignInView.swift */; };
 		A0A2BCDA34ACE2275B47C4D3 /* PaymentDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9680FB75DCD09A1EF814B503 /* PaymentDetails.swift */; };
 		A1BF2CB391D822994EE18DDF /* Figtree-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 43AF552C6BAC3A2CC56C0173 /* Figtree-Variable.ttf */; };
 		A5FECF5DF2FEB2F6BA58AF19 /* SubscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87989AA43748F65C5431A8CE /* SubscriptionTests.swift */; };
@@ -155,6 +156,7 @@
 		9769B6A1AEB1C0DEBF878E71 /* BillParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillParsing.swift; sourceTree = "<group>"; };
 		992D3AAAD100AE4EBFCBFA41 /* ReminderStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderStyleView.swift; sourceTree = "<group>"; };
 		9B5538D3C5E135F836B03AB3 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		9E2040188720E8DBF3F90D94 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		9EBE7D358CE9DD7567DEE507 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		A3FE7C86E066B7A77F16EA65 /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
 		A4535C1B1625A80EB6FE213A /* OverdueStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverdueStyleView.swift; sourceTree = "<group>"; };
@@ -402,6 +404,7 @@
 				992D3AAAD100AE4EBFCBFA41 /* ReminderStyleView.swift */,
 				A51D11383F8442B847789DB6 /* SecondBillView.swift */,
 				A7C779C656ACED8336E46F91 /* SetStateView.swift */,
+				9E2040188720E8DBF3F90D94 /* SignInView.swift */,
 				1211F816584B17BEC264ACE5 /* UploadBillView.swift */,
 				9B5538D3C5E135F836B03AB3 /* WelcomeView.swift */,
 			);
@@ -590,6 +593,7 @@
 				7000A84DFA998DCD5EA766F6 /* SecondBillView.swift in Sources */,
 				34A9472DB1200218BF595538 /* SetStateView.swift in Sources */,
 				70FC58F578C03E6C91AEB130 /* SettingsView.swift in Sources */,
+				9FE7AF576C8809ADDB4A43B7 /* SignInView.swift in Sources */,
 				C83F2969FBB5DDCE18516427 /* Subscription.swift in Sources */,
 				562C91F66D13F6E04C1C5A42 /* UploadBillView.swift in Sources */,
 				84F36372710AD65AE4F81D66 /* VisionBillParser.swift in Sources */,

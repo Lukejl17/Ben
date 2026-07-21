@@ -32,6 +32,11 @@ struct ContentView: View {
                     // The confirm sheet lives on the Bills tab — land there first.
                     if requested { selectedTab = 0 }
                 }
+                .onAppear {
+                    // Signing back in after a sign-out starts on Bills, not
+                    // wherever Settings left the tab bar.
+                    selectedTab = 0
+                }
             } else {
                 OnboardingFlow()
             }

@@ -4,6 +4,8 @@ import SwiftUI
 /// widget, tool rows, quiet app info.
 struct SettingsView: View {
     @Environment(\.services) private var services
+    @Environment(OnboardingCoordinator.self) private var coordinator
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     private enum Sheet: String, Identifiable {
         case account, export, emailIn
@@ -66,7 +68,10 @@ struct SettingsView: View {
                     if account != nil {
                         Button {
                             services.accounts.signOut()
-                            withAnimation(.spring(duration: 0.3)) { account = nil }
+                            account = nil
+                            // Back to the front door: onboard again or sign in.
+                            coordinator.resetToWelcome()
+                            hasCompletedOnboarding = false
                         } label: {
                             Text("Sign out")
                                 .font(.benLabel)

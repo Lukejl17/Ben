@@ -244,14 +244,20 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "settings-emailin-signedin")
         app.swipeDown(velocity: .fast)
 
+        // Sign out kicks back to the welcome handshake.
         XCTAssertTrue(app.buttons["Sign out"].waitForExistence(timeout: 5))
         app.buttons["Sign out"].tap()
+        let signInCTA = app.buttons["I already have an account"]
+        XCTAssertTrue(signInCTA.waitForExistence(timeout: 5))
+        snap(app, "s01-welcome-signedout")
 
-        app.buttons["Email bills in"].tap()
-        XCTAssertTrue(app.buttons["Set up my address"].waitForExistence(timeout: 5))
-        snap(app, "settings-emailin-signedout")
-        app.buttons["Set up my address"].tap()
-        XCTAssertTrue(app.buttons["Continue with Apple"].waitForExistence(timeout: 5))
-        snap(app, "settings-account-sheet")
+        // The returning-user sign-in page, then straight back to home.
+        signInCTA.tap()
+        let apple = app.buttons["Continue with Apple"]
+        XCTAssertTrue(apple.waitForExistence(timeout: 5))
+        snap(app, "s01b-signin")
+        apple.tap()
+        // Signing back in lands on the Bills tab with the saved bill intact.
+        XCTAssertTrue(app.staticTexts["AGL"].waitForExistence(timeout: 10))
     }
 }

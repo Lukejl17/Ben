@@ -88,6 +88,18 @@ final class OnboardingCoordinator {
         step = .upload
     }
 
+    /// Sign-out: back to the handshake with no leftover flow state.
+    func resetToWelcome() {
+        pendingImageData = nil
+        parsed = nil
+        confirmedBill = nil
+        pendingEmailKey = nil
+        isSampleWalkthrough = false
+        isAddingSubsequentBill = false
+        uploadMethod = .photo
+        step = .welcome
+    }
+
     func resetForSecondBill() {
         pendingImageData = nil
         parsed = nil

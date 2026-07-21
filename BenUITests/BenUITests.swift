@@ -32,18 +32,57 @@ final class BenUITests: XCTestCase {
 
         app.launch()
 
-        // S1 — welcome
-        let start = app.buttons["Set up my first bill"]
+        // S1 — welcome (sign-in CTA lives under the main button)
+        let start = app.buttons["Watch Ben work"]
         XCTAssertTrue(start.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["I already have an account"].exists)
         start.tap()
 
-        // S2 — intent
+        // S2 — demo scan
+        let demoCTA = app.buttons["That, but for my bills"]
+        XCTAssertTrue(demoCTA.waitForExistence(timeout: 5))
+        demoCTA.tap()
+
+        // Interview: intent → sources → volume → maths → late fees →
+        // feeling → mirror → odds → reminder style → plan
         app.buttons["Just bought a home"].tap()
         app.buttons["Continue"].tap()
 
-        // S3 — reminder style (default pre-selected)
-        XCTAssertTrue(app.staticTexts["A few days early"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Buried in my email"].waitForExistence(timeout: 5))
+        app.buttons["Buried in my email"].tap()
         app.buttons["Continue"].tap()
+
+        XCTAssertTrue(app.buttons["8–12"].waitForExistence(timeout: 5))
+        app.buttons["8–12"].tap()
+        app.buttons["Continue"].tap()
+
+        let mathsCTA = app.buttons["Take them off me"]
+        XCTAssertTrue(mathsCTA.waitForExistence(timeout: 5))
+        mathsCTA.tap()
+
+        XCTAssertTrue(app.buttons["A few times"].waitForExistence(timeout: 5))
+        app.buttons["A few times"].tap()
+        app.buttons["Continue"].tap()
+
+        XCTAssertTrue(app.buttons["It's always in the back of my mind"].waitForExistence(timeout: 5))
+        app.buttons["It's always in the back of my mind"].tap()
+        app.buttons["Continue"].tap()
+
+        let mirrorCTA = app.buttons["That's me"]
+        XCTAssertTrue(mirrorCTA.waitForExistence(timeout: 5))
+        mirrorCTA.tap()
+
+        let oddsCTA = app.buttons["Not me anymore"]
+        XCTAssertTrue(oddsCTA.waitForExistence(timeout: 5))
+        oddsCTA.tap()
+
+        XCTAssertTrue(app.buttons["A few days early"].waitForExistence(timeout: 5))
+        app.buttons["A few days early"].tap()
+        app.buttons["Continue"].tap()
+
+        let planCTA = app.buttons["Let's do the first bill"]
+        XCTAssertTrue(planCTA.waitForExistence(timeout: 5))
+        planCTA.tap()
 
         // S4 — trust block + method
         XCTAssertTrue(app.staticTexts["You confirm everything before it's saved."].waitForExistence(timeout: 5))
