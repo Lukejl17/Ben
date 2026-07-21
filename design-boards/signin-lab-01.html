@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ben — Sign-in lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Ben tokens (mirror of BenTheme.swift — do not invent new colours) ── */
+:root {
+  --forest-top: #25401C;
+  --forest-bottom: #1B3015;
+  --glow-warm: #3E6B2E;
+  --glow-deep: #173014;
+  --chartreuse: #D3E97A;
+  --on-chartreuse: #22361B;
+  --cream: #FAF3E3;
+  --on-cream: #293223;
+  --on-cream-strong: #2F4A26;
+  --on-cream-muted: #6B6B57;
+  --forest-ink: #F8F1DE;
+  --google-blue: #4285F4;
+  --google-green: #34A853;
+  --google-yellow: #FBBC05;
+  --google-red: #EA4335;
+  --row-fill: rgba(248,241,222,0.07);
+  --row-stroke: rgba(248,241,222,0.15);
+  --baloo: 'Baloo 2', system-ui, sans-serif;
+  --figtree: 'Figtree', system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #101810;
+  font-family: var(--figtree);
+  padding: 40px 28px 80px;
+  color: var(--forest-ink);
+}
+
+h1 {
+  font-family: var(--baloo);
+  font-weight: 800;
+  color: var(--chartreuse);
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.board-note {
+  color: rgba(248,241,222,0.6);
+  font-size: 14px;
+  margin-bottom: 28px;
+  max-width: 640px;
+  line-height: 1.5;
+}
+
+.board-note code {
+  font-size: 12px;
+  background: rgba(248,241,222,0.08);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.board {
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+
+.variant {
+  flex: 0 0 auto;
+}
+
+.variant-label {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 13px;
+  color: rgba(248,241,222,0.45);
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+}
+
+/* Phone frame ~ iPhone proportions */
+.phone {
+  width: 360px;
+  height: 780px;
+  border-radius: 44px;
+  border: 8px solid #0d130c;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(420px 420px at 85% -10%, rgba(62,107,46,0.55), transparent),
+    radial-gradient(420px 420px at -10% 110%, rgba(23,48,20,0.55), transparent),
+    linear-gradient(168deg, var(--forest-top), var(--forest-bottom));
+  box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+}
+
+.island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 26px;
+  border-radius: 14px;
+  background: #0d130c;
+  z-index: 2;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 28px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--forest-ink);
+}
+
+.close {
+  position: absolute;
+  top: 48px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--row-fill);
+  border: 1px solid var(--row-stroke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--forest-ink);
+  font-size: 16px;
+  z-index: 2;
+}
+
+.screen {
+  flex: 1;
+  padding: 28px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.brand {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--chartreuse);
+  text-align: center;
+  margin-top: 18px;
+}
+
+.title {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--chartreuse);
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.1;
+}
+
+.sub {
+  text-align: center;
+  font-size: 15px;
+  color: rgba(248,241,222,0.7);
+  margin-top: 8px;
+  line-height: 1.4;
+  padding: 0 8px;
+}
+
+.providers {
+  display: flex;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.provider {
+  flex: 1;
+  height: 52px;
+  border-radius: 999px;
+  background: rgba(250,243,227,0.12);
+  border: 1px solid rgba(250,243,227,0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--forest-ink);
+}
+
+.provider.cream {
+  background: var(--cream);
+  border-color: rgba(41,50,35,0.12);
+  color: var(--on-cream-strong);
+}
+
+.g-mark {
+  font-family: system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  background: conic-gradient(from 0deg, var(--google-blue), var(--google-green), var(--google-yellow), var(--google-red), var(--google-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.apple-mark {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: rgba(248,241,222,0.45);
+  font-size: 13px;
+}
+
+.or::before,
+.or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(248,241,222,0.15);
+}
+
+.field {
+  background: var(--cream);
+  border-radius: 22px;
+  padding: 16px 18px;
+  color: var(--on-cream-muted);
+  font-size: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
+
+.forgot {
+  text-align: right;
+  font-size: 13px;
+  color: rgba(248,241,222,0.7);
+  margin: -2px 4px 0;
+}
+
+.cta {
+  margin-top: 18px;
+  height: 54px;
+  border-radius: 999px;
+  background: var(--chartreuse);
+  color: var(--on-chartreuse);
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cta.dim {
+  opacity: 0.45;
+}
+
+.signup {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: rgba(248,241,222,0.55);
+}
+
+.signup strong {
+  color: var(--forest-ink);
+  font-weight: 600;
+}
+
+.legal {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 22px;
+  font-size: 11.5px;
+  color: rgba(248,241,222,0.45);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Stacked provider variant */
+.providers.stack {
+  flex-direction: column;
+}
+
+.providers.stack .provider {
+  justify-content: center;
+}
+
+.notes {
+  margin-top: 36px;
+  max-width: 760px;
+  background: rgba(248,241,222,0.04);
+  border: 1px solid rgba(248,241,222,0.1);
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+
+.notes h2 {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--chartreuse);
+  margin-bottom: 8px;
+}
+
+.notes ul {
+  padding-left: 18px;
+  color: rgba(248,241,222,0.65);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.notes li + li { margin-top: 4px; }
+</style>
+</head>
+<body>
+  <h1>Sign-in lab</h1>
+  <p class="board-note">
+    HTML scratchpad for the returning-user login sheet. Tweak copy, layout, and
+    button treatment here first — then we’ll port the winner into Swift.
+    File: <code>design-boards/signin-lab-01.html</code>
+  </p>
+
+  <div class="board">
+    <!-- A: Current shipping layout (side-by-side glass providers) -->
+    <div class="variant">
+      <div class="variant-label">A · Current (side-by-side glass)</div>
+      <div class="phone">
+        <div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● Wi‑Fi ▮</span></div>
+        <div class="close">×</div>
+        <div class="screen">
+          <div class="brand">Ben</div>
+          <div class="title">Welcome back.</div>
+          <div class="sub">Enter your details to pick up where you left off.</div>
+
+          <div class="providers">
+            <div class="provider"><span class="g-mark">G</span> Google</div>
+            <div class="provider"><span class="apple-mark"></span> Apple</div>
+          </div>
+
+          <div class="or">Or</div>
+
+          <div class="field">Email address</div>
+          <div class="field">Password</div>
+          <div class="forgot">Forgot password?</div>
+
+          <div class="cta dim">Log in</div>
+          <div class="signup">Create an account? <strong>Sign up</strong></div>
+          <div class="legal">Terms of Service &nbsp;|&nbsp; Privacy Policy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B: Cream providers (closer to Floxly reference weight) -->
+    <div class="variant">
+      <div class="variant-label">B · Cream providers + filled CTA</div>
+      <div class="phone">
+        <div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● Wi‑Fi ▮</span></div>
+        <div class="close">×</div>
+        <div class="screen">
+          <div class="brand">Ben</div>
+          <div class="title">Hi there.</div>
+          <div class="sub">Sign in and your bills are right where you left them.</div>
+
+          <div class="providers">
+            <div class="provider cream"><span class="g-mark">G</span> Google</div>
+            <div class="provider cream"><span class="apple-mark"></span> Apple</div>
+          </div>
+
+          <div class="or">Or</div>
+
+          <div class="field">Email address</div>
+          <div class="field">Password</div>
+          <div class="forgot">Forgot password?</div>
+
+          <div class="cta">Log in</div>
+          <div class="signup">Create an account? <strong>Sign up</strong></div>
+          <div class="legal">Terms of Service &nbsp;|&nbsp; Privacy Policy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: Stacked full-width providers -->
+    <div class="variant">
+      <div class="variant-label">C · Stacked full-width</div>
+      <div class="phone">
+        <div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● Wi‑Fi ▮</span></div>
+        <div class="close">×</div>
+        <div class="screen">
+          <div class="brand">Ben</div>
+          <div class="title">Welcome back.</div>
+          <div class="sub">Enter your details to pick up where you left off.</div>
+
+          <div class="providers stack">
+            <div class="provider cream"><span class="apple-mark"></span> Continue with Apple</div>
+            <div class="provider cream"><span class="g-mark">G</span> Continue with Google</div>
+          </div>
+
+          <div class="or">Or</div>
+
+          <div class="field">Email address</div>
+          <div class="field">Password</div>
+          <div class="forgot">Forgot password?</div>
+
+          <div class="cta">Log in</div>
+          <div class="signup">Create an account? <strong>Sign up</strong></div>
+          <div class="legal">Terms of Service &nbsp;|&nbsp; Privacy Policy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h2>How to use this board</h2>
+    <ul>
+      <li>Edit this HTML file and refresh the preview — that’s the design loop.</li>
+      <li>Pick a variant (or mash them up), then ask me to port it into <code>SignInView.swift</code>.</li>
+      <li>Stick to the CSS variables at the top — they mirror <code>BenTheme.swift</code>.</li>
+    </ul>
+  </div>
+</body>
+</html>

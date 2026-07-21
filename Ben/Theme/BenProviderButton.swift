@@ -36,19 +36,10 @@ struct BenProviderButton: View {
             .foregroundStyle(style == .compact ? Color.forestInk : Color.onCreamStrong)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
-            .background(fill, in: Capsule())
-            .overlay(Capsule().strokeBorder(stroke, lineWidth: 1))
+            .modifier(ProviderSurface(style: style))
         }
         .buttonStyle(BenPressable())
         .accessibilityIdentifier(style == .full ? title : "Continue with \(title)")
-    }
-
-    private var fill: Color {
-        style == .compact ? Color.cream.opacity(0.12) : Color.cream
-    }
-
-    private var stroke: Color {
-        style == .compact ? Color.cream.opacity(0.22) : Color.onCream.opacity(0.12)
     }
 
     @ViewBuilder
@@ -60,6 +51,23 @@ struct BenProviderButton: View {
                 .foregroundStyle(style == .compact ? Color.forestInk : Color.onCreamStrong)
         case .google:
             GoogleMark()
+        }
+    }
+}
+
+/// Compact pills get native Liquid Glass; full-width keeps the solid cream
+/// face users expect from standard provider buttons.
+private struct ProviderSurface: ViewModifier {
+    let style: BenProviderButton.Style
+
+    func body(content: Content) -> some View {
+        switch style {
+        case .compact:
+            content.glassEffect(.regular.interactive(), in: .capsule)
+        case .full:
+            content
+                .background(Color.cream, in: Capsule())
+                .overlay(Capsule().strokeBorder(Color.onCream.opacity(0.12), lineWidth: 1))
         }
     }
 }

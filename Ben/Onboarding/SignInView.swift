@@ -41,12 +41,14 @@ struct SignInView: View {
                     .padding(.top, 6)
                     .padding(.bottom, 22)
 
-                HStack(spacing: 12) {
-                    BenProviderButton(provider: .google, style: .compact) {
-                        signIn(with: .google)
-                    }
-                    BenProviderButton(provider: .apple, style: .compact) {
-                        signIn(with: .apple)
+                GlassEffectContainer {
+                    HStack(spacing: 12) {
+                        BenProviderButton(provider: .google, style: .compact) {
+                            signIn(with: .google)
+                        }
+                        BenProviderButton(provider: .apple, style: .compact) {
+                            signIn(with: .apple)
+                        }
                     }
                 }
 
