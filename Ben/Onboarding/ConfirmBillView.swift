@@ -19,7 +19,7 @@ struct ConfirmBillView: View {
     @State private var isRemoving = false
 
     private var amount: Decimal? {
-        Decimal(string: amountText.replacingOccurrences(of: ",", with: ""))
+        CurrencyAmountField.decimal(from: amountText)
     }
 
     private var isSplit: Bool { installments != nil }
@@ -78,10 +78,10 @@ struct ConfirmBillView: View {
                     installmentSummary(installments)
                 } else {
                     BenField("Amount") {
-                        TextField("$0.00", text: $amountText)
-                            .keyboardType(.decimalPad)
-                            .monospacedDigit()
-                            .accessibilityIdentifier("confirm-amount")
+                        CurrencyAmountField(
+                            text: $amountText,
+                            accessibilityIdentifier: "confirm-amount"
+                        )
                     }
                     BenField("Due date") {
                         DatePicker("", selection: $dueDate, displayedComponents: .date)
@@ -262,15 +262,16 @@ struct ConfirmBillView: View {
             )
         )
 
-        // An emailed bill is confirmed — clear it off the mailroom shelf.
+        // An emailed bill is confirmed — clear the shelf immediately, then claim.
         if let key = coordinator.pendingEmailKey {
             coordinator.pendingEmailKey = nil
+            pendingMonitor.removeLocally(key: key)
             let accounts = services.accounts
             let emailIn = services.emailIn
             Task {
-                if let token = try? await accounts.idToken() {
-                    try? await emailIn.claim(key: key, idToken: token)
-                }
+                await pendingMonitor.claimAfterConfirm(
+                    key: key, accounts: accounts, emailIn: emailIn
+                )
             }
         }
 

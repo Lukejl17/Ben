@@ -1,4 +1,3 @@
-import Charts
 import SwiftData
 import SwiftUI
 
@@ -10,6 +9,7 @@ struct HomeView: View {
     @Environment(PendingEmailMonitor.self) private var pendingMonitor
     @Environment(\.services) private var services
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \Bill.dueDate) private var bills: [Bill]
     @State private var showAddBill = false
     @State private var detailBill: Bill?
@@ -201,58 +201,106 @@ struct HomeView: View {
     }
 
     private var billList: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Bills")
-                    .font(.benTitle)
-                    .foregroundStyle(Color.chartreuse)
-                    .padding(.top, 18)
-                    .accessibilityAddTraits(.isHeader)
+        // List (not ScrollView) so swipe-to-remove works like Mail / Reminders.
+        List {
+            Text("Bills")
+                .font(.benTitle)
+                .foregroundStyle(Color.chartreuse)
+                .padding(.top, 10)
+                .accessibilityAddTraits(.isHeader)
+                .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 4, trailing: 20))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
 
-                if pendingMonitor.hasPending {
-                    pendingApprovalSection
+            if pendingMonitor.hasPending {
+                Section {
+                    ForEach(pendingMonitor.previews) { preview in
+                        pendingRow(preview)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button("Remove", systemImage: "trash", role: .destructive) {
+                                    dismissPending(preview.item.key)
+                                }
+                            }
+                            .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 4, trailing: 20))
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                } header: {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("Needs a look")
+                            .font(.benCardTitle)
+                            .foregroundStyle(Color.chartreuse)
+                        Spacer()
+                        Text(pendingMonitor.count == 1 ? "1 bill" : "\(pendingMonitor.count) bills")
+                            .font(.benMeta)
+                            .foregroundStyle(Color.forestInk.opacity(0.5))
+                    }
+                    .padding(.horizontal, 4)
+                    .textCase(nil)
+                    .accessibilityIdentifier("pending-email-approval")
                 }
+            }
 
-                HomeSummaryWidgets(
-                    nextUp: nextUp,
-                    thisMonth: thisMonth,
-                    biggestSlice: biggestSlice,
-                    onTapBill: { detailBill = $0 }
-                )
+            HomeSummaryWidgets(
+                nextUp: nextUp,
+                thisMonth: thisMonth,
+                biggestSlice: biggestSlice,
+                onTapBill: { detailBill = $0 }
+            )
+            .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 8, trailing: 20))
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
 
-                if case .lapsed = services.subscriptions.state() {
-                    Text("Your trial has ended. Bills stay visible here, reminders are off.")
-                        .font(.benMeta)
-                        .foregroundStyle(Color.forestInk.opacity(0.65))
-                        .padding(14)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .benRowSurface(radius: 20)
-                }
+            if case .lapsed = services.subscriptions.state() {
+                Text("Your trial has ended. Bills stay visible here, reminders are off.")
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.65))
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .benRowSurface(radius: 20)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 8, trailing: 20))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
 
-                ForEach(sections, id: \.title) { section in
-                    sectionHeader(title: section.title, bills: section.bills)
-                        .padding(.top, 12)
+            ForEach(sections, id: \.title) { section in
+                Section {
                     ForEach(section.bills) { bill in
                         BillRow(bill: bill) {
                             detailBill = bill
                         }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button("Remove", systemImage: "trash", role: .destructive) {
+                                removeTrackedBill(bill)
+                            }
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 4, trailing: 20))
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                    }
+                } header: {
+                    sectionHeader(title: section.title, bills: section.bills)
+                        .textCase(nil)
+                        .padding(.top, 8)
+                }
+            }
+
+            ExpectedSection(
+                expectations: expectations,
+                onArrived: { startAddBill() },
+                onStopExpecting: { expectation in
+                    if let source = bills.first(where: { $0.uuid == expectation.sourceBillUUID }) {
+                        source.recurrence = BillRecurrence.none.rawValue
+                        services.scheduler.cancel(identifiers: ["expect-\(source.uuid)"])
                     }
                 }
-
-                ExpectedSection(
-                    expectations: expectations,
-                    onArrived: { startAddBill() },
-                    onStopExpecting: { expectation in
-                        if let source = bills.first(where: { $0.uuid == expectation.sourceBillUUID }) {
-                            source.recurrence = BillRecurrence.none.rawValue
-                            services.scheduler.cancel(identifiers: ["expect-\(source.uuid)"])
-                        }
-                    }
-                )
-            }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 110)
+            )
+            .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 110, trailing: 20))
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .refreshable {
             await pendingMonitor.refresh(
                 accounts: services.accounts,
@@ -260,6 +308,12 @@ struct HomeView: View {
                 parser: services.parser
             )
         }
+    }
+
+    private func removeTrackedBill(_ bill: Bill) {
+        services.scheduler.cancel(identifiers: bill.notificationIDs)
+        modelContext.delete(bill)
+        try? modelContext.save()
     }
 
     /// Section header: title left, factual total right. No drama, even for overdue.
@@ -279,6 +333,7 @@ struct HomeView: View {
     }
 
     /// Named forwarded bills waiting for a once-over — confirm or remove.
+    /// Used on the empty state (ScrollView); list path renders rows inline.
     private var pendingApprovalSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .firstTextBaseline) {
@@ -297,6 +352,16 @@ struct HomeView: View {
             }
         }
         .accessibilityIdentifier("pending-email-approval")
+    }
+
+    private func dismissPending(_ key: String) {
+        Task {
+            await pendingMonitor.dismiss(
+                key: key,
+                accounts: services.accounts,
+                emailIn: services.emailIn
+            )
+        }
     }
 
     private func pendingRow(_ preview: PendingBillPreview) -> some View {
@@ -339,13 +404,7 @@ struct HomeView: View {
             .disabled(openingPendingKey != nil)
 
             Button {
-                Task {
-                    await pendingMonitor.dismiss(
-                        key: preview.item.key,
-                        accounts: services.accounts,
-                        emailIn: services.emailIn
-                    )
-                }
+                dismissPending(preview.item.key)
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 12, weight: .bold))
@@ -361,13 +420,7 @@ struct HomeView: View {
         .benRowSurface(radius: 26)
         .contextMenu {
             Button("Remove", systemImage: "trash", role: .destructive) {
-                Task {
-                    await pendingMonitor.dismiss(
-                        key: preview.item.key,
-                        accounts: services.accounts,
-                        emailIn: services.emailIn
-                    )
-                }
+                dismissPending(preview.item.key)
             }
         }
     }
@@ -439,117 +492,5 @@ struct HomeView: View {
             coordinator.advance(to: .capture)
         }
         showAddBill = true
-    }
-}
-
-/// The summary block at the top of home: cream hero + the two mini widgets.
-struct HomeSummaryWidgets: View {
-    let nextUp: Bill?
-    let thisMonth: (total: Decimal, count: Int)
-    let biggestSlice: CategorySlice?
-    let onTapBill: (Bill) -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            if let nextUp {
-                heroWidget(for: nextUp)
-            }
-            miniRow
-        }
-    }
-
-    /// The cream hero: the one bill that needs you next.
-    private func heroWidget(for bill: Bill) -> some View {
-        Button {
-            onTapBill(bill)
-        } label: {
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .top) {
-                    BenEyebrow(text: "Next up")
-                    Spacer()
-                    StatusChipOnCream(status: bill.status)
-                }
-                Text("\(bill.issuer) · \(BillCategory.label(for: bill.resolvedCategory))")
-                    .font(.benCardTitle)
-                    .foregroundStyle(Color.onCream)
-                    .padding(.top, 4)
-                // Baloo's line box is tall at 46pt — pull the neighbours in.
-                Text(bill.amount.formatted(.currency(code: "AUD")))
-                    .font(.benHeroAmount)
-                    .monospacedDigit()
-                    .foregroundStyle(Color.onCreamStrong)
-                    .padding(.vertical, -6)
-                Text(heroDueLine(for: bill))
-                    .font(.benMeta)
-                    .foregroundStyle(Color.onCreamMuted)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.cream, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
-        }
-        .buttonStyle(BenPressable(haptic: .light))
-        .benShadow(.cream)
-    }
-
-    private func heroDueLine(for bill: Bill) -> String {
-        let due = "Due \(bill.dueDate.formatted(.dateTime.weekday(.wide).day().month(.wide)))"
-        return bill.hasNotification ? due + " · reminder set" : due
-    }
-
-    /// Two supporting widgets: month total + biggest category.
-    private var miniRow: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                BenEyebrow(text: "This month", color: Color.forestInk.opacity(0.55))
-                Text(thisMonth.total.formatted(.currency(code: "AUD").precision(.fractionLength(0))))
-                    .font(.baloo("Baloo2-ExtraBold", 28, relativeTo: .title))
-                    .monospacedDigit()
-                    .foregroundStyle(Color.chartreuse)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .padding(.top, 6)
-                Text(thisMonth.count == 1 ? "1 bill" : "\(thisMonth.count) bills")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.6))
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .benRowSurface(radius: 26)
-
-            VStack(alignment: .leading, spacing: 2) {
-                BenEyebrow(text: "Biggest", color: Color.forestInk.opacity(0.55))
-                if let slice = biggestSlice {
-                    HStack(spacing: 10) {
-                        miniDonut(share: slice.share)
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("\(Int((slice.share * 100).rounded()))%")
-                                .font(.baloo("Baloo2-ExtraBold", 22, relativeTo: .title2))
-                                .foregroundStyle(Color.forestInk)
-                            Text(BillCategory.label(for: slice.category))
-                                .font(.benMeta)
-                                .foregroundStyle(Color.forestInk.opacity(0.6))
-                                .lineLimit(1)
-                        }
-                    }
-                    .padding(.top, 6)
-                }
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .benRowSurface(radius: 26)
-        }
-    }
-
-    private func miniDonut(share: Double) -> some View {
-        ZStack {
-            Circle()
-                .stroke(Color.rowStroke, lineWidth: 7)
-            Circle()
-                .trim(from: 0, to: share)
-                .stroke(Color.chartreuse, style: StrokeStyle(lineWidth: 7, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-        }
-        .frame(width: 44, height: 44)
     }
 }

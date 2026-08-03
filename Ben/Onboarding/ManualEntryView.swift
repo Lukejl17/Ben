@@ -14,7 +14,7 @@ struct ManualEntryView: View {
     @State private var isRemoving = false
 
     private var amount: Decimal? {
-        Decimal(string: amountText.replacingOccurrences(of: ",", with: ""))
+        CurrencyAmountField.decimal(from: amountText)
     }
 
     private var isValid: Bool {
@@ -42,9 +42,7 @@ struct ManualEntryView: View {
                     TextField("AGL, Telstra…", text: $issuer)
                 }
                 BenField("Amount") {
-                    TextField("$0.00", text: $amountText)
-                        .keyboardType(.decimalPad)
-                        .monospacedDigit()
+                    CurrencyAmountField(text: $amountText)
                 }
                 BenField("Due date") {
                     DatePicker("", selection: $dueDate, displayedComponents: .date)

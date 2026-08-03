@@ -49,6 +49,12 @@ struct BenApp: App {
                 .onOpenURL { url in
                     GIDSignIn.sharedInstance.handle(url)
                 }
+                .benInstallKeyboardDismiss()
+                .task {
+                    // Window may not be key on first appear — retry shortly.
+                    try? await Task.sleep(for: .milliseconds(200))
+                    KeyboardDismissInstaller.installIfNeeded()
+                }
         }
         .modelContainer(Self.makeContainer())
     }

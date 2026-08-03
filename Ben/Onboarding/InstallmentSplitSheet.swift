@@ -95,6 +95,8 @@ struct InstallmentSplitSheet: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .benKeyboardDoneToolbar()
         .benSheetClose()
         .onAppear { rebuildDrafts() }
     }

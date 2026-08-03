@@ -130,6 +130,23 @@ private struct BenSheetCloseModifier: ViewModifier {
 
 extension View {
     func benSheetClose() -> some View { modifier(BenSheetCloseModifier()) }
+
+    /// Done above the keyboard / number pad — decimal pads have no return key.
+    func benKeyboardDoneToolbar() -> some View {
+        toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") {
+                    UIApplication.shared.sendAction(
+                        #selector(UIResponder.resignFirstResponder),
+                        to: nil, from: nil, for: nil
+                    )
+                }
+                .font(.benLabel)
+                .foregroundStyle(Color.chartreuse)
+            }
+        }
+    }
 }
 
 /// Widget eyebrow: tiny tracked uppercase label.
@@ -365,6 +382,7 @@ struct BenScreen<Content: View, CTA: View>: View {
             }
             .scrollDismissesKeyboard(.interactively)
         }
+        .benKeyboardDoneToolbar()
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 10) {
                 cta

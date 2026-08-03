@@ -18,6 +18,7 @@
 		1A59B790D20C78506934A32B /* InstallmentSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF353C097B4F9CC01738BA6E /* InstallmentSplitter.swift */; };
 		1BF35BEC62CBA34E9491D64C /* CaptureExtractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9744BD8828BD4119D2EC87F /* CaptureExtractView.swift */; };
 		1E24678AEFC6092472C4446E /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933DFE07AE932F586707E638 /* OnboardingFlow.swift */; };
+		20ED27A2A8900448672C1D90 /* KeyboardDismiss.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4426A464C0D27167BAFBA987 /* KeyboardDismiss.swift */; };
 		224872B43D02625E320702CF /* EditBillSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650DBE1FD70026A020FD1FB9 /* EditBillSheet.swift */; };
 		23371D1F4E0CDEEF5C103A0F /* InsightsMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880CE6FA14E78D37DC9B2C79 /* InsightsMath.swift */; };
 		2424357ADAFDA991392B5BC9 /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8141350D969191D98384F2 /* InsightsView.swift */; };
@@ -90,9 +91,11 @@
 		CEDA3BFF6A57CFF4428C00EC /* ExpectedSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D003D28D1314F30A458E7 /* ExpectedSection.swift */; };
 		D57ADCF0997C262F711681B5 /* PaymentDetailsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D886AF4600BB007A655D13B /* PaymentDetailsCard.swift */; };
 		DA60403A82CC67C52C700F96 /* OverdueStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4535C1B1625A80EB6FE213A /* OverdueStyleView.swift */; };
+		DAF4D64C2878D42761983092 /* CurrencyAmountField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3AE5771BBCB26931C94239 /* CurrencyAmountField.swift */; };
 		DAFCADDE714E9897DD707429 /* BillParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9769B6A1AEB1C0DEBF878E71 /* BillParsing.swift */; };
 		DB59B6EDD27A66C09406C892 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B5538D3C5E135F836B03AB3 /* WelcomeView.swift */; };
 		DDF0B27A443760BC4F922D3B /* CommitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0051E555BF5838F309FF35D /* CommitView.swift */; };
+		E48DD58A216DBBD53079FDE2 /* HomeSummaryWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B4207EB10B1B5D85835924 /* HomeSummaryWidgets.swift */; };
 		E8B177DBC1A4F227A48A5F3C /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FE7C86E066B7A77F16EA65 /* ReminderScheduler.swift */; };
 		EB27BCBAFB7274AA519D35DB /* ConfirmBillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAFF1EA8A85A8657AF1413 /* ConfirmBillView.swift */; };
 		EB3D74E6A9DEC1DF8D542037 /* AppServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C5EEE4FD3295DC04F51F56 /* AppServices.swift */; };
@@ -141,11 +144,13 @@
 		3BA6AFC020BECE9B79402CCC /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		3BAD01A3B78A4F107098ED50 /* LocalAccountSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAccountSession.swift; sourceTree = "<group>"; };
 		43AF552C6BAC3A2CC56C0173 /* Figtree-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Figtree-Variable.ttf"; sourceTree = "<group>"; };
+		4426A464C0D27167BAFBA987 /* KeyboardDismiss.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardDismiss.swift; sourceTree = "<group>"; };
 		483D07784F323ACB8F0F4838 /* BenTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D4F001318AA2CE3A5FE684 /* BenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenTheme.swift; sourceTree = "<group>"; };
 		4D653B3B22406BC54F1F235F /* BillCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCategory.swift; sourceTree = "<group>"; };
 		4DD6CA4F6004BDB6C938C7D5 /* PaywallOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallOfferView.swift; sourceTree = "<group>"; };
 		50A75E32DF28C87EAF49B530 /* Ben.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ben.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F3AE5771BBCB26931C94239 /* CurrencyAmountField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyAmountField.swift; sourceTree = "<group>"; };
 		633D0752B06B1ED76E3AFB27 /* OnboardingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCoordinator.swift; sourceTree = "<group>"; };
 		6353B4FB81BB1A738EC61C57 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		64C5EEE4FD3295DC04F51F56 /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
@@ -198,6 +203,7 @@
 		DA72EE4D249FE8E4C433C9B2 /* ExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSheet.swift; sourceTree = "<group>"; };
 		DFA0C4864C4E68D071A3E3E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E0051E555BF5838F309FF35D /* CommitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitView.swift; sourceTree = "<group>"; };
+		E1B4207EB10B1B5D85835924 /* HomeSummaryWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSummaryWidgets.swift; sourceTree = "<group>"; };
 		E641C46D03C05D69E76D5A32 /* AddBillDial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBillDial.swift; sourceTree = "<group>"; };
 		E711747696076530D8DDE297 /* AnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
 		E9069EEDC762F738D1DD7364 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
@@ -294,6 +300,7 @@
 				EFB8FDDA1965289582EAB498 /* CategoryPickerSheet.swift */,
 				650DBE1FD70026A020FD1FB9 /* EditBillSheet.swift */,
 				B92D003D28D1314F30A458E7 /* ExpectedSection.swift */,
+				E1B4207EB10B1B5D85835924 /* HomeSummaryWidgets.swift */,
 				93C802D7582126B6B88B5F56 /* HomeView.swift */,
 				3288753C14422D2CE2EBB9A4 /* PaymentApprovalFields.swift */,
 				6D886AF4600BB007A655D13B /* PaymentDetailsCard.swift */,
@@ -318,6 +325,8 @@
 				F5A73E72637A952F057D3FA2 /* BenProviderButton.swift */,
 				48D4F001318AA2CE3A5FE684 /* BenTheme.swift */,
 				83D10B48F7915788B42436D5 /* ConfettiBurst.swift */,
+				5F3AE5771BBCB26931C94239 /* CurrencyAmountField.swift */,
+				4426A464C0D27167BAFBA987 /* KeyboardDismiss.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -604,6 +613,7 @@
 				2A9870AAD1857D8FB07CACE9 /* ConfettiBurst.swift in Sources */,
 				EB27BCBAFB7274AA519D35DB /* ConfirmBillView.swift in Sources */,
 				7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */,
+				DAF4D64C2878D42761983092 /* CurrencyAmountField.swift in Sources */,
 				332B27E45AC2F1C476C88B21 /* DemoScanView.swift in Sources */,
 				224872B43D02625E320702CF /* EditBillSheet.swift in Sources */,
 				7DCF512A386BFA840730B2C2 /* EmailInClient.swift in Sources */,
@@ -612,6 +622,7 @@
 				CEDA3BFF6A57CFF4428C00EC /* ExpectedSection.swift in Sources */,
 				349AE59B03173ACC3AEBB947 /* ExportSheet.swift in Sources */,
 				BBAE89294FE1BF7C2E34932F /* FirebaseAccountService.swift in Sources */,
+				E48DD58A216DBBD53079FDE2 /* HomeSummaryWidgets.swift in Sources */,
 				B73D5BF7903077D2126AAA7C /* HomeView.swift in Sources */,
 				23371D1F4E0CDEEF5C103A0F /* InsightsMath.swift in Sources */,
 				2424357ADAFDA991392B5BC9 /* InsightsView.swift in Sources */,
@@ -619,6 +630,7 @@
 				1A59B790D20C78506934A32B /* InstallmentSplitter.swift in Sources */,
 				6CF9AFD7C4E657043F50410D /* IntentView.swift in Sources */,
 				12203E1D44D1FD626A7FF6CC /* InterviewViews.swift in Sources */,
+				20ED27A2A8900448672C1D90 /* KeyboardDismiss.swift in Sources */,
 				13B2FE3003C8B6800F35EF84 /* LocalAccountSession.swift in Sources */,
 				353BD8F7E760B44909DD1626 /* ManualEntryView.swift in Sources */,
 				0D64BDEC7E1257CFB8C1A0BD /* NotificationRouter.swift in Sources */,

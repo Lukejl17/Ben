@@ -10,7 +10,6 @@ struct ReminderSetupView: View {
 
     @State private var style: ReminderStyle = .fewDaysEarly
     @State private var showPrePermissionSheet = false
-    @State private var permissionResolved = false
     @State private var denied = false
 
     private var bill: Bill? { coordinator.confirmedBill }
@@ -77,14 +76,15 @@ struct ReminderSetupView: View {
                     } else {
                         coordinator.advance(to: .setState)
                     }
-                } else if permissionResolved {
-                    coordinator.advance(to: nextStep)
                 } else {
-                    showPrePermissionSheet = true
+                    Task { await continueWithReminders() }
                 }
             }
         }
-        .onAppear { style = coordinator.reminderStyle }
+        .onAppear {
+            style = coordinator.reminderStyle
+            Task { await syncPermissionState() }
+        }
         .sheet(isPresented: $showPrePermissionSheet) {
             PrePermissionSheet(
                 onAllow: { requestPermission() },
@@ -107,6 +107,12 @@ struct ReminderSetupView: View {
             return hasCompletedOnboarding ? .done : .secondBillLockedIn
         }
         return .overdueStyle
+    }
+
+    /// Soft "Allow notifications" sheet is onboarding-only, and only when iOS
+    /// has never been asked. Subsequent bills reuse the existing decision.
+    private var mayShowPrePermissionSheet: Bool {
+        !hasCompletedOnboarding && !coordinator.isAddingSubsequentBill
     }
 
     private var benLine: String {
@@ -132,6 +138,46 @@ struct ReminderSetupView: View {
         return "Your \(bill.issuer) bill is due \(due)."
     }
 
+    private func syncPermissionState() async {
+        let status = await services.scheduler.permissionStatus()
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            coordinator.notificationsGranted = true
+        case .denied:
+            // Don't flip into the denied copy on subsequent bills — just schedule no-ops.
+            if mayShowPrePermissionSheet {
+                denied = true
+            }
+            coordinator.notificationsGranted = false
+        default:
+            break
+        }
+    }
+
+    private func continueWithReminders() async {
+        let status = await services.scheduler.permissionStatus()
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            coordinator.notificationsGranted = true
+            await scheduleAndAdvance()
+        case .notDetermined:
+            if mayShowPrePermissionSheet {
+                showPrePermissionSheet = true
+            } else {
+                // Post-onboarding: never re-ask. Schedule if somehow allowed later.
+                await scheduleAndAdvance()
+            }
+        case .denied:
+            if mayShowPrePermissionSheet {
+                handleDenied(osLevel: true)
+            } else {
+                await scheduleAndAdvance()
+            }
+        @unknown default:
+            await scheduleAndAdvance()
+        }
+    }
+
     private func requestPermission() {
         showPrePermissionSheet = false
         let scheduler = services.scheduler
@@ -141,7 +187,6 @@ struct ReminderSetupView: View {
             if granted {
                 analytics.track(.osPermissionGranted)
                 coordinator.notificationsGranted = true
-                permissionResolved = true
                 await scheduleAndAdvance()
             } else {
                 analytics.track(.osPermissionDenied)

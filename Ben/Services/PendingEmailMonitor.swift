@@ -72,20 +72,34 @@ final class PendingEmailMonitor {
     }
 
     /// Drop an unwanted forward (signature chrome, wrong mail, etc.).
+    /// Removes from the local shelf immediately, then claims on the server.
     func dismiss(
         key: String,
         accounts: any AccountService,
         emailIn: any EmailInFetching
     ) async {
+        removeLocally(key: key)
         do {
             guard let token = try await accounts.idToken() else { return }
             try await emailIn.claim(key: key, idToken: token)
-            items.removeAll { $0.key == key }
-            labelCache.removeValue(forKey: key)
-            rebuildPreviews()
         } catch {
-            lastError = "Couldn't remove that one. Try again in a tick."
+            lastError = "Couldn't remove that one from the mailroom. Pull to refresh."
         }
+    }
+
+    /// After confirm — same as dismiss; kept for call-site clarity.
+    func claimAfterConfirm(
+        key: String,
+        accounts: any AccountService,
+        emailIn: any EmailInFetching
+    ) async {
+        await dismiss(key: key, accounts: accounts, emailIn: emailIn)
+    }
+
+    func removeLocally(key: String) {
+        items.removeAll { $0.key == key }
+        labelCache.removeValue(forKey: key)
+        rebuildPreviews()
     }
 
     func startPolling(

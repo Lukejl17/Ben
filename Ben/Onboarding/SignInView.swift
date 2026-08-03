@@ -124,6 +124,7 @@ struct SignInView: View {
             }
             .padding(.horizontal, 24)
         }
+        .benKeyboardDoneToolbar()
         .overlay {
             if isWorking {
                 ProgressView()

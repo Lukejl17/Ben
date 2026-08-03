@@ -17,7 +17,7 @@ struct EditBillSheet: View {
     @State private var payment = PaymentDetails()
 
     private var amount: Decimal? {
-        Decimal(string: amountText.replacingOccurrences(of: ",", with: ""))
+        CurrencyAmountField.decimal(from: amountText)
     }
 
     private var canSave: Bool {
@@ -44,10 +44,10 @@ struct EditBillSheet: View {
                             .accessibilityIdentifier("edit-issuer")
                     }
                     BenField("Amount") {
-                        TextField("$0.00", text: $amountText)
-                            .keyboardType(.decimalPad)
-                            .monospacedDigit()
-                            .accessibilityIdentifier("edit-amount")
+                        CurrencyAmountField(
+                            text: $amountText,
+                            accessibilityIdentifier: "edit-amount"
+                        )
                     }
                     BenField("Due date") {
                         DatePicker("", selection: $dueDate, displayedComponents: .date)
@@ -66,6 +66,7 @@ struct EditBillSheet: View {
             .padding(.bottom, 24)
         }
         .scrollDismissesKeyboard(.interactively)
+        .benKeyboardDoneToolbar()
         .safeAreaInset(edge: .bottom) {
             BenPrimaryButton(title: "Save changes") { save() }
                 .disabled(!canSave)
