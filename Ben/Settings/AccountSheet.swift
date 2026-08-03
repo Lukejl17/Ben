@@ -5,6 +5,8 @@ import SwiftUI
 /// Developer membership is approved (HUMAN).
 struct AccountSheet: View {
     @Environment(\.services) private var services
+    @Environment(\.modelContext) private var modelContext
+    @Environment(PendingEmailMonitor.self) private var pendingMonitor
     @Environment(\.dismiss) private var dismiss
     var onSignedIn: ((BenAccount) -> Void)?
 
@@ -50,6 +52,12 @@ struct AccountSheet: View {
                     password: $password,
                     isCreatingAccount: $isCreatingAccount,
                     onSignedIn: { account in
+                        LocalAccountSession.bindAccount(
+                            account,
+                            modelContext: modelContext,
+                            scheduler: services.scheduler,
+                            pendingEmails: pendingMonitor
+                        )
                         onSignedIn?(account)
                         dismiss()
                     }

@@ -4,6 +4,8 @@ import SwiftUI
 struct WelcomeView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
+    @Environment(\.modelContext) private var modelContext
+    @Environment(PendingEmailMonitor.self) private var pendingMonitor
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var showSignIn = false
 
@@ -50,8 +52,15 @@ struct WelcomeView: View {
             .accessibilityIdentifier("I already have an account")
         }
         .sheet(isPresented: $showSignIn) {
-            SignInView { _ in
-                // A returning user has bills waiting, not an interview.
+            SignInView { account in
+                // Different Firebase user → wipe the previous owner's local bills.
+                LocalAccountSession.bindAccount(
+                    account,
+                    modelContext: modelContext,
+                    scheduler: services.scheduler,
+                    pendingEmails: pendingMonitor,
+                    assumeUnownedBillsAreForeign: true
+                )
                 hasCompletedOnboarding = true
             }
             .presentationDetents([.large])

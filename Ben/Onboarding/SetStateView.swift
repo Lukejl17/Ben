@@ -5,6 +5,8 @@ import SwiftUI
 struct SetStateView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
+    @Environment(\.modelContext) private var modelContext
+    @Environment(PendingEmailMonitor.self) private var pendingMonitor
 
     @State private var isWorking = false
     @State private var errorLine: String?
@@ -91,7 +93,15 @@ struct SetStateView: View {
                 email: $email,
                 password: $password,
                 isCreatingAccount: $isCreatingAccount,
-                onSignedIn: { _ in
+                onSignedIn: { account in
+                    // Bind this Firebase user to the bills created during onboarding.
+                    // Won't wipe when lastAccountId is empty (fresh after sign-out).
+                    LocalAccountSession.bindAccount(
+                        account,
+                        modelContext: modelContext,
+                        scheduler: services.scheduler,
+                        pendingEmails: pendingMonitor
+                    )
                     coordinator.advance(to: .commit)
                 }
             )
@@ -105,7 +115,8 @@ struct SetStateView: View {
         }
         .onAppear {
             // Already signed in (e.g. returning) — no need to ask again.
-            if services.accounts.account != nil {
+            if let account = services.accounts.account {
+                LocalAccountSession.remember(account)
                 coordinator.advance(to: .commit)
             }
         }

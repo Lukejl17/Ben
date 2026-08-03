@@ -29,6 +29,18 @@ final class PendingEmailMonitor {
     var count: Int { items.count }
     var hasPending: Bool { !items.isEmpty }
 
+    /// Drop the in-memory shelf (sign-out / account switch).
+    func clear() {
+        stopPolling()
+        enrichTask?.cancel()
+        enrichTask = nil
+        items = []
+        previews = []
+        labelCache = [:]
+        lastError = nil
+        isLoading = false
+    }
+
     func refresh(
         accounts: any AccountService,
         emailIn: any EmailInFetching,
