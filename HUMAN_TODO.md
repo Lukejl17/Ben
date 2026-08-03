@@ -28,8 +28,8 @@ Added overnight (14 Jul 2026):
 Added 15 Jul 2026 (settings/accounts/email-in build):
 
 - [x] Real auth — DONE 19 Jul via Firebase Authentication (FirebaseAccountService):
-      email/password + Google (web flow) live now; Apple button is wired but needs
-      the Developer membership + Sign in with Apple capability to light up (below).
+      email/password + Google live; Apple button is wired but needs the Developer
+      membership + Sign in with Apple capability to light up (below).
 - [x] Email ingestion backend — DONE 19 Jul: Postmark → Worker → R2, D1 maps
       Firebase uid → forwarding token, app polls /pending and feeds S6 confirm.
 
@@ -41,6 +41,11 @@ Added 19 Jul 2026 (Firebase + email-in production build):
       create a Sign in with Apple key + enable the Apple provider in Firebase Console.
 - [ ] Verify Firebase Console has Email/Password + Google + Apple providers enabled
       (project: repertoirestudio-ben).
+- [ ] Google OAuth branding: Google Cloud Console → APIs & Services → OAuth consent
+      screen → App name = "Ben" (and optional logo). This is what users see instead of
+      a Firebase hostname on consent. Native Google Sign-In SDK is wired in-app (Aug 2026);
+      if anything still shows `*.firebaseapp.com`, check Auth → Settings → Authorized domains
+      / custom auth domain later.
 - [ ] Postmark: move off the sandbox/test tier when real user mail should flow
       (request approval in their dashboard).
 

@@ -31,6 +31,7 @@ struct OnboardingFlow: View {
                 case .setState: SetStateView()
                 case .paywall: PaywallView()
                 case .secondBill: SecondBillView()
+                case .secondBillLockedIn: SecondBillLockedInView()
                 case .done: Color.clear
                 }
             }

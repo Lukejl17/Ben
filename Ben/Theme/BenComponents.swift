@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: - Ben Design System v3 · Forest Bold components
 // Cream widgets float on the forest; secondary rows are translucent.
@@ -241,10 +242,17 @@ struct BenCircleButton: View {
 }
 
 struct BenPressable: ButtonStyle {
+    /// Medium for CTAs / onboarding; light for browsing into bills and rows.
+    var haptic: UIImpactFeedbackGenerator.FeedbackStyle = .medium
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.spring(duration: 0.25), value: configuration.isPressed)
+            .onChange(of: configuration.isPressed) { _, pressed in
+                guard pressed else { return }
+                UIImpactFeedbackGenerator(style: haptic).impactOccurred(intensity: 0.9)
+            }
     }
 }
 

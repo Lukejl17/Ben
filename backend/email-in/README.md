@@ -15,6 +15,15 @@ R2 until the app claims them through the confirm flow.
 - The Worker only ever lists / returns / deletes bills under the caller's own
   token. Postmark's inbound webhook stays on the shared `WEBHOOK_SECRET`.
 
+## Attachment filtering
+
+On `/inbound`, we only store bill-like attachments:
+
+- If the mail has any **PDF**, only PDFs are kept (signature PNGs/JPEGs are ignored).
+- Otherwise images are kept only when they look like a real scan: no inline
+  `ContentID` (Postmark marks signature/logo embeds this way), not tiny
+  (&lt;40KB), and not named like `signature` / `logo` / social icons.
+
 ## Endpoints
 
 | Route | Auth | Purpose |

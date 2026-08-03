@@ -41,7 +41,7 @@ struct BillRow: View {
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(BenPressable())
+        .buttonStyle(BenPressable(haptic: .light))
         .benRowSurface(radius: 26)
         .contextMenu {
             if bill.status != .paid {
@@ -53,7 +53,7 @@ struct BillRow: View {
                     try? modelContext.save()
                 }
             }
-            Button("Delete", systemImage: "trash", role: .destructive) {
+            Button("Remove", systemImage: "trash", role: .destructive) {
                 services.scheduler.cancel(identifiers: bill.notificationIDs)
                 modelContext.delete(bill)
                 try? modelContext.save()

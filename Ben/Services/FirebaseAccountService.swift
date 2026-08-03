@@ -1,11 +1,13 @@
 import AuthenticationServices
 import CryptoKit
 import FirebaseAuth
+import FirebaseCore
 import Foundation
+import GoogleSignIn
 import UIKit
 
 /// Real accounts via Firebase Authentication: Sign in with Apple, Google
-/// (Firebase's web flow — no extra SDK), and email/password. After any
+/// (Google Sign-In SDK → Firebase credential), and email/password. After any
 /// successful sign-in we register with the email-in Worker, which mints the
 /// user's permanent forwarding address.
 ///
@@ -75,6 +77,7 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
 
     func signOut() {
         try? Auth.auth().signOut()
+        GIDSignIn.sharedInstance.signOut()
         lock.lock()
         defer { lock.unlock() }
         defaults.removeObject(forKey: key)
@@ -131,18 +134,53 @@ final class FirebaseAccountService: NSObject, AccountService, @unchecked Sendabl
         return try await finishSignIn(user: result.user, provider: .apple)
     }
 
-    // MARK: - Google (Firebase web flow, no GoogleSignIn SDK)
+    // MARK: - Google (native Google Sign-In SDK → Firebase)
 
     private func signInWithGoogle() async throws -> BenAccount {
-        let provider = OAuthProvider(providerID: "google.com")
-        provider.scopes = ["email", "profile"]
-        do {
-            let credential = try await provider.credential(with: nil)
-            let result = try await Auth.auth().signIn(with: credential)
-            return try await finishSignIn(user: result.user, provider: .google)
-        } catch {
-            throw mapAnyError(error)
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            throw AccountError.signInFailed
         }
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
+
+        guard let presenter = await MainActor.run(body: Self.topViewController) else {
+            throw AccountError.signInFailed
+        }
+
+        let signInResult: GIDSignInResult
+        do {
+            signInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
+        } catch let error as NSError {
+            // User backed out of the Google sheet.
+            if error.code == GIDSignInError.canceled.rawValue {
+                throw AccountError.cancelled
+            }
+            throw error
+        }
+
+        guard let idToken = signInResult.user.idToken?.tokenString else {
+            throw AccountError.signInFailed
+        }
+        let accessToken = signInResult.user.accessToken.tokenString
+        let credential = GoogleAuthProvider.credential(
+            withIDToken: idToken, accessToken: accessToken
+        )
+        let result = try await Auth.auth().signIn(with: credential)
+        return try await finishSignIn(user: result.user, provider: .google)
+    }
+
+    /// The visible view controller Google Sign-In presents from.
+    @MainActor
+    private static func topViewController() -> UIViewController? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let window = scenes
+            .flatMap(\.windows)
+            .first(where: \.isKeyWindow)
+            ?? scenes.first?.windows.first
+        var controller = window?.rootViewController
+        while let presented = controller?.presentedViewController {
+            controller = presented
+        }
+        return controller
     }
 
     // MARK: - Shared tail: register with the mailroom, persist locally

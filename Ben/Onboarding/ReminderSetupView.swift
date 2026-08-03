@@ -6,6 +6,7 @@ struct ReminderSetupView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
     @AppStorage("notificationReaskPending") private var reaskPending = false
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     @State private var style: ReminderStyle = .fewDaysEarly
     @State private var showPrePermissionSheet = false
@@ -71,7 +72,11 @@ struct ReminderSetupView: View {
             BenPrimaryButton(title: denied ? "Continue" : "Sounds right, set it up") {
                 if denied {
                     // B3: no permission means no overdue mentions either — skip S7b.
-                    coordinator.advance(to: coordinator.isAddingSubsequentBill ? .done : .setState)
+                    if coordinator.isAddingSubsequentBill {
+                        coordinator.advance(to: nextStep)
+                    } else {
+                        coordinator.advance(to: .setState)
+                    }
                 } else if permissionResolved {
                     coordinator.advance(to: nextStep)
                 } else {
@@ -94,10 +99,14 @@ struct ReminderSetupView: View {
         }
     }
 
-    /// First onboarding continues to the overdue-cadence ask; the add-a-bill
-    /// flow reuses the stored cadence and finishes.
+    /// First onboarding continues to the overdue-cadence ask.
+    /// A second bill still inside the S10 funnel gets a locked-in moment.
+    /// Adding from home afterwards just closes the sheet.
     private var nextStep: OnboardingCoordinator.Step {
-        coordinator.isAddingSubsequentBill ? .done : .overdueStyle
+        if coordinator.isAddingSubsequentBill {
+            return hasCompletedOnboarding ? .done : .secondBillLockedIn
+        }
+        return .overdueStyle
     }
 
     private var benLine: String {

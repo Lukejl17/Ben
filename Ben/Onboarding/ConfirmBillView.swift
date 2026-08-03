@@ -105,19 +105,11 @@ struct ConfirmBillView: View {
                 .padding(.top, 4)
             }
 
-            if !payment.isEmpty {
-                PaymentApprovalFields(payment: $payment)
-                    .padding(.top, 4)
-            }
+            PaymentApprovalFields(payment: $payment, alwaysShow: true)
+                .padding(.top, 4)
 
-            if let data = coordinator.pendingImageData, let image = UIImage(data: data) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 260)
-                    .frame(maxWidth: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    .benShadow(.floating)
+            if let data = coordinator.pendingImageData {
+                BillDocumentPreview(data: data)
                     .padding(.top, 8)
             }
 
@@ -266,54 +258,5 @@ struct ConfirmBillView: View {
 
     private func digitsOnly(_ value: String?) -> String {
         (value ?? "").filter(\.isNumber)
-    }
-}
-
-/// The payment block found on the scan, shown for a once-over before it's
-/// saved. Anything wrong can be edited or cleared right here.
-private struct PaymentApprovalFields: View {
-    @Binding var payment: PaymentDetails
-
-    var body: some View {
-        BenCard {
-            VStack(alignment: .leading, spacing: 10) {
-                BenEyebrow(text: "Payment details \u{00b7} check these")
-                Text("Found on the bill. I'll keep them handy for when you pay.")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.onCreamMuted)
-                if payment.bpayBillerCode != nil || payment.bpayReference != nil {
-                    approvalField("BPAY biller code", binding(\.bpayBillerCode))
-                    approvalField("BPAY reference", binding(\.bpayReference))
-                }
-                if payment.bsb != nil {
-                    approvalField("BSB", binding(\.bsb))
-                    approvalField("Account number", binding(\.accountNumber))
-                    approvalField("Payment reference", binding(\.eftReference))
-                }
-            }
-        }
-    }
-
-    private func binding(_ keyPath: WritableKeyPath<PaymentDetails, String?>) -> Binding<String> {
-        Binding(
-            get: { payment[keyPath: keyPath] ?? "" },
-            set: { payment[keyPath: keyPath] = $0.isEmpty ? nil : $0 }
-        )
-    }
-
-    private func approvalField(_ label: String, _ text: Binding<String>) -> some View {
-        HStack(spacing: 10) {
-            Text(label)
-                .font(.benMeta)
-                .foregroundStyle(Color.onCreamMuted)
-                .frame(width: 118, alignment: .leading)
-            TextField("Not on the bill", text: text)
-                .font(.benLabel)
-                .monospacedDigit()
-                .keyboardType(.numberPad)
-                .foregroundStyle(Color.onCream)
-                .accessibilityIdentifier("payment-\(label)")
-        }
-        .padding(.vertical, 2)
     }
 }

@@ -154,12 +154,13 @@ struct SecondBillView: View {
     }
 
     private func addSecondBill() {
-        hasCompletedOnboarding = true
+        // Stay in the onboarding funnel — completion happens after confirm + reminder.
         coordinator.isAddingSubsequentBill = true
         coordinator.resetForSecondBill()
     }
 
     private func finish() {
+        services.analytics.track(.onboardingCompleted(path: "deferred"))
         hasCompletedOnboarding = true
         coordinator.advance(to: .done)
     }

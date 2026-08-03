@@ -1,20 +1,21 @@
 import SwiftUI
 
-/// Email bills in: the user's personal forwarding address, how it works, and
-/// the bills waiting to be confirmed. Requires an account (the address
-/// belongs to it).
+/// Email bills in: your forwarding address and how it works.
+/// Waiting bills live on Bills home — this sheet is just the address.
 struct EmailInSheet: View {
     @Environment(\.services) private var services
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(NotificationRouter.self) private var notificationRouter
+    @Environment(PendingEmailMonitor.self) private var pendingMonitor
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var account: BenAccount?
     @State private var showAccountSheet = false
     @State private var copied = false
-    @State private var pending: [PendingEmailBill] = []
-    @State private var isLoadingPending = false
     @State private var openingKey: String?
-    @State private var pendingError: String?
+    @State private var openError: String?
+
+    private var pendingCount: Int { pendingMonitor.count }
 
     var body: some View {
         ScrollView {
@@ -26,8 +27,14 @@ struct EmailInSheet: View {
 
                 if let account {
                     addressCard(for: account)
-                    if !pending.isEmpty || isLoadingPending || pendingError != nil {
-                        pendingCard
+                    waitingHint
+                    if pendingCount > 0 {
+                        arrivedBanner
+                    }
+                    if let openError {
+                        Text(openError)
+                            .font(.benMeta)
+                            .foregroundStyle(Color.forestInk.opacity(0.6))
                     }
                     stepsCard
                 } else {
@@ -39,12 +46,26 @@ struct EmailInSheet: View {
         }
         .onAppear {
             account = services.accounts.account
-            refreshPending()
+            pendingMonitor.startPolling(
+                accounts: services.accounts,
+                emailIn: services.emailIn,
+                parser: services.parser,
+                every: .seconds(3)
+            )
+        }
+        .onDisappear {
+            pendingMonitor.stopPolling()
         }
         .sheet(isPresented: $showAccountSheet) {
             AccountSheet { newAccount in
                 account = newAccount
-                refreshPending()
+                Task {
+                    await pendingMonitor.refresh(
+                        accounts: services.accounts,
+                        emailIn: services.emailIn,
+                        parser: services.parser
+                    )
+                }
             }
             .presentationDetents([.large])
             .presentationCornerRadius(28)
@@ -53,87 +74,96 @@ struct EmailInSheet: View {
         .benSheetClose()
     }
 
-    // MARK: Pending bills (the mailroom's waiting shelf)
-
-    private var pendingCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            BenEyebrow(text: "Waiting for you", color: Color.forestInk.opacity(0.55))
-            if isLoadingPending && pending.isEmpty {
+    /// Calm status while the user is off in Mail forwarding something.
+    private var waitingHint: some View {
+        Group {
+            if pendingCount == 0 {
                 HStack(spacing: 10) {
-                    ProgressView().tint(.chartreuse)
-                    Text("Checking the mailroom…")
-                        .font(.benMeta)
-                        .foregroundStyle(Color.forestInk.opacity(0.6))
+                    if pendingMonitor.isLoading || copied {
+                        ProgressView().tint(.chartreuse)
+                    } else {
+                        Image(systemName: "envelope.open")
+                            .foregroundStyle(Color.chartreuse)
+                    }
+                    Text(
+                        copied
+                            ? "Address copied. Forward a bill — it'll show on Bills home when it lands."
+                            : "Forward a bill to your address. Waiting bills show on Bills home."
+                    )
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.65))
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .benRowSurface(radius: 20)
+            }
+        }
+    }
+
+    /// One calm prompt when mail arrives while this sheet is open (esp. S10).
+    private var arrivedBanner: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(pendingCount == 1 ? "A bill landed" : "\(pendingCount) bills landed")
+                .font(.benCardTitle)
+                .foregroundStyle(Color.forestInk)
+            Text(
+                hasCompletedOnboarding
+                    ? "They're waiting on Bills home. You can review or remove them there."
+                    : "Give the first one a once-over now, or remove it if it isn't a bill."
+            )
+            .font(.benMeta)
+            .foregroundStyle(Color.forestInk.opacity(0.6))
+            .fixedSize(horizontal: false, vertical: true)
+
+            if let first = pendingMonitor.previews.first {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(first.title)
+                            .font(.benCardTitle)
+                            .foregroundStyle(Color.forestInk)
+                            .lineLimit(1)
+                        Text(first.subtitle)
+                            .font(.benMeta)
+                            .foregroundStyle(Color.forestInk.opacity(0.55))
+                            .lineLimit(1)
+                    }
+                    Spacer()
+                    if openingKey == first.id {
+                        ProgressView().tint(.chartreuse)
+                    }
                 }
             }
-            if let pendingError {
-                Text(pendingError)
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.6))
-            }
-            ForEach(pending) { item in
-                Button {
-                    open(item)
-                } label: {
-                    HStack(spacing: 12) {
-                        BenIconCircle(
-                            systemName: "envelope.badge.fill", fill: .sky,
-                            iconColor: .onSky, size: 38
-                        )
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(item.subject.isEmpty ? "Forwarded bill" : item.subject)
-                                .font(.benCardTitle)
-                                .foregroundStyle(Color.forestInk)
-                                .lineLimit(1)
-                            Text(item.from.isEmpty ? "Tap to read and confirm" : item.from)
-                                .font(.benMeta)
-                                .foregroundStyle(Color.forestInk.opacity(0.6))
-                                .lineLimit(1)
-                        }
-                        Spacer()
-                        if openingKey == item.key {
-                            ProgressView().tint(.chartreuse)
-                        } else {
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(Color.forestInk.opacity(0.4))
+
+            HStack(spacing: 12) {
+                BenPrimaryButton(title: "Review") {
+                    if let first = pendingMonitor.items.first {
+                        open(first)
+                    }
+                }
+                .disabled(openingKey != nil)
+                BenTextButton(title: "Remove") {
+                    if let key = pendingMonitor.items.first?.key {
+                        Task {
+                            await pendingMonitor.dismiss(
+                                key: key,
+                                accounts: services.accounts,
+                                emailIn: services.emailIn
+                            )
                         }
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .benRowSurface(radius: 22)
                 }
-                .buttonStyle(BenPressable())
-                .disabled(openingKey != nil)
             }
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .benRowSurface(radius: 24)
     }
 
-    private func refreshPending() {
-        guard account != nil else { return }
-        isLoadingPending = true
-        pendingError = nil
-        let accounts = services.accounts
-        let emailIn = services.emailIn
-        Task {
-            do {
-                guard let token = try await accounts.idToken() else {
-                    isLoadingPending = false
-                    return
-                }
-                pending = try await emailIn.pending(idToken: token)
-            } catch {
-                pendingError = "Couldn't check for new bills just now. Pull the sheet down and try again."
-            }
-            isLoadingPending = false
-        }
-    }
-
-    /// Download the attachment, run the same on-device reader as a photo,
-    /// and hand over to the S6 confirm screen. Nothing saves until then.
     private func open(_ item: PendingEmailBill) {
         guard openingKey == nil else { return }
         openingKey = item.key
+        openError = nil
         let accounts = services.accounts
         let emailIn = services.emailIn
         let parser = services.parser
@@ -152,15 +182,16 @@ struct EmailInSheet: View {
                 coordinator.parsed = parsed
                 coordinator.pendingEmailKey = item.key
                 coordinator.advance(to: parsed == nil ? .manualEntry : .confirm)
-                notificationRouter.confirmEmailBillRequested = true
+                if hasCompletedOnboarding {
+                    notificationRouter.confirmEmailBillRequested = true
+                }
                 dismiss()
             } catch {
-                pendingError = "That one wouldn't open. Give it another go in a tick."
+                openError = "That one wouldn't open. Give it another go in a tick."
             }
         }
     }
 
-    /// The star widget: your address, one tap to copy.
     private func addressCard(for account: BenAccount) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             BenEyebrow(text: "Your address")
@@ -197,12 +228,12 @@ struct EmailInSheet: View {
 
     private var stepsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            stepRow(number: "1", title: "Forward the email",
-                    detail: "Send any bill that lands in your inbox to your address.")
-            stepRow(number: "2", title: "It waits here",
-                    detail: "Forwarded bills appear in this sheet, ready when you are.")
+            stepRow(number: "1", title: "Copy and forward",
+                    detail: "Send any bill email to your Ben address (PDF attached is best).")
+            stepRow(number: "2", title: "It lands on Bills",
+                    detail: "Waiting bills show on your Bills home — named once Ben's had a read.")
             stepRow(number: "3", title: "You confirm",
-                    detail: "Nothing is saved until you give it a once-over in here.")
+                    detail: "Nothing is saved until you give the details a once-over.")
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)

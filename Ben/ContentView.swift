@@ -57,5 +57,7 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(OnboardingCoordinator())
+        .environment(NotificationRouter())
+        .environment(PendingEmailMonitor())
         .tint(.chartreuse)
 }

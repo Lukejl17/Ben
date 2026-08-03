@@ -12,6 +12,8 @@ struct InsightsView: View {
     @State private var selectedAngle: Double?
     @State private var calloutSlice: CategorySlice?
     @State private var calloutHideTask: Task<Void, Never>?
+    /// Briefly ignore outside-taps so a sector select doesn't clear itself.
+    @State private var ignoreOutsideClear = false
 
     struct DrillTarget: Identifiable {
         let category: String
@@ -84,11 +86,15 @@ struct InsightsView: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 40)
+                    .contentShape(Rectangle())
+                    .simultaneousGesture(TapGesture().onEnded { clearCalloutFromOutside() })
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
         }
         .tint(.chartreuse)
+        .onChange(of: period) { _, _ in clearCallout() }
+        .onChange(of: includeUnpaid) { _, _ in clearCallout() }
         .sheet(item: $drillCategory) { target in
             CategoryBillsSheet(
                 category: target.category,
@@ -140,7 +146,12 @@ struct InsightsView: View {
         .chartAngleSelection(value: $selectedAngle)
         .onChange(of: selectedAngle) { _, angle in
             guard let angle else { return }
+            ignoreOutsideClear = true
             showCallout(for: angle, in: result.slices)
+            Task {
+                try? await Task.sleep(for: .milliseconds(80))
+                ignoreOutsideClear = false
+            }
         }
         .overlay(alignment: .top) {
             if let slice = calloutSlice,
@@ -149,6 +160,7 @@ struct InsightsView: View {
                              color: Self.palette[index % Self.palette.count])
                     .offset(y: -10)
                     .transition(.scale(scale: 0.8, anchor: .bottom).combined(with: .opacity))
+                    .onTapGesture { clearCallout() }
             }
         }
         .animation(.spring(duration: 0.3), value: calloutSlice?.category)
@@ -168,6 +180,8 @@ struct InsightsView: View {
                     .foregroundStyle(Color.forestInk.opacity(0.5))
             }
             .frame(maxWidth: 128)
+            .contentShape(Rectangle())
+            .onTapGesture { clearCallout() }
         }
         .padding(.vertical, 8)
     }
@@ -228,7 +242,24 @@ struct InsightsView: View {
         calloutHideTask = Task {
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
-            withAnimation(.easeOut(duration: 0.25)) { calloutSlice = nil }
+            withAnimation(.easeOut(duration: 0.25)) {
+                calloutSlice = nil
+                selectedAngle = nil
+            }
+        }
+    }
+
+    private func clearCalloutFromOutside() {
+        guard !ignoreOutsideClear else { return }
+        clearCallout()
+    }
+
+    private func clearCallout() {
+        guard calloutSlice != nil || selectedAngle != nil else { return }
+        calloutHideTask?.cancel()
+        withAnimation(.easeOut(duration: 0.25)) {
+            calloutSlice = nil
+            selectedAngle = nil
         }
     }
 

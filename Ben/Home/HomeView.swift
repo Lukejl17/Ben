@@ -7,12 +7,15 @@ import SwiftUI
 struct HomeView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(NotificationRouter.self) private var notificationRouter
+    @Environment(PendingEmailMonitor.self) private var pendingMonitor
     @Environment(\.services) private var services
+    @Environment(\.scenePhase) private var scenePhase
     @Query(sort: \Bill.dueDate) private var bills: [Bill]
     @State private var showAddBill = false
     @State private var detailBill: Bill?
     @State private var fabExpanded = false
     @State private var showEmailIn = false
+    @State private var openingPendingKey: String?
 
     // MARK: Derived
 
@@ -142,6 +145,24 @@ struct HomeView: View {
                 showAddBill = true
             }
             handleDeepLinks()
+            Task {
+                await pendingMonitor.refresh(
+                    accounts: services.accounts,
+                    emailIn: services.emailIn,
+                    parser: services.parser
+                )
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task {
+                    await pendingMonitor.refresh(
+                        accounts: services.accounts,
+                        emailIn: services.emailIn,
+                        parser: services.parser
+                    )
+                }
+            }
         }
         .sheet(item: $detailBill) { bill in
             BillDetailView(bill: bill)
@@ -188,6 +209,10 @@ struct HomeView: View {
                     .padding(.top, 18)
                     .accessibilityAddTraits(.isHeader)
 
+                if pendingMonitor.hasPending {
+                    pendingApprovalSection
+                }
+
                 HomeSummaryWidgets(
                     nextUp: nextUp,
                     thisMonth: thisMonth,
@@ -228,6 +253,13 @@ struct HomeView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 110)
         }
+        .refreshable {
+            await pendingMonitor.refresh(
+                accounts: services.accounts,
+                emailIn: services.emailIn,
+                parser: services.parser
+            )
+        }
     }
 
     /// Section header: title left, factual total right. No drama, even for overdue.
@@ -246,16 +278,152 @@ struct HomeView: View {
         .padding(.horizontal, 4)
     }
 
+    /// Named forwarded bills waiting for a once-over — confirm or remove.
+    private var pendingApprovalSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Needs a look")
+                    .font(.benCardTitle)
+                    .foregroundStyle(Color.chartreuse)
+                Spacer()
+                Text(pendingMonitor.count == 1 ? "1 bill" : "\(pendingMonitor.count) bills")
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.5))
+            }
+            .padding(.horizontal, 4)
+
+            ForEach(pendingMonitor.previews) { preview in
+                pendingRow(preview)
+            }
+        }
+        .accessibilityIdentifier("pending-email-approval")
+    }
+
+    private func pendingRow(_ preview: PendingBillPreview) -> some View {
+        HStack(spacing: 0) {
+            Button {
+                openPending(preview.item)
+            } label: {
+                HStack(spacing: 12) {
+                    BenIconCircle(
+                        systemName: preview.item.contentType.lowercased().contains("pdf")
+                            ? "doc.richtext.fill" : "envelope.badge.fill",
+                        fill: .sky,
+                        iconColor: .onSky
+                    )
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(preview.title)
+                            .font(.benCardTitle)
+                            .foregroundStyle(Color.forestInk)
+                            .lineLimit(1)
+                        HStack(spacing: 6) {
+                            if preview.isEnriching {
+                                ProgressView().controlSize(.mini).tint(.chartreuse)
+                            }
+                            Text(preview.subtitle)
+                                .font(.benMeta)
+                                .foregroundStyle(Color.forestInk.opacity(0.55))
+                                .lineLimit(1)
+                        }
+                    }
+                    Spacer(minLength: 8)
+                    if openingPendingKey == preview.id {
+                        ProgressView().tint(.chartreuse)
+                    }
+                }
+                .padding(.leading, 16)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(BenPressable(haptic: .light))
+            .disabled(openingPendingKey != nil)
+
+            Button {
+                Task {
+                    await pendingMonitor.dismiss(
+                        key: preview.item.key,
+                        accounts: services.accounts,
+                        emailIn: services.emailIn
+                    )
+                }
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(Color.forestInk.opacity(0.45))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Remove")
+            .disabled(openingPendingKey != nil)
+            .padding(.trailing, 6)
+        }
+        .benRowSurface(radius: 26)
+        .contextMenu {
+            Button("Remove", systemImage: "trash", role: .destructive) {
+                Task {
+                    await pendingMonitor.dismiss(
+                        key: preview.item.key,
+                        accounts: services.accounts,
+                        emailIn: services.emailIn
+                    )
+                }
+            }
+        }
+    }
+
+    private func openPending(_ item: PendingEmailBill) {
+        guard openingPendingKey == nil else { return }
+        openingPendingKey = item.key
+        let accounts = services.accounts
+        let emailIn = services.emailIn
+        let parser = services.parser
+        let analytics = services.analytics
+        Task {
+            defer { openingPendingKey = nil }
+            do {
+                guard let token = try await accounts.idToken() else { return }
+                let data = try await emailIn.blob(key: item.key, idToken: token)
+                analytics.track(.billUploadStarted(uploadMethod: UploadMethod.email.rawValue))
+                let parsed = try? await parser.parse(data)
+                coordinator.isAddingSubsequentBill = true
+                coordinator.uploadMethod = .email
+                coordinator.pendingImageData = data
+                coordinator.parsed = parsed
+                coordinator.pendingEmailKey = item.key
+                coordinator.advance(to: parsed == nil ? .manualEntry : .confirm)
+                showAddBill = true
+            } catch {
+                // Soft — pull to refresh and try again.
+            }
+        }
+    }
+
     private var emptyState: some View {
-        VStack(spacing: 18) {
-            Spacer()
-            BenCharacter(size: 150)
-            BenVoiceText(text: "No bills yet. Hand one over and it becomes my problem.")
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            BenPrimaryButton(title: "Add a bill") { startAddBill() }
-                .padding(.horizontal, 60)
-            Spacer()
+        ScrollView {
+            VStack(spacing: 18) {
+                if pendingMonitor.hasPending {
+                    pendingApprovalSection
+                        .padding(.top, 24)
+                }
+                Spacer(minLength: 40)
+                BenCharacter(size: 150)
+                BenVoiceText(text: "No bills yet. Hand one over and it becomes my problem.")
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+                BenPrimaryButton(title: "Add a bill") { startAddBill() }
+                    .padding(.horizontal, 60)
+                Spacer(minLength: 80)
+            }
+            .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity)
+        }
+        .refreshable {
+            await pendingMonitor.refresh(
+                accounts: services.accounts,
+                emailIn: services.emailIn,
+                parser: services.parser
+            )
         }
     }
 
@@ -320,7 +488,7 @@ struct HomeSummaryWidgets: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.cream, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
         }
-        .buttonStyle(BenPressable())
+        .buttonStyle(BenPressable(haptic: .light))
         .benShadow(.cream)
     }
 

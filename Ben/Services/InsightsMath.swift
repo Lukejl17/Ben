@@ -122,10 +122,10 @@ enum InsightsMath {
     }
 
     /// Ben's one factual line about the biggest slice. No judgment, no advice.
-    static func headline(slices: [CategorySlice], period: InsightsPeriod) -> String? {
+    /// Period lives on the donut centre — keep this sentence short.
+    static func headline(slices: [CategorySlice], period _: InsightsPeriod = .threeMonths) -> String? {
         guard let top = slices.first, slices.count > 1 else { return nil }
         let percent = Int((top.share * 100).rounded())
-        let periodPhrase = period == .all ? "overall" : "of the last \(period.label.lowercased())"
-        return "\(BillCategory.label(for: top.category)) is your biggest, about \(percent)% \(periodPhrase)."
+        return "\(BillCategory.label(for: top.category)) is your biggest, about \(percent)%."
     }
 }

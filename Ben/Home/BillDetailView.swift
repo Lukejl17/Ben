@@ -10,8 +10,10 @@ struct BillDetailView: View {
     @State private var showCategoryPicker = false
     @State private var showRecurrence = false
     @State private var showReminderOverride = false
+    @State private var showEdit = false
     @State private var askCadenceAfterPaid = false
     @State private var showConfetti = false
+    @State private var showRemoveConfirm = false
 
     var body: some View {
         ScrollView {
@@ -36,24 +38,70 @@ struct BillDetailView: View {
                 .padding(.top, 36)
                 .padding(.bottom, 8)
 
-                BenCard {
-                    HStack(spacing: 14) {
-                        BenIconCircle(systemName: "calendar", fill: .amber, iconColor: .onAmber, size: 40)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Due \(bill.dueDate.formatted(.dateTime.weekday(.wide).day().month(.wide).year()))")
-                                .font(.benCardTitle)
-                                .foregroundStyle(Color.onCream)
-                            Text(bill.hasNotification
-                                 ? "Reminder set. I'll mention it when it matters."
-                                 : "No reminder for this one. It stays visible here.")
-                                .font(.benMeta)
+                Button {
+                    showEdit = true
+                } label: {
+                    BenCard {
+                        HStack(spacing: 14) {
+                            BenIconCircle(systemName: "calendar", fill: .amber, iconColor: .onAmber, size: 40)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Due \(bill.dueDate.formatted(.dateTime.weekday(.wide).day().month(.wide).year()))")
+                                    .font(.benCardTitle)
+                                    .foregroundStyle(Color.onCream)
+                                Text(bill.hasNotification
+                                     ? "Reminder set. I'll mention it when it matters."
+                                     : "No reminder for this one. It stays visible here.")
+                                    .font(.benMeta)
+                                    .foregroundStyle(Color.onCreamMuted)
+                            }
+                            Spacer()
+                            Image(systemName: "pencil")
+                                .font(.footnote.weight(.semibold))
                                 .foregroundStyle(Color.onCreamMuted)
+                        }
+                    }
+                }
+                .buttonStyle(BenPressable(haptic: .light))
+
+                if !bill.notes.isEmpty {
+                    BenCard {
+                        VStack(alignment: .leading, spacing: 4) {
+                            BenEyebrow(text: "Notes")
+                            Text(bill.notes)
+                                .font(.benBody)
+                                .foregroundStyle(Color.onCream)
                         }
                     }
                 }
 
                 if bill.hasPaymentDetails {
                     PaymentDetailsCard(bill: bill)
+                } else {
+                    Button {
+                        showEdit = true
+                    } label: {
+                        BenCard {
+                            HStack(spacing: 14) {
+                                BenIconCircle(
+                                    systemName: "building.columns.fill",
+                                    fill: .sky, iconColor: .onSky, size: 40
+                                )
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Add payment details")
+                                        .font(.benCardTitle)
+                                        .foregroundStyle(Color.onCream)
+                                    Text("BPAY, BSB and account — tap to copy when you pay")
+                                        .font(.benMeta)
+                                        .foregroundStyle(Color.onCreamMuted)
+                                }
+                                Spacer()
+                                Image(systemName: "plus")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(Color.onCreamMuted)
+                            }
+                        }
+                    }
+                    .buttonStyle(BenPressable(haptic: .light))
                 }
 
                 Button {
@@ -83,7 +131,7 @@ struct BillDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.cream, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                 }
-                .buttonStyle(BenPressable())
+                .buttonStyle(BenPressable(haptic: .light))
                 .benShadow(.floating)
 
                 HStack(spacing: 12) {
@@ -99,18 +147,18 @@ struct BillDetailView: View {
                     ) { showReminderOverride = true }
                 }
 
-                if let data = bill.sourceImageData, let image = UIImage(data: data) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 300)
-                        .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                        .benShadow(.floating)
+                if let data = bill.sourceImageData {
+                    BillDocumentPreview(data: data, maxHeight: 300)
                 }
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
+        }
+        .sheet(isPresented: $showEdit) {
+            EditBillSheet(bill: bill)
+                .presentationDetents([.large])
+                .presentationCornerRadius(28)
+                .presentationBackground(Color.forestBottom)
         }
         .sheet(isPresented: $showCategoryPicker) {
             CategoryPickerSheet(bill: bill)
@@ -141,11 +189,28 @@ struct BillDetailView: View {
             }
         )
         .safeAreaInset(edge: .bottom) {
-            if bill.status != .paid {
-                BenPrimaryButton(title: "Mark as paid", systemImage: "checkmark") { markPaid() }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 12)
+            VStack(spacing: 10) {
+                BenSecondaryButton(title: "Edit details") {
+                    showEdit = true
+                }
+                if bill.status != .paid {
+                    BenPrimaryButton(title: "Mark as paid", systemImage: "checkmark") { markPaid() }
+                }
+                BenTextButton(title: "Remove") {
+                    showRemoveConfirm = true
+                }
+                .frame(maxWidth: .infinity)
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
+            .padding(.top, 8)
+            .background(Color.forestBottom.opacity(0.92))
+        }
+        .alert("Remove this bill?", isPresented: $showRemoveConfirm) {
+            Button("Remove", role: .destructive) { removeBill() }
+            Button("Keep it", role: .cancel) {}
+        } message: {
+            Text("Reminders stop and it leaves your list. You can always add it again later.")
         }
         .overlay {
             if showConfetti {
@@ -174,6 +239,13 @@ struct BillDetailView: View {
             }
         }
     }
+
+    private func removeBill() {
+        services.scheduler.cancel(identifiers: bill.notificationIDs)
+        modelContext.delete(bill)
+        try? modelContext.save()
+        dismiss()
+    }
 }
 
 extension BillDetailView {
@@ -200,7 +272,7 @@ extension BillDetailView {
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(BenPressable())
+        .buttonStyle(BenPressable(haptic: .light))
         .benRowSurface(radius: 22)
     }
 }

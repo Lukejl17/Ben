@@ -27,6 +27,8 @@ final class OnboardingCoordinator {
         case commit           // 14 — the pact, thumb on it
         case paywall          // 15 — S9
         case secondBill       // 16 — S10
+        /// After the second bill's reminder is set — calm close before home.
+        case secondBillLockedIn
         /// Terminal for the add-a-bill flow launched from home.
         case done
     }

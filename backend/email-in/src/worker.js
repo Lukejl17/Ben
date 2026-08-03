@@ -60,9 +60,10 @@ async function handleInbound(message, env, ctx) {
     return json({ status: "unknown token" }, 200);
   }
 
-  const attachments = (message.Attachments ?? []).filter((attachment) =>
-    /pdf|image/.test(attachment.ContentType ?? "")
-  );
+  const rawAttachments = message.Attachments ?? [];
+  // Prefer real documents: if any PDF arrived, ignore image chrome (signatures, logos).
+  const pdfs = rawAttachments.filter((attachment) => isPdfAttachment(attachment));
+  const attachments = (pdfs.length > 0 ? pdfs : rawAttachments).filter(isBillAttachment);
 
   for (const attachment of attachments) {
     const key = `${token}/${Date.now()}-${safeName(attachment.Name)}`;
@@ -76,6 +77,42 @@ async function handleInbound(message, env, ctx) {
   }
 
   return json({ status: "ok", stored: attachments.length }, 200);
+}
+
+/** PDF invoices/attachments — always keep. */
+function isPdfAttachment(attachment) {
+  const type = (attachment.ContentType ?? "").toLowerCase();
+  const name = (attachment.Name ?? "").toLowerCase();
+  return type.includes("pdf") || name.endsWith(".pdf");
+}
+
+/**
+ * Keep bill-like attachments; drop email signature / logo images.
+ * Postmark sets ContentID on inline HTML images (signatures).
+ */
+function isBillAttachment(attachment) {
+  const type = (attachment.ContentType ?? "").toLowerCase();
+  const name = (attachment.Name ?? "").toLowerCase();
+  const size = Number(attachment.ContentLength ?? 0);
+  const contentId = (attachment.ContentID ?? "").trim();
+
+  if (isPdfAttachment(attachment)) return true;
+  if (!type.includes("image")) return false;
+
+  // Inline body images — almost always signature blocks / logos.
+  if (contentId) return false;
+
+  // Tiny raster files aren't bill scans.
+  if (size > 0 && size < 40_000) return false;
+
+  if (
+    /(signature|logo|letterhead|spacer|facebook|linkedin|twitter|instagram|icon|badge|banner)/i
+      .test(name)
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 // ---- Authenticated (app) routes -------------------------------------------

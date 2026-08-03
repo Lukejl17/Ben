@@ -1,4 +1,5 @@
 import FirebaseCore
+import GoogleSignIn
 import SwiftData
 import SwiftUI
 import UserNotifications
@@ -7,6 +8,7 @@ import UserNotifications
 struct BenApp: App {
     @State private var coordinator = OnboardingCoordinator()
     @State private var router: NotificationRouter
+    @State private var pendingEmailMonitor = PendingEmailMonitor()
     private let services: AppServices
     private let notificationDelegate: NotificationDelegate
 
@@ -37,11 +39,16 @@ struct BenApp: App {
             ContentView()
                 .environment(coordinator)
                 .environment(router)
+                .environment(pendingEmailMonitor)
                 .environment(\.services, services)
                 .tint(.chartreuse)
                 .background(Color.forestBottom)
                 // Forest Bold is one committed world — no light variant.
                 .preferredColorScheme(.dark)
+                // Google Sign-In returns via the reversed client ID URL scheme.
+                .onOpenURL { url in
+                    GIDSignIn.sharedInstance.handle(url)
+                }
         }
         .modelContainer(Self.makeContainer())
     }

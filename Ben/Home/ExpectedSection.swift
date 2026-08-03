@@ -61,7 +61,7 @@ struct ExpectedSection: View {
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .buttonStyle(BenPressable())
+                .buttonStyle(BenPressable(haptic: .light))
                 .background(Color.rowFill.opacity(0.5), in: RoundedRectangle(cornerRadius: 26, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 26, style: .continuous)
