@@ -13,6 +13,12 @@ struct ReminderSetupView: View {
     @State private var denied = false
 
     private var bill: Bill? { coordinator.confirmedBill }
+    private var billsToRemind: [Bill] {
+        let batch = coordinator.confirmedBills
+        if !batch.isEmpty { return batch }
+        if let bill { return [bill] }
+        return []
+    }
 
     private var plannedDates: [Date] {
         guard let bill else { return [] }
@@ -100,6 +106,15 @@ struct ReminderSetupView: View {
             return "No worries, I'll keep everything ready in here instead."
         }
         let due = bill.dueDate.formatted(.dateTime.day().month(.wide))
+        let count = billsToRemind.count
+        if count > 1 {
+            if let first = plannedDates.first {
+                let mention = first.formatted(.dateTime.day().month(.wide))
+                return "Your \(bill.issuer) notice is \(count) instalments. "
+                    + "I'll mention the first one on \(mention). Sound right?"
+            }
+            return "Your \(bill.issuer) notice is \(count) instalments. I'll watch each due date."
+        }
         if let first = plannedDates.first {
             let mention = first.formatted(.dateTime.day().month(.wide))
             return "Your \(bill.issuer) bill is due \(due). I'll mention it on \(mention). Sound right? "
@@ -135,29 +150,34 @@ struct ReminderSetupView: View {
     }
 
     private func scheduleAndAdvance() async {
-        guard let bill else {
+        let bills = billsToRemind
+        guard !bills.isEmpty else {
             coordinator.advance(to: nextStep)
             return
         }
         coordinator.reminderStyle = style
-        let identifiers = await services.scheduler.scheduleReminders(
-            billID: bill.uuid,
-            issuer: bill.issuer,
-            dueDate: bill.dueDate,
-            style: style,
-            withSecondBillRider: true  // first due-soon reminder carries the one rider
-        )
-        bill.hasNotification = !identifiers.isEmpty
-        bill.notificationIDs = identifiers
-        bill.reminderStyleRaw = style.rawValue
-        // Subsequent bills reuse the cadence chosen during onboarding (S7b).
-        if coordinator.isAddingSubsequentBill {
-            let raw = UserDefaults.standard.string(forKey: OverdueCadence.storageKey)
-            let cadence = OverdueCadence(rawValue: raw ?? "") ?? .everySecondDay
-            let overdueIDs = await services.scheduler.scheduleOverdueReminders(
-                billID: bill.uuid, issuer: bill.issuer, dueDate: bill.dueDate, cadence: cadence
+        var isFirst = true
+        for bill in bills {
+            let identifiers = await services.scheduler.scheduleReminders(
+                billID: bill.uuid,
+                issuer: bill.issuer,
+                dueDate: bill.dueDate,
+                style: style,
+                withSecondBillRider: isFirst  // one rider on the soonest instalment only
             )
-            bill.notificationIDs.append(contentsOf: overdueIDs)
+            bill.hasNotification = !identifiers.isEmpty
+            bill.notificationIDs = identifiers
+            bill.reminderStyleRaw = style.rawValue
+            // Subsequent bills reuse the cadence chosen during onboarding (S7b).
+            if coordinator.isAddingSubsequentBill {
+                let raw = UserDefaults.standard.string(forKey: OverdueCadence.storageKey)
+                let cadence = OverdueCadence(rawValue: raw ?? "") ?? .everySecondDay
+                let overdueIDs = await services.scheduler.scheduleOverdueReminders(
+                    billID: bill.uuid, issuer: bill.issuer, dueDate: bill.dueDate, cadence: cadence
+                )
+                bill.notificationIDs.append(contentsOf: overdueIDs)
+            }
+            isFirst = false
         }
         services.analytics.track(.notificationSet)
         coordinator.advance(to: nextStep)

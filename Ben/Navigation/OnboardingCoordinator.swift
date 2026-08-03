@@ -48,8 +48,10 @@ final class OnboardingCoordinator {
     var pendingEmailKey: String?
     /// True while walking the B1 sample bill — nothing is saved.
     var isSampleWalkthrough = false
-    /// Set by S6 confirm; S7/S8 read it.
+    /// Set by S6 confirm; S7/S8 read it (soonest instalment when split).
     var confirmedBill: Bill?
+    /// All bills saved from the latest confirm — one item, or several instalments.
+    var confirmedBills: [Bill] = []
     /// S7 outcome, read by S8 and analytics.
     var notificationsGranted: Bool?
 
@@ -93,6 +95,7 @@ final class OnboardingCoordinator {
         pendingImageData = nil
         parsed = nil
         confirmedBill = nil
+        confirmedBills = []
         pendingEmailKey = nil
         isSampleWalkthrough = false
         isAddingSubsequentBill = false
@@ -104,6 +107,7 @@ final class OnboardingCoordinator {
         pendingImageData = nil
         parsed = nil
         confirmedBill = nil
+        confirmedBills = []
         uploadMethod = .photo
         pendingEmailKey = nil
         step = .upload

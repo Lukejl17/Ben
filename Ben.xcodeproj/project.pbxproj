@@ -11,8 +11,10 @@
 		08165EF101103878DD9D1922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFA0C4864C4E68D071A3E3E1 /* GoogleService-Info.plist */; };
 		0D64BDEC7E1257CFB8C1A0BD /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */; };
 		0EFF8DAA8068086F9F1A4EC4 /* ReminderStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992D3AAAD100AE4EBFCBFA41 /* ReminderStyleView.swift */; };
+		0F637FC6FA78E72B563B376B /* InstallmentSplitSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F675022B57E929716FFAC418 /* InstallmentSplitSheet.swift */; };
 		12203E1D44D1FD626A7FF6CC /* InterviewViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C55F74B507145DEF5BCCB9F /* InterviewViews.swift */; };
 		15916B09963465496E88A1FF /* BillCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D653B3B22406BC54F1F235F /* BillCategory.swift */; };
+		1A59B790D20C78506934A32B /* InstallmentSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF353C097B4F9CC01738BA6E /* InstallmentSplitter.swift */; };
 		1BF35BEC62CBA34E9491D64C /* CaptureExtractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9744BD8828BD4119D2EC87F /* CaptureExtractView.swift */; };
 		1E24678AEFC6092472C4446E /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933DFE07AE932F586707E638 /* OnboardingFlow.swift */; };
 		23371D1F4E0CDEEF5C103A0F /* InsightsMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880CE6FA14E78D37DC9B2C79 /* InsightsMath.swift */; };
@@ -76,6 +78,7 @@
 		C7A7DDEA97044AC57BE353FF /* ExporterAndAccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91935D4887107EA8E6230B41 /* ExporterAndAccountTests.swift */; };
 		C83F2969FBB5DDCE18516427 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9069EEDC762F738D1DD7364 /* Subscription.swift */; };
 		CB22D6A85CB9650E9C11348F /* AccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC70CEEDAFCD38BA3E860DE9 /* AccountService.swift */; };
+		CBF649160065BD8693D70C25 /* InstallmentSplitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33DCE5F6C54E098265388 /* InstallmentSplitterTests.swift */; };
 		CEDA3BFF6A57CFF4428C00EC /* ExpectedSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D003D28D1314F30A458E7 /* ExpectedSection.swift */; };
 		D57ADCF0997C262F711681B5 /* PaymentDetailsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D886AF4600BB007A655D13B /* PaymentDetailsCard.swift */; };
 		DA60403A82CC67C52C700F96 /* OverdueStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4535C1B1625A80EB6FE213A /* OverdueStyleView.swift */; };
@@ -109,6 +112,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00D33DCE5F6C54E098265388 /* InstallmentSplitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentSplitterTests.swift; sourceTree = "<group>"; };
 		0134544487EB6E60560B0ECF /* OnboardingAnswersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAnswersTests.swift; sourceTree = "<group>"; };
 		0B330F481868C852CC1118F7 /* AccountSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheet.swift; sourceTree = "<group>"; };
 		0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillRow.swift; sourceTree = "<group>"; };
@@ -171,6 +175,7 @@
 		CBE7532AE49874607299953C /* ManualEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEntryView.swift; sourceTree = "<group>"; };
 		CC70CEEDAFCD38BA3E860DE9 /* AccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountService.swift; sourceTree = "<group>"; };
 		CEE9A19BD02DD5D47FFB3CC0 /* OnboardingAnswers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAnswers.swift; sourceTree = "<group>"; };
+		CF353C097B4F9CC01738BA6E /* InstallmentSplitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentSplitter.swift; sourceTree = "<group>"; };
 		D1FEB6A681D22FBFC5617414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D5F2CCEE2A9C323E66090979 /* BenComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenComponents.swift; sourceTree = "<group>"; };
 		D853ACCC7A4596D8497D055A /* ReminderSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSetupView.swift; sourceTree = "<group>"; };
@@ -192,8 +197,10 @@
 		F5A73E72637A952F057D3FA2 /* BenProviderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenProviderButton.swift; sourceTree = "<group>"; };
 		F620063485E9C32AEFFFCA9A /* BenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenApp.swift; sourceTree = "<group>"; };
 		F6372B46A46205B936B03CED /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
+		F675022B57E929716FFAC418 /* InstallmentSplitSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentSplitSheet.swift; sourceTree = "<group>"; };
 		F76653553158ABD93AA95A68 /* OnboardingV2Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingV2Components.swift; sourceTree = "<group>"; };
 		F9AD927BE23BB8218DA4C34C /* EmailInClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailInClient.swift; sourceTree = "<group>"; };
+		FFFB89BAD014E58506D725C3 /* Ben.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ben.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,6 +241,7 @@
 			isa = PBXGroup;
 			children = (
 				2A9BD2482F4FD2847F694570 /* Assets.xcassets */,
+				FFFB89BAD014E58506D725C3 /* Ben.entitlements */,
 				F620063485E9C32AEFFFCA9A /* BenApp.swift */,
 				7A884086B3F417CFBD382BA0 /* ContentView.swift */,
 				DFA0C4864C4E68D071A3E3E1 /* GoogleService-Info.plist */,
@@ -308,6 +316,7 @@
 				ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */,
 				91935D4887107EA8E6230B41 /* ExporterAndAccountTests.swift */,
 				ED87CEAFE8744C32F2865013 /* InsightsMathTests.swift */,
+				00D33DCE5F6C54E098265388 /* InstallmentSplitterTests.swift */,
 				0134544487EB6E60560B0ECF /* OnboardingAnswersTests.swift */,
 				80B76F4C029AF4124C7FBB17 /* PaymentDetailsTests.swift */,
 				BE3694F56DE31849A2C2C49A /* ReminderSchedulerTests.swift */,
@@ -364,6 +373,7 @@
 				687C17C4E27E7CCDB4BC28B0 /* ExpectedBills.swift */,
 				F2F66AAE2BD688E561016374 /* FirebaseAccountService.swift */,
 				880CE6FA14E78D37DC9B2C79 /* InsightsMath.swift */,
+				CF353C097B4F9CC01738BA6E /* InstallmentSplitter.swift */,
 				F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */,
 				9680FB75DCD09A1EF814B503 /* PaymentDetails.swift */,
 				A3FE7C86E066B7A77F16EA65 /* ReminderScheduler.swift */,
@@ -390,6 +400,7 @@
 				E0051E555BF5838F309FF35D /* CommitView.swift */,
 				85AAFF1EA8A85A8657AF1413 /* ConfirmBillView.swift */,
 				F56833A66BB0AF77CFE00E5C /* DemoScanView.swift */,
+				F675022B57E929716FFAC418 /* InstallmentSplitSheet.swift */,
 				7DA80A2E4EC074A63F77B8FB /* IntentView.swift */,
 				8C55F74B507145DEF5BCCB9F /* InterviewViews.swift */,
 				CBE7532AE49874607299953C /* ManualEntryView.swift */,
@@ -480,13 +491,14 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					8A72EDE34CD5048E59B6F88A = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 4CGY239475;
+						ProvisioningStyle = Automatic;
 					};
 					A914CBA982E3E8C1A5375942 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 4CGY239475;
 					};
 					B526510B8CCDF8704FB5D37D = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 4CGY239475;
 						TestTargetID = 8A72EDE34CD5048E59B6F88A;
 					};
 				};
@@ -567,6 +579,8 @@
 				B73D5BF7903077D2126AAA7C /* HomeView.swift in Sources */,
 				23371D1F4E0CDEEF5C103A0F /* InsightsMath.swift in Sources */,
 				2424357ADAFDA991392B5BC9 /* InsightsView.swift in Sources */,
+				0F637FC6FA78E72B563B376B /* InstallmentSplitSheet.swift in Sources */,
+				1A59B790D20C78506934A32B /* InstallmentSplitter.swift in Sources */,
 				6CF9AFD7C4E657043F50410D /* IntentView.swift in Sources */,
 				12203E1D44D1FD626A7FF6CC /* InterviewViews.swift in Sources */,
 				353BD8F7E760B44909DD1626 /* ManualEntryView.swift in Sources */,
@@ -621,6 +635,7 @@
 				29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */,
 				C7A7DDEA97044AC57BE353FF /* ExporterAndAccountTests.swift in Sources */,
 				5613F23E5A323A873602191A /* InsightsMathTests.swift in Sources */,
+				CBF649160065BD8693D70C25 /* InstallmentSplitterTests.swift in Sources */,
 				7161C1B180F228648AE31197 /* OnboardingAnswersTests.swift in Sources */,
 				4D080D55512EFCB19EBC8F0F /* PaymentDetailsTests.swift in Sources */,
 				30C0567FBE22A4A470816003 /* ReminderSchedulerTests.swift in Sources */,
@@ -648,7 +663,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Ben/Ben.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Ben/Info.plist;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -696,7 +713,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4CGY239475;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -794,7 +811,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4CGY239475;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -820,7 +837,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Ben/Ben.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Ben/Info.plist;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
 				LD_RUNPATH_SEARCH_PATHS = (
