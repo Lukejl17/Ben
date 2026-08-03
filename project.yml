@@ -11,7 +11,7 @@ packages:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    DEVELOPMENT_TEAM: ""   # HUMAN: set team ID for device builds; simulator works without
+    DEVELOPMENT_TEAM: "4CGY239475"  # Repertoire Studio Pty Ltd
 targets:
   Ben:
     type: application
@@ -25,6 +25,8 @@ targets:
       properties:
         UILaunchScreen: {}
         CFBundleDisplayName: Ben
+        # Skip export-compliance quiz on each upload (HTTPS-only / OS encryption).
+        ITSAppUsesNonExemptEncryption: false
         UIAppFonts:
           - Baloo2-Variable.ttf
           - Figtree-Variable.ttf
@@ -40,6 +42,9 @@ targets:
       base:
         INFOPLIST_KEY_UIUserInterfaceStyle: Automatic
         TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_ENTITLEMENTS: Ben/Ben.entitlements
+        CODE_SIGN_STYLE: Automatic
+        PRODUCT_BUNDLE_IDENTIFIER: com.repertoirestudio.Ben
   BenTests:
     type: bundle.unit-test
     platform: iOS

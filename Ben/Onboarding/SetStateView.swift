@@ -115,6 +115,10 @@ struct SetStateView: View {
         guard let bill else { return "Nothing else needs your attention." }
         let due = bill.dueDate.formatted(.dateTime.day().month(.wide))
         let amount = bill.amount.formatted(.currency(code: "AUD"))
+        let parts = coordinator.confirmedBills.count
+        if parts > 1 {
+            return "\(bill.issuer), \(parts) instalments — first \(amount) due \(due) is my problem now."
+        }
         return "\(bill.issuer), \(amount), due \(due) is my problem now."
     }
 

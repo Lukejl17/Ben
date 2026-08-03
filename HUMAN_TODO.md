@@ -2,12 +2,13 @@
 
 Pre-seeded — these need Luke, not Claude:
 
-- [ ] Apple Developer account + DEVELOPMENT_TEAM in project.yml (device builds / TestFlight)
-- [ ] Sign in with Apple capability + entitlement (S8 account save is stubbed until then)
+- [x] Apple Developer account + DEVELOPMENT_TEAM in project.yml (device builds / TestFlight)
+      Team ID `4CGY239475` · Repertoire Studio Pty Ltd · set 3 Aug 2026
+- [x] Sign in with Apple capability + entitlement (App ID + Ben/Ben.entitlements)
 - [ ] RevenueCat account + API key → replace StubSubscriptionService (S9)
 - [ ] App Store Connect products: annual US$49.99 / monthly US$5.99, 7-day intro trial
 - [ ] PostHog project + API key → replace LocalAnalytics
-- [ ] Email forwarding ingestion backend (S10 forwarding address is display-only)
+- [x] Email forwarding ingestion backend (S10 forwarding address is display-only)
 - [ ] Ben's illustration (clay + ink palette, one calm expression, ≤44pt — replaces SF Symbol placeholder)
 
 Added overnight (14 Jul 2026):
@@ -34,14 +35,18 @@ Added 15 Jul 2026 (settings/accounts/email-in build):
 
 Added 19 Jul 2026 (Firebase + email-in production build):
 
-- [ ] Apple Developer membership (enrolment started 19 Jul). When approved:
-      set DEVELOPMENT_TEAM in project.yml, add the Sign in with Apple capability
-      to com.repertoirestudio.Ben, and configure the Apple provider in
-      Firebase Console → Authentication → Sign-in method.
+- [x] Apple Developer membership approved. App ID `com.repertoirestudio.Ben` registered
+      with Sign in with Apple. App Store Connect app created (Apple ID 6797410242,
+      name "Ben: Bill Reminders & Tracker"). Remaining for Apple login in Firebase:
+      create a Sign in with Apple key + enable the Apple provider in Firebase Console.
 - [ ] Verify Firebase Console has Email/Password + Google + Apple providers enabled
       (project: repertoirestudio-ben).
 - [ ] Postmark: move off the sandbox/test tier when real user mail should flow
       (request approval in their dashboard).
+
+## TestFlight (next human step in Xcode)
+- [ ] Archive + upload: open Ben.xcodeproj → Any iOS Device → Product → Archive →
+      Distribute App → App Store Connect → Upload. Then enable Internal Testing in TestFlight.
 
 ## Paywall (flow F)
 - [ ] RevenueCat: annual US$49.99/yr with 7-day intro trial, monthly US$5.99/mo, and a real time-boxed welcome intro offer to back the countdown chip. If no real offer exists, cut the countdown.
