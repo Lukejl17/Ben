@@ -134,56 +134,78 @@ struct InsightsView: View {
     }
 
     private func donut(result: (slices: [CategorySlice], total: Decimal)) -> some View {
-        Chart(Array(result.slices.enumerated()), id: \.element.category) { index, slice in
-            SectorMark(
-                angle: .value("Amount", (slice.total as NSDecimalNumber).doubleValue),
-                innerRadius: .ratio(0.64),
-                angularInset: 2
-            )
-            .cornerRadius(6)
-            .foregroundStyle(Self.palette[index % Self.palette.count])
-        }
-        .chartAngleSelection(value: $selectedAngle)
-        .onChange(of: selectedAngle) { _, angle in
-            guard let angle else { return }
-            ignoreOutsideClear = true
-            showCallout(for: angle, in: result.slices)
-            Task {
-                try? await Task.sleep(for: .milliseconds(80))
-                ignoreOutsideClear = false
+        // Square chart centred so the left/right gutters can dismiss the callout —
+        // a full-width Chart maps every side tap into a sector instead.
+        ZStack {
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture { clearCallout() }
+
+            Chart(Array(result.slices.enumerated()), id: \.element.category) { index, slice in
+                SectorMark(
+                    angle: .value("Amount", (slice.total as NSDecimalNumber).doubleValue),
+                    innerRadius: .ratio(0.64),
+                    angularInset: 2
+                )
+                .cornerRadius(6)
+                .foregroundStyle(Self.palette[index % Self.palette.count])
             }
-        }
-        .overlay(alignment: .top) {
-            if let slice = calloutSlice,
-               let index = result.slices.firstIndex(where: { $0.category == slice.category }) {
-                donutCallout(slice: slice, total: result.total,
-                             color: Self.palette[index % Self.palette.count])
-                    .offset(y: -10)
-                    .transition(.scale(scale: 0.8, anchor: .bottom).combined(with: .opacity))
-                    .onTapGesture { clearCallout() }
+            .chartAngleSelection(value: $selectedAngle)
+            .onChange(of: selectedAngle) { _, angle in
+                guard let angle else { return }
+                ignoreOutsideClear = true
+                let tapped = slice(for: angle, in: result.slices)
+                if let tapped, tapped.category == calloutSlice?.category {
+                    clearCallout()
+                } else {
+                    showCallout(for: angle, in: result.slices)
+                }
+                Task {
+                    try? await Task.sleep(for: .milliseconds(80))
+                    ignoreOutsideClear = false
+                }
             }
-        }
-        .animation(.spring(duration: 0.3), value: calloutSlice?.category)
-        .frame(height: 240)
-        .chartBackground { _ in
-            // The hole is ~64% of the 240pt chart: keep the number inside it
-            // whatever its length ($243 through $12,345.67).
-            VStack(spacing: 2) {
-                Text(result.total.formatted(.currency(code: "AUD")))
-                    .font(.baloo("Baloo2-ExtraBold", 28, relativeTo: .largeTitle))
-                    .monospacedDigit()
-                    .foregroundStyle(Color.forestInk)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
-                Text(period == .all ? "all time" : "last \(period.label.lowercased())")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.5))
+            .overlay(alignment: .top) {
+                if let slice = calloutSlice,
+                   let index = result.slices.firstIndex(where: { $0.category == slice.category }) {
+                    donutCallout(slice: slice, total: result.total,
+                                 color: Self.palette[index % Self.palette.count])
+                        .offset(y: -10)
+                        .transition(.scale(scale: 0.8, anchor: .bottom).combined(with: .opacity))
+                        .onTapGesture { clearCallout() }
+                }
             }
-            .frame(maxWidth: 128)
-            .contentShape(Rectangle())
-            .onTapGesture { clearCallout() }
+            .animation(.spring(duration: 0.3), value: calloutSlice?.category)
+            .chartBackground { _ in
+                VStack(spacing: 2) {
+                    Text(result.total.formatted(.currency(code: "AUD")))
+                        .font(.baloo("Baloo2-ExtraBold", 28, relativeTo: .largeTitle))
+                        .monospacedDigit()
+                        .foregroundStyle(Color.forestInk)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.4)
+                    Text(period == .all ? "all time" : "last \(period.label.lowercased())")
+                        .font(.benMeta)
+                        .foregroundStyle(Color.forestInk.opacity(0.5))
+                }
+                .frame(maxWidth: 128)
+                .contentShape(Rectangle())
+                .onTapGesture { clearCallout() }
+            }
+            .frame(width: 240, height: 240)
         }
+        .frame(maxWidth: .infinity)
+        .frame(height: 260)
         .padding(.vertical, 8)
+    }
+
+    private func slice(for angle: Double, in slices: [CategorySlice]) -> CategorySlice? {
+        var running = 0.0
+        for slice in slices {
+            running += (slice.total as NSDecimalNumber).doubleValue
+            if angle <= running { return slice }
+        }
+        return slices.last
     }
 
     private func categoryRows(slices: [CategorySlice]) -> some View {
@@ -230,14 +252,7 @@ struct InsightsView: View {
 
     /// Maps a tapped angle back to its slice and shows the mini callout.
     private func showCallout(for angle: Double, in slices: [CategorySlice]) {
-        var running = 0.0
-        for slice in slices {
-            running += (slice.total as NSDecimalNumber).doubleValue
-            if angle <= running {
-                calloutSlice = slice
-                break
-            }
-        }
+        calloutSlice = slice(for: angle, in: slices)
         calloutHideTask?.cancel()
         calloutHideTask = Task {
             try? await Task.sleep(for: .seconds(3))
