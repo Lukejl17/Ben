@@ -4,8 +4,10 @@ import SwiftUI
 /// S6 — confirm. The amount is the hero; nothing saves without a once-over.
 struct ConfirmBillView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
+    @Environment(PendingEmailMonitor.self) private var pendingMonitor
     @Environment(\.services) private var services
     @Environment(\.modelContext) private var modelContext
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     @State private var issuer = ""
     @State private var amountText = ""
@@ -13,12 +15,19 @@ struct ConfirmBillView: View {
     @State private var payment = PaymentDetails()
     @State private var installments: [InstallmentDraft]?
     @State private var showSplitSheet = false
+    @State private var showRemoveConfirm = false
+    @State private var isRemoving = false
 
     private var amount: Decimal? {
         Decimal(string: amountText.replacingOccurrences(of: ",", with: ""))
     }
 
     private var isSplit: Bool { installments != nil }
+
+    /// Forwarded mail still on the shelf — can be dropped without tracking.
+    private var canRemovePendingEmail: Bool {
+        coordinator.pendingEmailKey != nil && !coordinator.isSampleWalkthrough
+    }
 
     var body: some View {
         BenScreen {
@@ -127,8 +136,23 @@ struct ConfirmBillView: View {
             }
             .disabled(!coordinator.isSampleWalkthrough && (issuer.isEmpty || amount == nil))
             .opacity(!coordinator.isSampleWalkthrough && (issuer.isEmpty || amount == nil) ? 0.45 : 1)
+
+            if canRemovePendingEmail {
+                BenTextButton(title: isRemoving ? "Removing…" : "Remove") {
+                    showRemoveConfirm = true
+                }
+                .disabled(isRemoving)
+                .frame(maxWidth: .infinity)
+                .accessibilityIdentifier("Remove pending email bill")
+            }
         }
         .onAppear(perform: prefill)
+        .alert("Remove this bill?", isPresented: $showRemoveConfirm) {
+            Button("Remove", role: .destructive) { discardPendingEmail() }
+            Button("Keep reviewing", role: .cancel) {}
+        } message: {
+            Text("It won't be tracked, and it'll leave your waiting list.")
+        }
         .sheet(isPresented: $showSplitSheet) {
             if let amount {
                 InstallmentSplitSheet(
@@ -254,6 +278,27 @@ struct ConfirmBillView: View {
         coordinator.confirmedBills = saved
         coordinator.confirmedBill = soonest
         coordinator.advance(to: .reminderSetup)
+    }
+
+    /// Drop a forwarded attachment without saving — same as × on Home.
+    private func discardPendingEmail() {
+        guard let key = coordinator.pendingEmailKey, !isRemoving else { return }
+        isRemoving = true
+        let accounts = services.accounts
+        let emailIn = services.emailIn
+        Task {
+            await pendingMonitor.dismiss(key: key, accounts: accounts, emailIn: emailIn)
+            coordinator.pendingEmailKey = nil
+            coordinator.pendingImageData = nil
+            coordinator.parsed = nil
+            isRemoving = false
+            if hasCompletedOnboarding {
+                coordinator.advance(to: .done)
+            } else {
+                coordinator.isAddingSubsequentBill = false
+                coordinator.advance(to: .secondBill)
+            }
+        }
     }
 
     private func digitsOnly(_ value: String?) -> String {
