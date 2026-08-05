@@ -48,6 +48,8 @@ struct BillRow: View {
                 Button("Mark as paid", systemImage: "checkmark.circle") {
                     bill.paidAt = .now
                     services.scheduler.cancel(identifiers: bill.notificationIDs)
+                    let billID = bill.uuid
+                    Task { await LiveActivityManager.markPaid(billID: billID) }
                     bill.notificationIDs = []
                     bill.hasNotification = false
                     try? modelContext.save()
@@ -55,6 +57,8 @@ struct BillRow: View {
             }
             Button("Remove", systemImage: "trash", role: .destructive) {
                 services.scheduler.cancel(identifiers: bill.notificationIDs)
+                let billID = bill.uuid
+                Task { await LiveActivityManager.end(billID: billID) }
                 modelContext.delete(bill)
                 try? modelContext.save()
             }

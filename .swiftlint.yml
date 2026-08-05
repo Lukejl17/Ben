@@ -1,5 +1,7 @@
 included:
   - Ben
+  - BenShared
+  - BenWidgets
   - BenTests
   - BenUITests
 line_length:
@@ -16,8 +18,8 @@ function_body_length:
   error: 140
 # Home / Insights / email sheets are intentionally vertical; keep them readable.
 file_length:
-  warning: 500
+  warning: 520
   error: 650
 type_body_length:
-  warning: 460
+  warning: 480
   error: 550

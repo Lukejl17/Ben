@@ -215,6 +215,7 @@ struct ReminderSetupView: View {
             let identifiers = await services.scheduler.scheduleReminders(
                 billID: bill.uuid,
                 issuer: bill.issuer,
+                amount: bill.amount,
                 dueDate: bill.dueDate,
                 style: style,
                 withSecondBillRider: isFirst  // one rider on the soonest instalment only
@@ -222,6 +223,16 @@ struct ReminderSetupView: View {
             bill.hasNotification = !identifiers.isEmpty
             bill.notificationIDs = identifiers
             bill.reminderStyleRaw = style.rawValue
+            if BillDueLiveActivityPolicy.shouldPresent(
+                style: style, dueDate: bill.dueDate, paidAt: bill.paidAt
+            ) {
+                _ = await LiveActivityManager.start(
+                    billID: bill.uuid,
+                    issuer: bill.issuer,
+                    amount: bill.amount,
+                    dueDate: bill.dueDate
+                )
+            }
             // Subsequent bills reuse the cadence chosen during onboarding (S7b).
             if coordinator.isAddingSubsequentBill {
                 let raw = UserDefaults.standard.string(forKey: OverdueCadence.storageKey)

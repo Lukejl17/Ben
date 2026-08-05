@@ -129,17 +129,27 @@ struct EditBillSheet: View {
         let oldIDs = bill.notificationIDs.filter { $0.hasPrefix("bill-") }
         let billID = bill.uuid
         let issuer = bill.issuer
+        let amount = bill.amount
         let due = bill.dueDate
         let scheduler = services.scheduler
         Task {
             scheduler.cancel(identifiers: oldIDs)
+            await LiveActivityManager.end(billID: billID)
             let newIDs = await scheduler.scheduleReminders(
-                billID: billID, issuer: issuer, dueDate: due, style: style
+                billID: billID, issuer: issuer, amount: amount, dueDate: due, style: style
             )
             bill.notificationIDs.removeAll { oldIDs.contains($0) }
             bill.notificationIDs.append(contentsOf: newIDs)
             bill.hasNotification = !bill.notificationIDs.isEmpty
             try? modelContext.save()
+            // Due-date edits may land the bill on/off today — resync Lock Screen.
+            if BillDueLiveActivityPolicy.shouldPresent(
+                style: style, dueDate: due, paidAt: bill.paidAt
+            ) {
+                _ = await LiveActivityManager.start(
+                    billID: billID, issuer: issuer, amount: amount, dueDate: due
+                )
+            }
         }
     }
 

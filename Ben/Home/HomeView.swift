@@ -145,6 +145,7 @@ struct HomeView: View {
                 showAddBill = true
             }
             handleDeepLinks()
+            syncLiveActivities()
             Task {
                 await pendingMonitor.refresh(
                     accounts: services.accounts,
@@ -155,6 +156,7 @@ struct HomeView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                syncLiveActivities()
                 Task {
                     await pendingMonitor.refresh(
                         accounts: services.accounts,
@@ -198,6 +200,21 @@ struct HomeView: View {
             notificationRouter.addBillRequested = false
             startAddBill()
         }
+    }
+
+    /// Due-day Live Activities can't be scheduled ahead — sync whenever Home is active.
+    private func syncLiveActivities() {
+        let snapshot = bills.map {
+            BillLiveActivitySnapshot(
+                billID: $0.uuid,
+                issuer: $0.issuer,
+                amount: $0.amount,
+                dueDate: $0.dueDate,
+                paidAt: $0.paidAt,
+                style: ReminderStyle(rawValue: $0.reminderStyleRaw) ?? .fewDaysEarly
+            )
+        }
+        Task { await LiveActivityManager.sync(bills: snapshot) }
     }
 
     private var billList: some View {
@@ -312,6 +329,8 @@ struct HomeView: View {
 
     private func removeTrackedBill(_ bill: Bill) {
         services.scheduler.cancel(identifiers: bill.notificationIDs)
+        let billID = bill.uuid
+        Task { await LiveActivityManager.end(billID: billID) }
         modelContext.delete(bill)
         try? modelContext.save()
     }

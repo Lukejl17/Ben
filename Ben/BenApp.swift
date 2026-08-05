@@ -47,7 +47,14 @@ struct BenApp: App {
                 .preferredColorScheme(.dark)
                 // Google Sign-In returns via the reversed client ID URL scheme.
                 .onOpenURL { url in
-                    GIDSignIn.sharedInstance.handle(url)
+                    if GIDSignIn.sharedInstance.handle(url) { return }
+                    // Live Activity / widget deep link: ben://bill/<uuid>
+                    if url.scheme == "ben", url.host == "bill" {
+                        let id = url.pathComponents.dropFirst().first ?? url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                        if !id.isEmpty {
+                            router.openBillID = id
+                        }
+                    }
                 }
                 .benInstallKeyboardDismiss()
                 .task {

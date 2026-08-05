@@ -34,23 +34,41 @@ struct ReminderScheduler: Sendable {
         hour: Int = ReminderPrefs.hour(),
         quietWeekends: Bool = ReminderPrefs.quietWeekends()
     ) -> [Date] {
-        var offsets: [Int] {
-            switch style {
-            case .fewDaysEarly: [-3]
-            case .justBefore: [0]
-            case .both: [-3, 0]
-            }
+        triggerSchedule(
+            style: style, dueDate: dueDate, now: now, calendar: calendar,
+            hour: hour, quietWeekends: quietWeekends
+        ).map(\.date)
+    }
+
+    /// Day offsets used by scheduling — shared so due-day tagging stays in sync.
+    static func triggerOffsets(for style: ReminderStyle) -> [Int] {
+        switch style {
+        case .fewDaysEarly: [-3]
+        case .justBefore: [0]
+        case .both: [-3, 0]
         }
-        return offsets.compactMap { offset -> Date? in
+    }
+
+    /// Scheduled fire dates paired with their style offset (0 = due day).
+    static func triggerSchedule(
+        style: ReminderStyle,
+        dueDate: Date,
+        now: Date = .now,
+        calendar: Calendar = .current,
+        hour: Int = ReminderPrefs.hour(),
+        quietWeekends: Bool = ReminderPrefs.quietWeekends()
+    ) -> [(date: Date, offset: Int)] {
+        triggerOffsets(for: style).compactMap { offset -> (Date, Int)? in
             guard let day = calendar.date(byAdding: .day, value: offset, to: dueDate) else { return nil }
             var components = calendar.dateComponents([.year, .month, .day], from: day)
             components.hour = hour
             components.minute = 0
             guard let date = calendar.date(from: components) else { return nil }
-            return Self.shiftedForQuietWeekends(date, enabled: quietWeekends, calendar: calendar)
+            let shifted = Self.shiftedForQuietWeekends(date, enabled: quietWeekends, calendar: calendar)
+            guard shifted > now else { return nil }
+            return (shifted, offset)
         }
-        .filter { $0 > now }
-        .sorted()
+        .sorted { $0.0 < $1.0 }
     }
 
     /// Quiet weekends: Saturday/Sunday reminders slide to Monday, same hour.
@@ -166,10 +184,12 @@ struct ReminderScheduler: Sendable {
     }
 
     /// Schedules reminders for a bill; returns the notification identifiers.
+    /// Due-day payloads carry enough fields to start a Live Activity on delivery/tap.
     @discardableResult
     func scheduleReminders(
         billID: String,
         issuer: String,
+        amount: Decimal = 0,
         dueDate: Date,
         style: ReminderStyle,
         withSecondBillRider: Bool = false,
@@ -178,7 +198,8 @@ struct ReminderScheduler: Sendable {
     ) async -> [String] {
         let center = UNUserNotificationCenter.current()
         var identifiers: [String] = []
-        for trigger in Self.triggerDates(style: style, dueDate: dueDate, now: now, calendar: calendar) {
+        let schedule = Self.triggerSchedule(style: style, dueDate: dueDate, now: now, calendar: calendar)
+        for (trigger, offset) in schedule {
             let content = UNMutableNotificationContent()
             content.title = "Ben"
             var body = Self.reminderBody(issuer: issuer, dueDate: dueDate, triggerDate: trigger, calendar: calendar)
@@ -187,7 +208,14 @@ struct ReminderScheduler: Sendable {
             }
             content.body = body
             content.sound = .default
-            content.userInfo = ["billID": billID, "kind": "bill_reminder"]
+            content.userInfo = [
+                "billID": billID,
+                "kind": "bill_reminder",
+                "issuer": issuer,
+                "amount": NSDecimalNumber(decimal: amount).stringValue ?? "0",
+                "dueDate": dueDate.timeIntervalSince1970,
+                "isDueDay": offset == 0
+            ]
             content.categoryIdentifier = "bill_reminder"
             let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger)
             let identifier = "bill-\(billID)-\(components.day ?? 0)-\(components.month ?? 0)"

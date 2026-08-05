@@ -19,12 +19,15 @@ targets:
   Ben:
     type: application
     platform: iOS
-    sources: [Ben]
+    sources:
+      - path: Ben
+      - path: BenShared
     dependencies:
       - package: Firebase
         product: FirebaseAuth
       - package: GoogleSignIn
         product: GoogleSignIn
+      - target: BenWidgets
     info:
       path: Ben/Info.plist
       properties:
@@ -32,17 +35,19 @@ targets:
         CFBundleDisplayName: Ben
         # Skip export-compliance quiz on each upload (HTTPS-only / OS encryption).
         ITSAppUsesNonExemptEncryption: false
+        NSSupportsLiveActivities: true
         UIAppFonts:
           - Baloo2-Variable.ttf
           - Figtree-Variable.ttf
         NSCameraUsageDescription: "Ben uses the camera to read your bill so you don't have to type it."
         NSPhotoLibraryUsageDescription: "Ben reads bill photos you choose so you don't have to type them."
         UIBackgroundModes: []
-        # Firebase Google sign-in calls back into the app on REVERSED_CLIENT_ID.
+        # Firebase Google sign-in + Live Activity deep links (ben://bill/<id>).
         CFBundleURLTypes:
           - CFBundleTypeRole: Editor
             CFBundleURLSchemes:
               - com.googleusercontent.apps.1003553134186-qb4b4len15l62u6tq2ahi69fof7mpgrm
+              - ben
     settings:
       base:
         INFOPLIST_KEY_UIUserInterfaceStyle: Automatic
@@ -50,6 +55,30 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Ben/Ben.entitlements
         CODE_SIGN_STYLE: Automatic
         PRODUCT_BUNDLE_IDENTIFIER: com.repertoirestudio.Ben
+  BenWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: BenWidgets
+      - path: BenShared
+    info:
+      path: BenWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Ben
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.repertoirestudio.Ben.BenWidgets
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+    dependencies:
+      - sdk: SwiftUI.framework
+      - sdk: WidgetKit.framework
+      - sdk: ActivityKit.framework
   BenTests:
     type: bundle.unit-test
     platform: iOS
@@ -73,5 +102,6 @@ schemes:
     build:
       targets:
         Ben: all
+        BenWidgets: all
     test:
       targets: [BenTests, BenUITests]

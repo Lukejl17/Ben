@@ -19,6 +19,8 @@ enum LocalAccountSession {
         for bill in bills {
             scheduler.cancel(identifiers: bill.notificationIDs)
             scheduler.cancel(identifiers: ["expect-\(bill.uuid)"])
+            let billID = bill.uuid
+            Task { await LiveActivityManager.end(billID: billID) }
             modelContext.delete(bill)
         }
         scheduler.cancel(identifiers: ["second-bill-day4"])

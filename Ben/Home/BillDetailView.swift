@@ -224,6 +224,8 @@ struct BillDetailView: View {
     private func markPaid() {
         bill.paidAt = .now
         services.scheduler.cancel(identifiers: bill.notificationIDs)
+        let billID = bill.uuid
+        Task { await LiveActivityManager.markPaid(billID: billID) }
         bill.notificationIDs = []
         bill.hasNotification = false
         try? modelContext.save()
@@ -242,6 +244,8 @@ struct BillDetailView: View {
 
     private func removeBill() {
         services.scheduler.cancel(identifiers: bill.notificationIDs)
+        let billID = bill.uuid
+        Task { await LiveActivityManager.end(billID: billID) }
         modelContext.delete(bill)
         try? modelContext.save()
         dismiss()

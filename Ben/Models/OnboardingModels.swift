@@ -42,9 +42,12 @@ enum ReminderStyle: String, CaseIterable, Codable, Sendable {
 
     var detail: String {
         switch self {
-        case .fewDaysEarly: "A heads-up three days out, time to sort it without rushing."
-        case .justBefore: "One mention on the day it's due."
-        case .both: "Three days out and again on the day."
+        case .fewDaysEarly:
+            "A heads-up three days out, time to sort it without rushing."
+        case .justBefore:
+            "A mention on the day, plus Ben on your Lock Screen until it's sorted."
+        case .both:
+            "Three days out, then again on the day with Ben on your Lock Screen."
         }
     }
 }
