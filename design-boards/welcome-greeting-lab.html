@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ben — Welcome greeting lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Forest Bold tokens — mirror BenTheme.swift */
+:root {
+  --forest-top: #25401C;
+  --forest-bottom: #1B3015;
+  --glow-warm: #3E6B2E;
+  --glow-deep: #173014;
+  --chartreuse: #D3E97A;
+  --on-chartreuse: #22361B;
+  --cream: #FAF3E3;
+  --on-cream: #293223;
+  --on-cream-muted: #6B6B57;
+  --forest-ink: #F8F1DE;
+  --voice: #EFE8D2;
+  --row-fill: rgba(248,241,222,0.07);
+  --row-stroke: rgba(248,241,222,0.15);
+  --baloo: 'Baloo 2', system-ui, sans-serif;
+  --figtree: 'Figtree', system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #101810;
+  font-family: var(--figtree);
+  padding: 40px 28px 80px;
+  color: var(--forest-ink);
+}
+
+h1 {
+  font-family: var(--baloo);
+  font-weight: 800;
+  color: var(--chartreuse);
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.board-note {
+  color: rgba(248,241,222,0.6);
+  font-size: 14px;
+  margin-bottom: 28px;
+  max-width: 640px;
+  line-height: 1.5;
+}
+
+.layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* ── Phone ── */
+.phone {
+  width: 360px;
+  height: 780px;
+  border-radius: 44px;
+  border: 8px solid #0d130c;
+  overflow: hidden;
+  position: relative;
+  flex: 0 0 auto;
+  background:
+    radial-gradient(420px 420px at 85% -10%, rgba(62,107,46,0.55), transparent),
+    radial-gradient(420px 420px at -10% 110%, rgba(23,48,20,0.55), transparent),
+    linear-gradient(168deg, var(--forest-top), var(--forest-bottom));
+  box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+}
+
+.island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 26px;
+  border-radius: 14px;
+  background: #0d130c;
+  z-index: 2;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 28px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--forest-ink);
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 28px 22px;
+  min-height: 0;
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: 24px;
+}
+
+.char {
+  width: 170px;
+  height: 170px;
+  object-fit: contain;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.35));
+}
+
+.title {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--chartreuse);
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.title-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.title-rest {
+  flex: 0 0 auto;
+}
+
+/* Wheel window — one greeting visible, strip rolls behind the mask */
+.greeting-slot {
+  position: relative;
+  display: inline-block;
+  height: 1.15em;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Width set in JS to the longest greeting so the line never breathes */
+  width: 0;
+  text-align: center;
+  flex: 0 0 auto;
+  /* Soft fade at the rim so it reads as a wheel, not a hard clip */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 22%,
+    #000 78%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 22%,
+    #000 78%,
+    transparent 100%
+  );
+}
+
+.greeting-reel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  will-change: transform;
+}
+
+.greeting-word {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.15em;
+  white-space: nowrap;
+  flex: 0 0 1.15em;
+}
+
+.voice {
+  font-family: var(--baloo);
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--voice);
+  max-width: 280px;
+  opacity: 0.95;
+}
+
+.cta-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.cta {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 17px;
+  background: var(--chartreuse);
+  color: var(--on-chartreuse);
+  border: none;
+  border-radius: 18px;
+  height: 54px;
+  width: 100%;
+  cursor: default;
+}
+
+.ghost {
+  font-family: var(--baloo);
+  font-weight: 600;
+  font-size: 15px;
+  color: rgba(248,241,222,0.75);
+  background: none;
+  border: none;
+  height: 44px;
+  cursor: default;
+}
+
+/* ── Controls ── */
+.controls {
+  flex: 1;
+  min-width: 280px;
+  max-width: 420px;
+}
+
+.controls h2 {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--chartreuse);
+  margin-bottom: 12px;
+}
+
+.regions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.region {
+  font-family: var(--baloo);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--row-stroke);
+  background: var(--row-fill);
+  color: var(--forest-ink);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.region:hover {
+  border-color: rgba(211,233,122,0.45);
+}
+
+.region.on {
+  background: var(--chartreuse);
+  color: var(--on-chartreuse);
+  border-color: var(--chartreuse);
+}
+
+.region .code {
+  opacity: 0.55;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.region.on .code { opacity: 0.7; }
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.btn {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--chartreuse);
+  color: var(--on-chartreuse);
+}
+
+.btn.secondary {
+  background: var(--row-fill);
+  color: var(--forest-ink);
+  border: 1px solid var(--row-stroke);
+}
+
+.timeline {
+  background: var(--row-fill);
+  border: 1px solid var(--row-stroke);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(248,241,222,0.7);
+}
+
+.timeline strong {
+  color: var(--chartreuse);
+  font-family: var(--baloo);
+  font-weight: 700;
+}
+
+.timeline ol {
+  margin: 10px 0 0 18px;
+}
+
+.timeline li { margin-bottom: 4px; }
+
+.grid-label {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--chartreuse);
+  margin: 36px 0 14px;
+}
+
+.finals {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  max-width: 900px;
+}
+
+.final {
+  background: var(--row-fill);
+  border: 1px solid var(--row-stroke);
+  border-radius: 16px;
+  padding: 14px 14px 12px;
+}
+
+.final .where {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(248,241,222,0.45);
+  font-family: var(--baloo);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.final .line {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--chartreuse);
+  letter-spacing: -0.02em;
+}
+</style>
+</head>
+<body>
+
+<h1>Welcome greeting lab</h1>
+<p class="board-note">
+  S1 only. Opens on <strong style="color:var(--chartreuse)">G'day,</strong> then
+  a continuous wheel of hellos rolls past — fast at first, easing onto the
+  device-region greeting. Greeting line stacked above <em>I'm Ben.</em>
+  Body copy stays Australian. Pick a region and hit Replay.
+</p>
+
+<div class="layout">
+  <div class="phone" aria-label="Welcome screen preview">
+    <div class="island"></div>
+    <div class="status"><span>9:41</span><span>●●●●</span></div>
+    <div class="screen">
+      <div class="hero">
+        <img class="char" src="assets/ben-character.png" alt="Ben">
+        <div class="title">
+          <div class="title-line">
+            <span class="greeting-slot" id="slot">
+              <span class="greeting-reel" id="reel">
+                <span class="greeting-word current" id="greeting">G'day,</span>
+              </span>
+            </span>
+          </div>
+          <div class="title-rest">I'm Ben.</div>
+        </div>
+        <p class="voice">Give me your bills and I'll tell you when they matter. First, watch me read one.</p>
+      </div>
+      <div class="cta-stack">
+        <button class="cta" type="button">Watch Ben work</button>
+        <button class="ghost" type="button">I already have an account</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <h2>Device region</h2>
+    <div class="regions" id="regions"></div>
+
+    <div class="actions">
+      <button class="btn primary" type="button" id="replay">Replay animation</button>
+      <button class="btn secondary" type="button" id="skip">Skip to final</button>
+    </div>
+
+    <div class="timeline">
+      <strong>Motion beat</strong> — continuous wheel reel (not word-swap)
+      <ol>
+        <li>Hold on <em>G'day,</em> so the brand registers</li>
+        <li>Strip of hellos rolls past in one motion</li>
+        <li>Ease-out: fast at first, then ticks slower as it lands</li>
+        <li>Soft mask at top/bottom so it reads as a wheel rim</li>
+        <li>Slot width locked — <em>I'm Ben.</em> never shifts</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<h2 class="grid-label">Final states — check length</h2>
+<div class="finals" id="finals"></div>
+
+<script>
+const GREETINGS = [
+  { code: 'AU', label: 'Australia', word: "G'day" },
+  { code: 'NZ', label: 'New Zealand', word: 'Kia ora' },
+  { code: 'US', label: 'United States', word: 'Howdy' },
+  { code: 'CA', label: 'Canada', word: 'Oh hey bud' },
+  { code: 'GB', label: 'United Kingdom', word: 'Alright' },
+  { code: 'IE', label: 'Ireland', word: 'Howaya' },
+  { code: 'FR', label: 'France', word: 'Bonjour' },
+  { code: 'ES', label: 'Spain', word: 'Hola' },
+  { code: 'DE', label: 'Germany', word: 'Hallo' },
+  { code: 'IT', label: 'Italy', word: 'Ciao' },
+  { code: 'BR', label: 'Brazil', word: 'Olá' },
+  { code: 'NL', label: 'Netherlands', word: 'Hoi' },
+  { code: 'JP', label: 'Japan', word: 'Konnichiwa' },
+  { code: 'KR', label: 'Korea', word: 'Annyeong' },
+];
+
+const ALL_WORDS = GREETINGS.map(g => `${g.word},`);
+const BRAND = "G'day,";
+
+let selected = GREETINGS.find(g => g.code === 'US');
+let runId = 0;
+let rafId = 0;
+
+const regionsEl = document.getElementById('regions');
+const slotEl = document.getElementById('slot');
+const reelEl = document.getElementById('reel');
+const finalsEl = document.getElementById('finals');
+
+function renderRegions() {
+  regionsEl.innerHTML = GREETINGS.map(g => `
+    <button type="button" class="region ${g.code === selected.code ? 'on' : ''}" data-code="${g.code}">
+      ${g.label}<span class="code">${g.code}</span>
+    </button>
+  `).join('');
+}
+
+function renderFinals() {
+  finalsEl.innerHTML = GREETINGS.map(g => `
+    <div class="final">
+      <div class="where">${g.code} · ${g.label}</div>
+      <div class="line">${g.word},<br>I'm Ben.</div>
+    </div>
+  `).join('');
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function rowHeight() {
+  // Matches CSS: height / flex-basis 1.15em at 40px font
+  return 40 * 1.15;
+}
+
+function mountStrip(words) {
+  reelEl.innerHTML = words
+    .map(w => `<span class="greeting-word">${w}</span>`)
+    .join('');
+  reelEl.style.transform = 'translate3d(0,0,0)';
+}
+
+function setWordInstant(word) {
+  cancelAnimationFrame(rafId);
+  mountStrip([word]);
+}
+
+/** Shuffle array copy. */
+function shuffled(list) {
+  const a = list.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Long vertical strip: brand → distractors (full lap+) → target.
+ * Continuous translateY rolls this past the window like a slot wheel.
+ */
+function buildStrip(targetWord) {
+  const target = `${targetWord},`;
+  const pool = shuffled(ALL_WORDS.filter(w => w !== target));
+
+  // Enough cells that the motion reads as a roll, not a hop
+  let mid = [];
+  while (mid.length < 10) {
+    mid = mid.concat(pool);
+  }
+  mid = mid.slice(0, 10);
+
+  // Avoid brand/target abutting the same word awkwardly
+  if (mid[0] === BRAND) mid[0] = pool.find(w => w !== BRAND) || mid[0];
+  if (mid[mid.length - 1] === target) {
+    mid[mid.length - 1] = pool.find(w => w !== target) || mid[mid.length - 1];
+  }
+
+  if (target === BRAND) {
+    return [BRAND, ...mid.slice(0, 8), BRAND];
+  }
+  return [BRAND, ...mid, target];
+}
+
+/** Ease-out quint — races early, settles hard at the end. */
+function easeOutQuint(t) {
+  return 1 - Math.pow(1 - t, 5);
+}
+
+function animateReelTo(endIndex, durationMs, id) {
+  return new Promise(resolve => {
+    const h = rowHeight();
+    const from = 0;
+    const to = -endIndex * h;
+    const start = performance.now();
+
+    function frame(now) {
+      if (id !== runId) {
+        resolve();
+        return;
+      }
+      const t = Math.min(1, (now - start) / durationMs);
+      const p = easeOutQuint(t);
+      const y = from + (to - from) * p;
+      reelEl.style.transform = `translate3d(0, ${y}px, 0)`;
+      if (t < 1) {
+        rafId = requestAnimationFrame(frame);
+      } else {
+        reelEl.style.transform = `translate3d(0, ${to}px, 0)`;
+        resolve();
+      }
+    }
+    rafId = requestAnimationFrame(frame);
+  });
+}
+
+async function play() {
+  const id = ++runId;
+  cancelAnimationFrame(rafId);
+
+  const strip = buildStrip(selected.word);
+  mountStrip(strip);
+
+  // Brand hold
+  await sleep(700);
+  if (id !== runId) return;
+
+  // ~2.2s roll — long enough to feel like a wheel, short enough for welcome
+  await animateReelTo(strip.length - 1, 2200, id);
+}
+
+function skipToFinal() {
+  runId += 1;
+  cancelAnimationFrame(rafId);
+  setWordInstant(`${selected.word},`);
+}
+
+regionsEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-code]');
+  if (!btn) return;
+  selected = GREETINGS.find(g => g.code === btn.dataset.code);
+  renderRegions();
+  play();
+});
+
+document.getElementById('replay').addEventListener('click', play);
+document.getElementById('skip').addEventListener('click', skipToFinal);
+
+function lockSlotWidth() {
+  const probe = document.createElement('span');
+  probe.style.cssText = `
+    position: absolute; visibility: hidden; white-space: nowrap;
+    font-family: var(--baloo); font-weight: 800; font-size: 40px;
+    letter-spacing: -0.02em;
+  `;
+  document.body.appendChild(probe);
+  let max = 0;
+  for (const w of ALL_WORDS) {
+    probe.textContent = w;
+    max = Math.max(max, probe.offsetWidth);
+  }
+  probe.remove();
+  slotEl.style.width = `${max + 4}px`;
+}
+
+renderRegions();
+renderFinals();
+lockSlotWidth();
+play();
+</script>
+
+</body>
+</html>
