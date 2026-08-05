@@ -24,7 +24,7 @@ struct PaywallOfferView: View {
                 .lineSpacing(0)
             recapCard
             VStack(alignment: .leading, spacing: 10) {
-                tick("Unlimited bills tracked and reminded, calmly")
+                tick("Bills tracked and reminded, calmly")
                 tick("Payment details ready to copy and pay")
                 tick("$0 due today. 7 days free first")
             }

@@ -69,7 +69,7 @@ Bill reading happens on your device. There's no account to create and no server 
 
 SUBSCRIPTION
 
-Ben is free to try for 7 days. After that, a subscription unlocks unlimited bills. Payment is charged to your Apple ID account at confirmation of purchase. Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.
+Ben is free to try for 7 days. After that, a Ben Pro subscription unlocks ongoing access. Payment is charged to your Apple ID account at confirmation of purchase. Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in Settings > Apple ID > Subscriptions.
 
 SUPPORT
 
@@ -102,10 +102,11 @@ Ben's first outing. Snap a bill, confirm the details, get a reminder before it's
 
 ## In-App Purchase display names (shown on the listing)
 
-| Product | Display name (30) | Description (45) |
-|---|---|---|
-| Annual | `Ben Unlimited (Yearly)` | `Unlimited bills, reminders and insights.` |
-| Monthly | `Ben Unlimited (Monthly)` | `Unlimited bills, reminders and insights.` |
+| Product | Display name (30) | Description (45) | Product ID |
+|---|---|---|---|
+| Group | `Ben Pro` (reference + localization) | — | Group ID `22287735` |
+| Annual | `Ben Pro (Yearly)` | `Bills, reminders and insights — unlocked.` | `com.repertoirestudio.Ben.pro.yearly` |
+| Monthly | `Ben Pro (Monthly)` | `Bills, reminders and insights — unlocked.` | `com.repertoirestudio.Ben.pro.monthly` |
 
 ---
 
