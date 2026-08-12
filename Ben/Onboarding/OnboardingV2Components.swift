@@ -72,6 +72,56 @@ struct EchoSlot: View {
     }
 }
 
+/// Solid example chips on the volume screen — utilities through subscriptions on one line.
+struct VolumeExampleChips: View {
+    private struct Example: Identifiable {
+        let id: String
+        let label: String
+        let fill: Color
+        let foreground: Color
+    }
+
+    private let examples: [Example] = [
+        Example(id: "agl", label: "AGL", fill: .amber, foreground: .onAmber),
+        Example(id: "netflix", label: "Netflix", fill: .clay, foreground: .onClay),
+        Example(id: "kayo", label: "Kayo", fill: .clay, foreground: .onClay),
+        Example(id: "gym", label: "Gym", fill: .lavender, foreground: .onLavender),
+        Example(id: "telstra", label: "Telstra", fill: .sky, foreground: .onSky),
+        Example(id: "council", label: "Council", fill: .chartreuse, foreground: .onChartreuse)
+    ]
+
+    var body: some View {
+        VStack(spacing: 8) {
+            BenEyebrow(text: "All of these count", color: Color.forestInk.opacity(0.45))
+            ViewThatFits(in: .horizontal) {
+                chipRow(spacing: 5, fontSize: 11, horizontal: 7, vertical: 5)
+                chipRow(spacing: 4, fontSize: 10, horizontal: 5, vertical: 4)
+            }
+            .frame(maxWidth: .infinity)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(
+                "Examples: electricity, streaming, gym, phone, and council rates all count"
+            )
+        }
+        .padding(.bottom, 4)
+    }
+
+    private func chipRow(spacing: CGFloat, fontSize: CGFloat, horizontal: CGFloat, vertical: CGFloat) -> some View {
+        HStack(spacing: spacing) {
+            ForEach(examples) { example in
+                Text(example.label)
+                    .font(.baloo("Baloo2-Bold", fontSize, relativeTo: .caption2))
+                    .foregroundStyle(example.foreground)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .padding(.horizontal, horizontal)
+                    .padding(.vertical, vertical)
+                    .background(example.fill, in: Capsule())
+            }
+        }
+    }
+}
+
 /// The wheel-of-fortune number: races early, then ticks to a stop with a
 /// light haptic on the last few steps.
 struct SpinNumber: View {

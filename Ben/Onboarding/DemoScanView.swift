@@ -24,6 +24,14 @@ struct DemoScanView: View {
                 notification
                     .opacity(revealed >= 4 ? 1 : 0)
                     .offset(y: revealed >= 4 ? 0 : 12)
+
+                scopeNote
+                    .opacity(revealed >= 5 ? 1 : 0)
+                    .offset(y: revealed >= 5 ? 0 : 12)
+
+                renewalExamples
+                    .opacity(revealed >= 5 ? 1 : 0)
+                    .offset(y: revealed >= 5 ? 0 : 12)
             }
         } cta: {
             BenPrimaryButton(title: "That, but for my bills") {
@@ -31,8 +39,8 @@ struct DemoScanView: View {
             }
         }
         .task {
-            for step in 1...4 {
-                try? await Task.sleep(for: .seconds(step == 4 ? 0.6 : 0.45))
+            for step in 1...5 {
+                try? await Task.sleep(for: .seconds(step == 5 ? 0.5 : step == 4 ? 0.6 : 0.45))
                 withAnimation(.spring(duration: 0.4)) { revealed = step }
             }
         }
@@ -112,6 +120,47 @@ struct DemoScanView: View {
         .background(Color.cream.opacity(0.95), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .environment(\.colorScheme, .light)
         .benShadow(.cream)
+    }
+
+    private var scopeNote: some View {
+        HStack(alignment: .top, spacing: 10) {
+            BenCharacter(size: 36)
+            BenVoiceText(
+                text: "Works the same for Netflix renewals, gym fees, insurance — anything with a due date.",
+                quiet: true
+            )
+        }
+        .padding(12)
+        .benRowSurface(radius: 16)
+    }
+
+    private var renewalExamples: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                renewalCard(issuer: "Netflix", amount: "$17.99", due: "Renews 12 Aug")
+                renewalCard(issuer: "Kayo", amount: "$30.00", due: "Renews 18 Aug")
+                renewalCard(issuer: "Gym", amount: "$59.95", due: "Due 1 Sep")
+            }
+        }
+        .accessibilityLabel("More examples: Netflix, Kayo, gym membership")
+    }
+
+    private func renewalCard(issuer: String, amount: String, due: String) -> some View {
+        BenCard(padding: 10, radius: 14) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(issuer)
+                    .font(.baloo("Baloo2-Bold", 12, relativeTo: .caption))
+                    .foregroundStyle(Color.onCream)
+                Text(amount)
+                    .font(.baloo("Baloo2-ExtraBold", 15, relativeTo: .subheadline))
+                    .foregroundStyle(Color.onCreamStrong)
+                    .monospacedDigit()
+                Text(due)
+                    .font(.benMeta)
+                    .foregroundStyle(Color.onCreamMuted)
+            }
+            .frame(width: 104, alignment: .leading)
+        }
     }
 }
 

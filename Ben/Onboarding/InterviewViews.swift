@@ -39,8 +39,7 @@ struct SourcesView: View {
     }
 }
 
-/// Screen 5 — how many bills land each month. Time-boxed so the yearly maths
-/// on the next screen is defensible. Subscriptions count too.
+/// Screen 5 — how many things land each month. Subscriptions and renewals count.
 struct VolumeView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
     @State private var selected: BillVolume?
@@ -48,9 +47,10 @@ struct VolumeView: View {
     var body: some View {
         BenScreen {
             CenteredQuestion(
-                title: "How many bills land\nat your place each month?",
-                intro: "Count the sneaky ones too. Netflix, Kayo, the gym you swear you'll use. If it leaves your account, it's a bill."
+                title: "What hits your account\nevery month?",
+                intro: "Utilities, streaming, gym, insurance — if it renews, it counts."
             ) {
+                VolumeExampleChips()
                 VStack(spacing: 12) {
                     ForEach(BillVolume.allCases, id: \.self) { volume in
                         SelectablePill(
