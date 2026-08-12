@@ -33,9 +33,9 @@ struct UploadBillView: View {
                                label: "Take a photo", detail: "Point it at the bill and I'll do the reading", method: .camera)
                 }
                 methodCard(symbol: "photo.on.rectangle.angled", chip: (.chartreuse, .onChartreuse),
-                           label: "Choose a photo", detail: "From your photo library", method: .photo)
+                           label: "Upload a photo", detail: "From your photo library", method: .photo)
                 methodCard(symbol: "doc.fill", chip: (.sky, .onSky),
-                           label: "PDF or file", detail: "Straight from an email attachment", method: .pdf)
+                           label: "Upload a PDF or file", detail: "Straight from an email attachment", method: .pdf)
                 emailMethodRow
             }
 

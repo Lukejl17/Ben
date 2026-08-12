@@ -37,5 +37,6 @@ struct IntentView: View {
             .disabled(selected == nil)
             .opacity(selected == nil ? 0.45 : 1)
         }
+        .onAppear { selected = coordinator.intent }
     }
 }

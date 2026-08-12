@@ -113,7 +113,7 @@ final class ScreenshotTests: XCTestCase {
     private func walkFirstBill(_ app: XCUIApplication) {
         XCTAssertTrue(app.staticTexts["You confirm everything before it's saved."].waitForExistence(timeout: 5))
         snap(app, "s4-trust-upload")
-        app.buttons["Choose a photo"].tap()
+        app.buttons["Upload a photo"].tap()
 
         let confirmCTA = app.buttons["Looks right, track it"]
         XCTAssertTrue(confirmCTA.waitForExistence(timeout: 10))
@@ -196,12 +196,12 @@ final class ScreenshotTests: XCTestCase {
 
         // The add-bill dial, expanded
         app.buttons["Add a bill"].tap()
-        XCTAssertTrue(app.buttons["Choose a photo"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Upload a photo"].waitForExistence(timeout: 5))
         snap(app, "home-add-dial")
         app.buttons["Add a bill"].tap()  // collapse
         let dialGone = expectation(
             for: NSPredicate(format: "exists == FALSE"),
-            evaluatedWith: app.buttons["Choose a photo"]
+            evaluatedWith: app.buttons["Upload a photo"]
         )
         wait(for: [dialGone], timeout: 5)
 

@@ -34,6 +34,10 @@ final class OnboardingCoordinator {
     }
 
     var step: Step = .welcome
+    private(set) var navigationHistory: [Step] = []
+    /// When set, handles back within a multi-beat screen (paywall pages, etc.).
+    var backInterceptor: (() -> Bool)?
+    var suppressBackButton = false
 
     // Collected along the way
     var intent: IntentContext?
@@ -60,12 +64,29 @@ final class OnboardingCoordinator {
     /// Adding a bill from the home screen reuses S4–S7 without the intro steps.
     var isAddingSubsequentBill = false
 
+    var canGoBack: Bool {
+        guard step != .welcome, step != .done else { return false }
+        return !suppressBackButton && !navigationHistory.isEmpty
+    }
+
     func advance(to next: Step) {
+        guard step != next else { return }
+        navigationHistory.append(step)
+        backInterceptor = nil
+        suppressBackButton = false
         step = next
     }
 
-    /// Persists the interview answers as user attributes. Called whenever an
-    /// answer lands so a drop-off mid-flow still leaves useful segmentation.
+    func goBack() {
+        if backInterceptor?() == true { return }
+        guard let previous = navigationHistory.popLast() else { return }
+        backInterceptor = nil
+        suppressBackButton = false
+        step = previous
+    }
+
+    /// Persists the interview answers as user attributes. Called on each
+    /// screen's Continue tap so the stored values always match the final choice.
     func saveAttributes() {
         OnboardingAttributes.save(.init(
             moment: intent,
@@ -82,14 +103,14 @@ final class OnboardingCoordinator {
         isSampleWalkthrough = true
         uploadMethod = .sample
         parsed = MockBillParser.aglFixture
-        step = .confirm
+        advance(to: .confirm)
     }
 
     func endSampleWalkthrough() {
         isSampleWalkthrough = false
         parsed = nil
         pendingImageData = nil
-        step = .upload
+        goBack()
     }
 
     /// Sign-out: back to the handshake with no leftover flow state.
@@ -102,6 +123,9 @@ final class OnboardingCoordinator {
         isSampleWalkthrough = false
         isAddingSubsequentBill = false
         uploadMethod = .photo
+        navigationHistory.removeAll()
+        backInterceptor = nil
+        suppressBackButton = false
         step = .welcome
     }
 
@@ -112,6 +136,9 @@ final class OnboardingCoordinator {
         confirmedBills = []
         uploadMethod = .photo
         pendingEmailKey = nil
+        navigationHistory.removeAll()
+        backInterceptor = nil
+        suppressBackButton = false
         step = .upload
     }
 }

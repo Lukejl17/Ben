@@ -15,10 +15,10 @@ struct AddBillDial: View {
                     }
                 }
                 option(symbol: "photo.on.rectangle.angled", fill: .amber, iconColor: .onAmber,
-                       label: "Choose a photo") {
+                       label: "Upload a photo") {
                     onPick(.photo)
                 }
-                option(symbol: "doc.fill", fill: .sky, iconColor: .onSky, label: "PDF or file") {
+                option(symbol: "doc.fill", fill: .sky, iconColor: .onSky, label: "Upload a PDF or file") {
                     onPick(.pdf)
                 }
                 option(symbol: "envelope.fill", fill: .clay, iconColor: .onClay, label: "Email it in") {

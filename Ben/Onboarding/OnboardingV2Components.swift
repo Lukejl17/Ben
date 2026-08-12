@@ -1,6 +1,27 @@
 import SwiftUI
 import UIKit
 
+/// Top-leading back control for every onboarding step after welcome.
+struct OnboardingBackButton: View {
+    @Environment(OnboardingCoordinator.self) private var coordinator
+
+    var body: some View {
+        Button {
+            coordinator.goBack()
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "chevron.left")
+                    .font(.body.weight(.semibold))
+                Text("Back")
+                    .font(.benLabel)
+            }
+            .foregroundStyle(Color.chartreuse)
+        }
+        .buttonStyle(BenPressable())
+        .accessibilityIdentifier("Back")
+    }
+}
+
 /// Centred question scaffold: title and options float mid-screen with
 /// balanced forest above and below, per the onboarding prototype.
 struct CenteredQuestion<Content: View>: View {

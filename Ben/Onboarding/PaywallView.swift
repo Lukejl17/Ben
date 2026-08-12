@@ -6,6 +6,17 @@ import SwiftUI
 struct PaywallView: View {
     enum Page: Int, CaseIterable {
         case outcome, gift, rail, compare, offer, plans
+
+        var previous: Page? {
+            switch self {
+            case .outcome: nil
+            case .gift: .outcome
+            case .rail: .gift
+            case .compare: .rail
+            case .offer: .compare
+            case .plans: .offer
+            }
+        }
     }
 
     @Environment(OnboardingCoordinator.self) private var coordinator
@@ -39,8 +50,15 @@ struct PaywallView: View {
             .transition(.opacity)
         }
         .animation(.spring(duration: 0.35), value: page)
-        .onAppear { trackPage(.outcome) }
-        .onChange(of: page) { _, newPage in trackPage(newPage) }
+        .onAppear {
+            trackPage(.outcome)
+            syncBackInterceptor(for: page)
+        }
+        .onChange(of: page) { _, newPage in
+            trackPage(newPage)
+            syncBackInterceptor(for: newPage)
+        }
+        .onDisappear { coordinator.backInterceptor = nil }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background && !abandonmentTracked
                 && services.subscriptions.state() == .notStarted {
@@ -77,6 +95,14 @@ struct PaywallView: View {
 
     private func advance(to next: Page) {
         withAnimation(.spring(duration: 0.35)) { page = next }
+    }
+
+    private func syncBackInterceptor(for current: Page) {
+        coordinator.backInterceptor = {
+            guard let previous = current.previous else { return false }
+            withAnimation(.spring(duration: 0.35)) { page = previous }
+            return true
+        }
     }
 
     private func trackPage(_ page: Page) {

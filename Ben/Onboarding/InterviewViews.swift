@@ -36,6 +36,7 @@ struct SourcesView: View {
             .disabled(picked.isEmpty)
             .opacity(picked.isEmpty ? 0.45 : 1)
         }
+        .onAppear { picked = coordinator.sources }
     }
 }
 
@@ -74,6 +75,7 @@ struct VolumeView: View {
             .disabled(selected == nil)
             .opacity(selected == nil ? 0.45 : 1)
         }
+        .onAppear { selected = coordinator.volume }
     }
 }
 
@@ -111,6 +113,7 @@ struct LateFeesView: View {
             .disabled(selected == nil)
             .opacity(selected == nil ? 0.45 : 1)
         }
+        .onAppear { selected = coordinator.lateFees }
     }
 }
 
@@ -146,5 +149,6 @@ struct FeelingView: View {
             .disabled(selected == nil)
             .opacity(selected == nil ? 0.45 : 1)
         }
+        .onAppear { selected = coordinator.feeling }
     }
 }
