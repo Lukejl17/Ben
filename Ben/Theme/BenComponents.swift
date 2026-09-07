@@ -167,15 +167,21 @@ struct BenEyebrow: View {
 struct BenPrimaryButton: View {
     let title: String
     var systemImage: String?
+    var isBusy: Bool = false
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                if let systemImage {
-                    Image(systemName: systemImage)
+                if isBusy {
+                    ProgressView()
+                        .tint(Color.onChartreuse)
+                } else {
+                    if let systemImage {
+                        Image(systemName: systemImage)
+                    }
+                    Text(title)
                 }
-                Text(title)
             }
             .font(.benLabel)
             .foregroundStyle(Color.onChartreuse)
@@ -185,6 +191,8 @@ struct BenPrimaryButton: View {
         }
         .buttonStyle(BenPressable())
         .benShadow(.glow)
+        .disabled(isBusy)
+        .accessibilityLabel(isBusy ? "Working" : title)
     }
 }
 

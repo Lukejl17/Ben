@@ -5,6 +5,7 @@ import SwiftUI
 /// Success lands straight on home — no onboarding rerun.
 struct SignInView: View {
     @Environment(\.services) private var services
+    @Environment(SubscriptionController.self) private var subscriptions
     @Environment(\.dismiss) private var dismiss
     /// Called with the signed-in account; the presenter decides where to go.
     var onSignedIn: (BenAccount) -> Void
@@ -207,9 +208,11 @@ struct SignInView: View {
         errorLine = nil
         infoLine = nil
         let accounts = services.accounts
+        let billing = subscriptions
         Task {
             do {
                 let account = try await accounts.signIn(with: provider)
+                await billing.identify(userID: account.id)
                 onSignedIn(account)
                 dismiss()
             } catch {
@@ -228,11 +231,13 @@ struct SignInView: View {
         let formEmail = email
         let formPassword = password
         let creating = isCreating
+        let billing = subscriptions
         Task {
             do {
                 let account = try await accounts.signIn(
                     email: formEmail, password: formPassword, creating: creating
                 )
+                await billing.identify(userID: account.id)
                 onSignedIn(account)
                 dismiss()
             } catch {

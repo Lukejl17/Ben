@@ -5,8 +5,13 @@ Pre-seeded — these need Luke, not Claude:
 - [x] Apple Developer account + DEVELOPMENT_TEAM in project.yml (device builds / TestFlight)
       Team ID `4CGY239475` · Repertoire Studio Pty Ltd · set 3 Aug 2026
 - [x] Sign in with Apple capability + entitlement (App ID + Ben/Ben.entitlements)
-- [ ] RevenueCat account + API key → replace StubSubscriptionService (S9)
+- [x] RevenueCat project **Ben** (Test Store) — entitlement `ben_pro`, products
+      `ben_pro_annual` / `ben_pro_monthly`, default offering `$rc_annual` / `$rc_monthly`.
+      Debug builds use the Test Store public key. Confirm the signup email.
+- [ ] Paste Apple public SDK key (`appl_…`) into `RevenueCatConfig.publicAPIKey` for
+      TestFlight/App Store (Release builds currently have an empty key on purpose).
 - [ ] App Store Connect products: annual US$49.99 / monthly US$5.99, 7-day intro trial
+      + enable In-App Purchase on App ID `com.repertoirestudio.Ben`
 - [ ] PostHog project + API key → replace LocalAnalytics
 - [x] Email forwarding ingestion backend (S10 forwarding address is display-only)
 - [ ] Ben's illustration (clay + ink palette, one calm expression, ≤44pt — replaces SF Symbol placeholder)
@@ -54,7 +59,15 @@ Added 19 Jul 2026 (Firebase + email-in production build):
       Distribute App → App Store Connect → Upload. Then enable Internal Testing in TestFlight.
 
 ## Paywall (flow F)
-- [ ] RevenueCat: annual US$49.99/yr with 7-day intro trial, monthly US$5.99/mo, and a real time-boxed welcome intro offer to back the countdown chip. If no real offer exists, cut the countdown.
-- [ ] App Store Connect: the US$69.99 anchor behind "FREE TRIAL + 29% OFF" must be a genuine standing price (App Review and the ACCC both check was-prices).
-- [ ] Wire Restore purchase (RevenueCat restore), Privacy Policy and T&Cs URLs on the offer screen (currently no-ops).
+Code is live on this branch: hard gate, RevenueCat SDK, restore, StoreKit prices, identity on sign-in.
+Test Store is configured in the Ben RevenueCat project. Real Apple receipts need ASC + `appl_` key.
+
+1. [ ] App ID `com.repertoirestudio.Ben` → enable **In-App Purchase**
+2. [ ] App Store Connect → Features → In-App Purchases: auto-renewable group **Ben Pro**
+      - `ben_pro_annual` — US$49.99/year, 7-day free intro trial
+      - `ben_pro_monthly` — US$5.99/month, no trial
+      - Optional standing price US$69.99/year if we keep the 29% off / was-price badge (ACCC + App Review)
+3. [ ] RevenueCat → add the iOS app with bundle `com.repertoirestudio.Ben` and a P8 In-App Purchase key, then import the ASC products onto entitlement `ben_pro`
+4. [ ] Paste the Apple public SDK key (`appl_…`) for Release/TestFlight
+- [x] Restore purchase, Privacy Policy and T&Cs URLs on the offer screen
 - [ ] Source the fee-comparison figures (credit card ~$30, utility ~$15, telco ~$15) properly before ads go live; the $119 Finder yearly average is already cited.

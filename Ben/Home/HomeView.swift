@@ -268,18 +268,6 @@ struct HomeView: View {
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
 
-            if case .lapsed = services.subscriptions.state() {
-                Text("Your trial has ended. Bills stay visible here, reminders are off.")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.65))
-                    .padding(14)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .benRowSurface(radius: 20)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 8, trailing: 20))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-            }
-
             ForEach(sections, id: \.title) { section in
                 Section {
                     ForEach(section.bills) { bill in
