@@ -6,15 +6,15 @@ import RevenueCat
 /// Product IDs and entitlement — must match App Store Connect + RevenueCat.
 enum RevenueCatConfig {
     static let entitlementID = "ben_pro"
-    static let annualProductID = "ben_pro_annual"
-    static let monthlyProductID = "ben_pro_monthly"
+    static let annualProductID = "com.repertoirestudio.Ben.pro.yearly"
+    static let monthlyProductID = "com.repertoirestudio.Ben.pro.monthly"
 
-    /// Test Store public key from the Ben project (debug / simulator).
-    /// HUMAN: paste the Apple public SDK key (`appl_…`) for TestFlight/App Store.
+    /// Public SDK keys from the Ben RevenueCat project.
+    /// Debug talks to Test Store. Release talks to App Store (needs ASC products live).
     #if DEBUG
-    static let publicAPIKey = "test_gFjsjDujEqiMmhPUOIgQvtqFqzg"
+    static let publicAPIKey = "test_gFiejDuyEqiMmhPUOIgOvtqFqzg"
     #else
-    static let publicAPIKey = ""
+    static let publicAPIKey = "appl_WDkpoJXREbCyPnslnpnkJGUFnvP"
     #endif
 
     static var resolvedAPIKey: String {

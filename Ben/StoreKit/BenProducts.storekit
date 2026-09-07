@@ -39,7 +39,7 @@
               "locale" : "en_AU"
             }
           ],
-          "productID" : "ben_pro_annual",
+          "productID" : "com.repertoirestudio.Ben.pro.yearly",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Annual",
           "subscriptionGroupID" : "ben_pro_group",
@@ -60,7 +60,7 @@
               "locale" : "en_AU"
             }
           ],
-          "productID" : "ben_pro_monthly",
+          "productID" : "com.repertoirestudio.Ben.pro.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Monthly",
           "subscriptionGroupID" : "ben_pro_group",
