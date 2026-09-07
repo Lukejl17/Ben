@@ -1,0 +1,33 @@
+# Ben support desk worker. Deploy: `npx wrangler deploy`
+name = "ben-support-desk"
+main = "src/worker.js"
+compatibility_date = "2026-07-01"
+workers_dev = true
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ben-support"
+# HUMAN: paste id from `npx wrangler d1 create ben-support`
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# Weekly ops digest (Monday 09:00 UTC ≈ evening AEST Sunday / morning Mon)
+[triggers]
+crons = ["0 9 * * 1"]
+
+[vars]
+SUPPORT_FROM_EMAIL = "support@benandbill.app"
+SUPPORT_FROM_NAME = "Ben Support"
+POSTMARK_INBOUND_LOCAL = "support-desk"
+# HUMAN: set in dashboard or `wrangler.toml` locally (not a secret):
+# SLACK_CHANNEL_ID = "C…"
+
+# Secrets (`npx wrangler secret put <NAME>`):
+#   WEBHOOK_SECRET
+#   SLACK_BOT_TOKEN
+#   SLACK_SIGNING_SECRET
+#   POSTMARK_SERVER_TOKEN
+#   LLM_API_KEY          (optional — unused in v1 playbook drafts)

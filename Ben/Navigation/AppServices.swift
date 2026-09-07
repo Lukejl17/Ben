@@ -16,7 +16,7 @@ struct AppServices {
             analytics: LocalAnalytics(),
             parser: VisionBillParser(),
             scheduler: ReminderScheduler(),
-            subscriptions: StubSubscriptionService(),
+            subscriptions: RevenueCatSubscriptionService(),
             accounts: FirebaseAccountService(emailIn: emailIn),
             emailIn: emailIn
         )

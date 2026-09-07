@@ -9,6 +9,7 @@ struct BenApp: App {
     @State private var coordinator = OnboardingCoordinator()
     @State private var router: NotificationRouter
     @State private var pendingEmailMonitor = PendingEmailMonitor()
+    @State private var subscriptions: SubscriptionController
     private let services: AppServices
     private let notificationDelegate: NotificationDelegate
 
@@ -30,6 +31,7 @@ struct BenApp: App {
         UNUserNotificationCenter.current().setNotificationCategories([category])
         self.services = services
         self._router = State(initialValue: router)
+        self._subscriptions = State(initialValue: SubscriptionController(service: services.subscriptions))
         self.notificationDelegate = delegate
         Self.applyForestBoldChrome()
     }
@@ -40,6 +42,7 @@ struct BenApp: App {
                 .environment(coordinator)
                 .environment(router)
                 .environment(pendingEmailMonitor)
+                .environment(subscriptions)
                 .environment(\.services, services)
                 .tint(.chartreuse)
                 .background(Color.forestBottom)
@@ -58,6 +61,10 @@ struct BenApp: App {
                 }
                 .benInstallKeyboardDismiss()
                 .task {
+                    await subscriptions.refresh()
+                    if let userID = services.accounts.account?.id {
+                        await subscriptions.identify(userID: userID)
+                    }
                     // Window may not be key on first appear — retry shortly.
                     try? await Task.sleep(for: .milliseconds(200))
                     KeyboardDismissInstaller.installIfNeeded()

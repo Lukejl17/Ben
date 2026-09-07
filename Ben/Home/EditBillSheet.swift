@@ -144,7 +144,7 @@ struct EditBillSheet: View {
             try? modelContext.save()
             // Due-date edits may land the bill on/off today — resync Lock Screen.
             if BillDueLiveActivityPolicy.shouldPresent(
-                style: style, dueDate: due, paidAt: bill.paidAt
+                dueDate: due, paidAt: bill.paidAt
             ) {
                 _ = await LiveActivityManager.start(
                     billID: billID, issuer: issuer, amount: amount, dueDate: due

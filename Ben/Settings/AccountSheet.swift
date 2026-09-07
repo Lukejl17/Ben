@@ -109,6 +109,7 @@ struct AccountSheet: View {
 /// the required S8 gate before paywall.
 struct AccountSignInControls: View {
     @Environment(\.services) private var services
+    @Environment(SubscriptionController.self) private var subscriptions
     @Binding var isWorking: Bool
     @Binding var errorLine: String?
     @Binding var showEmailForm: Bool
@@ -199,9 +200,11 @@ struct AccountSignInControls: View {
         errorLine = nil
         let accounts = services.accounts
         let analytics = services.analytics
+        let billing = subscriptions
         Task {
             do {
                 let account = try await accounts.signIn(with: provider)
+                await billing.identify(userID: account.id)
                 analytics.track(.accountCreated)
                 onSignedIn(account)
             } catch {
@@ -220,11 +223,13 @@ struct AccountSignInControls: View {
         let creating = isCreatingAccount
         let formEmail = email
         let formPassword = password
+        let billing = subscriptions
         Task {
             do {
                 let account = try await accounts.signIn(
                     email: formEmail, password: formPassword, creating: creating
                 )
+                await billing.identify(userID: account.id)
                 analytics.track(.accountCreated)
                 onSignedIn(account)
             } catch {

@@ -50,9 +50,10 @@ struct OverdueStyleView: View {
             let billID = bill.uuid
             let issuer = bill.issuer
             let dueDate = bill.dueDate
+            let amount = bill.amount
             Task {
                 let identifiers = await scheduler.scheduleOverdueReminders(
-                    billID: billID, issuer: issuer, dueDate: dueDate, cadence: cadence
+                    billID: billID, issuer: issuer, amount: amount, dueDate: dueDate, cadence: cadence
                 )
                 bill.notificationIDs.append(contentsOf: identifiers)
             }

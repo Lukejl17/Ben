@@ -5,6 +5,10 @@ import SwiftUI
 struct PaywallOfferView: View {
     let onStart: () -> Void
     let onOtherPlans: () -> Void
+    var isBusy: Bool = false
+    var errorLine: String?
+    var onRestore: () -> Void = {}
+    var pricing: PlanPricing = .fallback
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
 
@@ -12,8 +16,10 @@ struct PaywallOfferView: View {
         VStack(spacing: 14) {
             PaywallDots(current: 4)
                 .padding(.top, 14)
-            WelcomeOfferChip()
-                .padding(.top, 6)
+            if pricing.annualHasIntro {
+                WelcomeOfferChip()
+                    .padding(.top, 6)
+            }
             Spacer()
             BenCharacter(size: 78)
                 .padding(.bottom, -4)
@@ -26,16 +32,31 @@ struct PaywallOfferView: View {
             VStack(alignment: .leading, spacing: 10) {
                 tick("Bills tracked and reminded, calmly")
                 tick("Payment details ready to copy and pay")
-                tick("$0 due today. 7 days free first")
+                tick(pricing.annualHasIntro
+                     ? "$0 due today. 7 days free first"
+                     : "Annual plan. Cancel anytime")
             }
             .padding(.horizontal, 10)
             Spacer()
-            PaywallAssurance(text: "No payment due now. Cancel anytime")
-            BenPrimaryButton(title: "Start for $0.00", action: onStart)
+            PaywallAssurance(text: pricing.annualHasIntro
+                             ? "No payment due now. Cancel anytime"
+                             : "Cancel anytime")
+            if let errorLine {
+                Text(errorLine)
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+            }
+            BenPrimaryButton(
+                title: pricing.annualHasIntro ? "Start for $0.00" : "Subscribe annually",
+                isBusy: isBusy,
+                action: onStart
+            )
             equivalentLines
             BenTextButton(title: "Show me other plans", action: onOtherPlans)
                 .frame(maxWidth: .infinity)
-            PaywallLegalRow()
+            PaywallLegalRow(onRestore: onRestore)
                 .padding(.bottom, 8)
         }
         .padding(.horizontal, 20)
@@ -84,11 +105,13 @@ struct PaywallOfferView: View {
     private var equivalentLines: some View {
         VStack(spacing: 2) {
             (Text("Equivalent to ")
-                + Text("US$4.17").foregroundStyle(Color.chartreuse)
+                + Text(pricing.annualPerMonth).foregroundStyle(Color.chartreuse)
                 + Text("/month"))
                 .font(.baloo("Baloo2-Bold", 14.5, relativeTo: .footnote))
                 .foregroundStyle(Color.forestInk)
-            Text("7 days free, then US$49.99/yr")
+            Text(pricing.annualHasIntro
+                 ? "7 days free, then \(pricing.annualPrice)/yr"
+                 : "Then \(pricing.annualPrice)/yr")
                 .font(.benMeta)
                 .foregroundStyle(Color.forestInk.opacity(0.55))
         }
@@ -98,8 +121,12 @@ struct PaywallOfferView: View {
 /// Paywall page 6 — other plans. Annual framed as the standing offer;
 /// selection switches the assurance line and the CTA.
 struct PaywallPlansView: View {
-    let onStart: () -> Void
+    let onPurchase: (SubscriptionPlan) -> Void
     let onBack: () -> Void
+    var isBusy: Bool = false
+    var errorLine: String?
+    var onRestore: () -> Void = {}
+    var pricing: PlanPricing = .fallback
     @State private var monthlySelected = false
 
     var body: some View {
@@ -111,7 +138,7 @@ struct PaywallPlansView: View {
                 .padding(.bottom, 8)
             annualCard
             monthlyCard
-            Text("If the trial lapses, your bills stay visible. Reminders stop, that's all.")
+            Text("If a plan ends, Ben waits here. Reminders pause until you're back.")
                 .font(.benMeta)
                 .foregroundStyle(Color.forestInk.opacity(0.55))
                 .multilineTextAlignment(.center)
@@ -120,17 +147,28 @@ struct PaywallPlansView: View {
             PaywallAssurance(
                 text: monthlySelected
                     ? "No commitment, cancel anytime"
-                    : "No payment due now. Cancel anytime"
+                    : (pricing.annualHasIntro
+                       ? "No payment due now. Cancel anytime"
+                       : "Cancel anytime")
             )
+            if let errorLine {
+                Text(errorLine)
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+            }
             BenPrimaryButton(
-                title: monthlySelected ? "Subscribe monthly" : "Start for $0.00"
+                title: monthlySelected
+                    ? "Subscribe monthly"
+                    : (pricing.annualHasIntro ? "Start for $0.00" : "Subscribe annually"),
+                isBusy: isBusy
             ) {
-                // HUMAN: monthly maps to the monthly product purchase via
-                // RevenueCat; the stub starts the same local trial either way.
-                onStart()
+                onPurchase(monthlySelected ? .monthly : .annual)
             }
             BenTextButton(title: "Back to the offer", action: onBack)
                 .frame(maxWidth: .infinity)
+            PaywallLegalRow(onRestore: onRestore)
                 .padding(.bottom, 12)
         }
         .padding(.horizontal, 20)
@@ -146,12 +184,11 @@ struct PaywallPlansView: View {
                     Text("Annual")
                         .font(.baloo("Baloo2-ExtraBold", 17, relativeTo: .headline))
                     Spacer()
-                    (Text("US$4.17").font(.baloo("Baloo2-ExtraBold", 17, relativeTo: .headline))
+                    (Text(pricing.annualPerMonth).font(.baloo("Baloo2-ExtraBold", 17, relativeTo: .headline))
                         + Text("/month").font(.baloo("Baloo2-Bold", 12, relativeTo: .caption)))
                         .monospacedDigit()
                 }
-                (Text("US$69.99").strikethrough().foregroundStyle(planMuted(selected: !monthlySelected))
-                    + Text("  US$49.99/year"))
+                annualDetail
                     .font(.benMeta)
             }
             .foregroundStyle(monthlySelected ? Color.forestInk : Color.onCream)
@@ -167,14 +204,16 @@ struct PaywallPlansView: View {
                     .strokeBorder(monthlySelected ? Color.rowStroke : Color.clear, lineWidth: 1.5)
             )
             .overlay(alignment: .topTrailing) {
-                Text("FREE TRIAL + 29% OFF")
-                    .font(.baloo("Baloo2-ExtraBold", 11, relativeTo: .caption2))
-                    .tracking(0.8)
-                    .foregroundStyle(Color.chartreuse)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
-                    .background(Color.onCreamStrong, in: Capsule())
-                    .offset(x: -14, y: -12)
+                if pricing.annualHasIntro {
+                    Text("FREE TRIAL + 29% OFF")
+                        .font(.baloo("Baloo2-ExtraBold", 11, relativeTo: .caption2))
+                        .tracking(0.8)
+                        .foregroundStyle(Color.chartreuse)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
+                        .background(Color.onCreamStrong, in: Capsule())
+                        .offset(x: -14, y: -12)
+                }
             }
         }
         .buttonStyle(BenPressable())
@@ -190,7 +229,7 @@ struct PaywallPlansView: View {
                     Text("Monthly")
                         .font(.baloo("Baloo2-ExtraBold", 17, relativeTo: .headline))
                     Spacer()
-                    (Text("US$5.99").font(.baloo("Baloo2-ExtraBold", 17, relativeTo: .headline))
+                    (Text(pricing.monthlyPrice).font(.baloo("Baloo2-ExtraBold", 17, relativeTo: .headline))
                         + Text("/mo").font(.baloo("Baloo2-Bold", 12, relativeTo: .caption)))
                         .monospacedDigit()
                 }
@@ -213,6 +252,14 @@ struct PaywallPlansView: View {
         }
         .buttonStyle(BenPressable())
         .benShadow(monthlySelected ? .cream : .floating)
+    }
+
+    private var annualDetail: Text {
+        if let standing = pricing.standingPrice {
+            return Text(standing).strikethrough().foregroundStyle(planMuted(selected: !monthlySelected))
+                + Text("  \(pricing.annualPrice)/year")
+        }
+        return Text("\(pricing.annualPrice)/year")
     }
 
     private func planMuted(selected: Bool) -> Color {
@@ -238,61 +285,35 @@ struct PaywallAssurance: View {
     }
 }
 
-/// The welcome-offer countdown. The deadline persists per install so it
-/// cannot reset on relaunch.
-/// HUMAN: back this with a real time-boxed RevenueCat intro offer, or cut it.
+/// Honest intro chip — the 7-day trial is Apple's, not a fake countdown.
 struct WelcomeOfferChip: View {
-    static let deadlineKey = "welcomeOfferDeadline"
-    @State private var remaining: TimeInterval = 3600
-
     var body: some View {
-        HStack(spacing: 8) {
-            Text("Welcome offer ends in")
-            Text(formatted)
-                .monospacedDigit()
-                .tracking(0.5)
-        }
-        .font(.baloo("Baloo2-Bold", 12.5, relativeTo: .caption))
-        .foregroundStyle(Color.onChartreuse)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 6)
-        .background(Color.chartreuse, in: Capsule())
-        .benShadow(.glow)
-        .task { await tick() }
-    }
-
-    private var formatted: String {
-        let total = max(0, Int(remaining))
-        return String(format: "%02d:%02d:%02d", total / 3600, (total / 60) % 60, total % 60)
-    }
-
-    private func tick() async {
-        let defaults = UserDefaults.standard
-        let deadline: Date
-        if let saved = defaults.object(forKey: Self.deadlineKey) as? Date, saved > .now {
-            deadline = saved
-        } else {
-            deadline = .now.addingTimeInterval(3600)
-            defaults.set(deadline, forKey: Self.deadlineKey)
-        }
-        while !Task.isCancelled {
-            remaining = deadline.timeIntervalSinceNow
-            if remaining <= 0 { break }
-            try? await Task.sleep(for: .seconds(1))
-        }
+        Text("7 days free")
+            .font(.baloo("Baloo2-Bold", 12.5, relativeTo: .caption))
+            .foregroundStyle(Color.onChartreuse)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 6)
+            .background(Color.chartreuse, in: Capsule())
+            .benShadow(.glow)
     }
 }
 
 /// Restore purchase and the legal links, quiet at the very bottom.
-/// HUMAN: wire the real privacy/terms URLs and the RevenueCat restore call.
 struct PaywallLegalRow: View {
+    var onRestore: () -> Void = {}
+    @Environment(\.openURL) private var openURL
+
     var body: some View {
         HStack(spacing: 8) {
-            legal("Restore purchase")
+            Button(action: onRestore) {
+                Text("Restore purchase")
+                    .font(.system(size: 11.5))
+                    .foregroundStyle(Color.forestInk.opacity(0.45))
+            }
             divider
-            legal("Privacy Policy")
+            legal("Privacy Policy", url: "https://benandbill.app/privacy")
             divider
-            legal("T&Cs")
+            legal("T&Cs", url: "https://benandbill.app/terms")
         }
     }
 
@@ -300,9 +321,11 @@ struct PaywallLegalRow: View {
         Text("|").foregroundStyle(Color.forestInk.opacity(0.25)).font(.benMeta)
     }
 
-    private func legal(_ label: String) -> some View {
+    private func legal(_ label: String, url: String) -> some View {
         Button {
-            // HUMAN: no-op until the URLs and restore flow exist.
+            if let link = URL(string: url) {
+                openURL(link)
+            }
         } label: {
             Text(label)
                 .font(.system(size: 11.5))

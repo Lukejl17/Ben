@@ -5,7 +5,11 @@ Pre-seeded — these need Luke, not Claude:
 - [x] Apple Developer account + DEVELOPMENT_TEAM in project.yml (device builds / TestFlight)
       Team ID `4CGY239475` · Repertoire Studio Pty Ltd · set 3 Aug 2026
 - [x] Sign in with Apple capability + entitlement (App ID + Ben/Ben.entitlements)
-- [ ] RevenueCat account + API key → replace StubSubscriptionService (S9)
+- [ ] RevenueCat account + paste the public Apple API key into `RevenueCatConfig.publicAPIKey`
+      (`Ben/Services/RevenueCatSubscriptionService.swift`) or Info.plist `REVENUECAT_API_KEY`.
+      Dashboard: https://app.revenuecat.com — create project **Ben**, add iOS app
+      bundle `com.repertoirestudio.Ben`, copy the **Apple** public SDK key (`appl_…`).
+      Use the Test Store key only in Debug; TestFlight/App Store must use the Apple key.
 - [ ] App Store Connect products: annual US$49.99 / monthly US$5.99, 7-day intro trial
 - [ ] PostHog project + API key → replace LocalAnalytics
 - [x] Email forwarding ingestion backend (S10 forwarding address is display-only)
@@ -54,7 +58,31 @@ Added 19 Jul 2026 (Firebase + email-in production build):
       Distribute App → App Store Connect → Upload. Then enable Internal Testing in TestFlight.
 
 ## Paywall (flow F)
-- [ ] RevenueCat: annual US$49.99/yr with 7-day intro trial, monthly US$5.99/mo, and a real time-boxed welcome intro offer to back the countdown chip. If no real offer exists, cut the countdown.
-- [ ] App Store Connect: the US$69.99 anchor behind "FREE TRIAL + 29% OFF" must be a genuine standing price (App Review and the ACCC both check was-prices).
-- [ ] Wire Restore purchase (RevenueCat restore), Privacy Policy and T&Cs URLs on the offer screen (currently no-ops).
+Code is live on this branch: hard gate, RevenueCat SDK, restore, StoreKit prices, identity on sign-in.
+
+Do these in order — purchases stay blocked with a calm error until the API key is in the build.
+
+1. [ ] App ID `com.repertoirestudio.Ben` → enable **In-App Purchase**
+2. [ ] App Store Connect → Features → In-App Purchases: auto-renewable group **Ben Pro**
+      - `ben_pro_annual` — US$49.99/year, 7-day free intro trial
+      - `ben_pro_monthly` — US$5.99/month, no trial
+      - Optional standing price US$69.99/year if we keep the 29% off / was-price badge (ACCC + App Review)
+3. [ ] RevenueCat dashboard (https://app.revenuecat.com):
+      - Project **Ben**, iOS app bundle `com.repertoirestudio.Ben`
+      - Products `ben_pro_annual` and `ben_pro_monthly` imported from App Store Connect (or Test Store products with the same IDs)
+      - Entitlement `ben_pro` attached to both products
+      - Offering `default` with `$rc_annual` → annual, `$rc_monthly` → monthly
+      - Copy the **Apple** public SDK key (`appl_…`) — Test Store key is Debug-only
+4. [ ] Paste that key into `RevenueCatConfig.publicAPIKey` (`Ben/Services/RevenueCatSubscriptionService.swift`)
+      or Info.plist `REVENUECAT_API_KEY`, then archive a new TestFlight
+5. [ ] Sandbox: StoreKit file `Ben/StoreKit/BenProducts.storekit` is attached to the Ben scheme for local Xcode testing. For device/TestFlight, use a sandbox Apple ID after products are in ASC + RC.
+- [x] Restore purchase, Privacy Policy and T&Cs URLs on the offer screen
 - [ ] Source the fee-comparison figures (credit card ~$30, utility ~$15, telco ~$15) properly before ads go live; the $119 Finder yearly average is already cited.
+
+## Support desk (Slack + Workspace) — Phase 0 HUMAN
+- [ ] Google Workspace: create `support@benandbill.app` (shared inbox or user). Confirm apex MX still delivers to Google — do not point apex MX at Postmark.
+- [ ] Gmail auto-forward a copy of support mail to Postmark inbound `support-desk@in.benandbill.app` (keep Gmail copy).
+- [ ] Slack: ops workspace + private `#ben-support` + Slack app (bot token, signing secret, interactivity URL → support-desk Worker). Invite bot; copy channel ID.
+- [ ] Postmark: inbound webhook → support-desk Worker `/inbound?secret=…`; verify outbound From `support@benandbill.app`.
+- [ ] Deploy Worker per [docs/support/SETUP.md](docs/support/SETUP.md); store secrets in Wrangler only.
+- [ ] Smoke: test mail → Slack draft → Approve sends; Reject does not.

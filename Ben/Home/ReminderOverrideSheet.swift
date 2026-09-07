@@ -72,7 +72,7 @@ struct ReminderOverrideSheet: View {
             bill.hasNotification = !newIDs.isEmpty || bill.hasNotification
             try? modelContext.save()
             if BillDueLiveActivityPolicy.shouldPresent(
-                style: style, dueDate: dueDate, paidAt: bill.paidAt
+                dueDate: dueDate, paidAt: bill.paidAt
             ) {
                 _ = await LiveActivityManager.start(
                     billID: billID, issuer: issuer, amount: amount, dueDate: dueDate

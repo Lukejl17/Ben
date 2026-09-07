@@ -13,6 +13,8 @@ final class NotificationRouter {
     var addBillRequested = false
     /// An emailed bill is staged on the coordinator — open the confirm flow.
     var confirmEmailBillRequested = false
+    /// Bill uuid from a reminder tap/delivery — start a Live Activity once bills are loaded.
+    var pendingLiveActivityBillID: String?
 }
 
 /// UNUserNotificationCenter delegate: foreground presentation + tap routing.
@@ -37,6 +39,9 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         analytics.track(.notificationTriggered)
         let info = Self.sendableUserInfo(notification.request.content.userInfo)
         Task { @MainActor in
+            if let billID = LiveActivityNotificationPayload.billID(from: info) {
+                self.router.pendingLiveActivityBillID = billID
+            }
             await LiveActivityManager.startFromNotificationUserInfo(info)
         }
         completionHandler([.banner, .sound])
@@ -63,8 +68,11 @@ final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
 
         analytics.track(.appOpenedFromNotification)
-        // Tap on a due-day reminder is the reliable wake path to start the Live Activity.
+        // Tap is the reliable wake path — payload start plus a bill lookup once Home loads.
         Task { @MainActor in
+            if let billID {
+                self.router.pendingLiveActivityBillID = billID
+            }
             await LiveActivityManager.startFromNotificationUserInfo(info)
             self.route(kind: kind, billID: billID)
         }

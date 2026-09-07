@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ben — Onboarding click-through</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest-top: #25401C;
+  --forest-bottom: #1B3015;
+  --chartreuse: #D3E97A;
+  --on-chartreuse: #22361B;
+  --cream: #FAF3E3;
+  --on-cream: #293223;
+  --on-cream-strong: #2F4A26;
+  --on-cream-muted: #6B6B57;
+  --forest-ink: #F8F1DE;
+  --voice: #EFE8D2;
+  --row-fill: rgba(248,241,222,0.07);
+  --row-stroke: rgba(248,241,222,0.15);
+  --amber: #E9A13B;
+  --on-amber: #2A2A20;
+  --sky: #9CC0CF;
+  --on-sky: #1E3540;
+  --clay: #D08D66;
+  --on-clay: #3B2415;
+  --lavender: #E7CFF2;
+  --on-lavender: #4A2F5E;
+  --baloo: 'Baloo 2', system-ui, sans-serif;
+  --figtree: 'Figtree', system-ui, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #101810;
+  font-family: var(--figtree);
+  color: var(--forest-ink);
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+}
+header { max-width: 420px; margin: 0 auto 18px; }
+h1 {
+  font-family: var(--baloo);
+  font-weight: 800;
+  color: var(--chartreuse);
+  font-size: 22px;
+}
+.sub { color: rgba(248,241,222,0.58); font-size: 13px; line-height: 1.5; margin-top: 4px; }
+.phone-wrap { display: flex; justify-content: center; }
+.phone {
+  width: 360px;
+  height: 780px;
+  border-radius: 44px;
+  border: 8px solid #0d130c;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(420px 420px at 85% -10%, rgba(62,107,46,0.55), transparent),
+    radial-gradient(420px 420px at -10% 110%, rgba(23,48,20,0.55), transparent),
+    linear-gradient(168deg, var(--forest-top), var(--forest-bottom));
+  box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+}
+.island {
+  position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+  width: 96px; height: 26px; border-radius: 14px; background: #0d130c; z-index: 3;
+}
+.topbar {
+  height: 52px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 16px 6px;
+  flex-shrink: 0;
+}
+.back-btn {
+  background: none; border: none; color: var(--chartreuse);
+  font-family: var(--baloo); font-weight: 700; font-size: 15px;
+  cursor: pointer; display: none; align-items: center; gap: 4px; padding: 6px 0;
+}
+.back-btn.show { display: flex; }
+.screen-area {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: 8px 22px 12px;
+  display: flex; flex-direction: column;
+}
+.screen { display: none; flex: 1; flex-direction: column; animation: fadeIn 0.28s ease; }
+.screen.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.q-title {
+  font-family: var(--baloo); font-weight: 800; font-size: 26px; line-height: 1.12;
+  color: var(--chartreuse); text-align: center; margin-bottom: 10px; white-space: pre-line;
+}
+.screen-title {
+  font-family: var(--baloo); font-weight: 800; font-size: 24px; line-height: 1.15;
+  color: var(--chartreuse); margin: 6px 0 12px;
+}
+.q-intro {
+  font-size: 15px; line-height: 1.45; color: rgba(248,241,222,0.65);
+  text-align: center; margin-bottom: 16px;
+}
+.voice {
+  font-family: var(--baloo); font-weight: 500; font-size: 16px; line-height: 1.45;
+  color: var(--voice); text-align: center;
+}
+.voice.quiet { font-size: 15px; text-align: left; color: rgba(248,241,222,0.65); }
+.spacer { flex: 1; min-height: 10px; }
+.pill {
+  width: 100%; text-align: left; padding: 13px 16px; border-radius: 18px;
+  border: 1.5px solid var(--row-stroke); background: var(--row-fill);
+  color: var(--forest-ink); font-family: var(--baloo); font-weight: 600; font-size: 16px;
+  margin-bottom: 10px; cursor: pointer;
+}
+.pill small { display: block; font-family: var(--figtree); font-weight: 400; font-size: 12px; color: rgba(248,241,222,0.55); margin-top: 2px; }
+.pill.selected { background: rgba(211,233,122,0.14); border-color: rgba(211,233,122,0.45); }
+.echo {
+  display: none; align-items: flex-start; gap: 10px; padding: 12px;
+  background: var(--cream); border-radius: 20px; margin-top: 6px; margin-bottom: 8px;
+}
+.echo.show { display: flex; }
+.echo img { width: 36px; height: 36px; object-fit: contain; }
+.echo p { font-family: var(--baloo); font-weight: 500; font-size: 13px; line-height: 1.4; color: var(--on-cream); }
+.cta-bar { padding: 6px 22px 20px; flex-shrink: 0; }
+.btn-primary, .btn-secondary, .btn-text {
+  width: 100%; padding: 15px; border: none; border-radius: 999px;
+  font-family: var(--baloo); font-weight: 700; font-size: 17px; cursor: pointer;
+}
+.btn-primary { background: var(--chartreuse); color: var(--on-chartreuse); }
+.btn-primary:disabled { opacity: 0.45; cursor: default; }
+.btn-secondary { background: rgba(248,241,222,0.1); color: var(--forest-ink); margin-top: 8px; }
+.btn-text {
+  background: none; color: rgba(248,241,222,0.72); font-size: 15px; padding: 10px; margin-top: 4px;
+}
+.card {
+  background: var(--cream); color: var(--on-cream); border-radius: 20px; padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+}
+.card.dark { background: var(--row-fill); color: var(--forest-ink); box-shadow: none; border: 1.5px solid var(--row-stroke); }
+.row-surface {
+  background: var(--row-fill); border: 1.5px solid var(--row-stroke);
+  border-radius: 16px; padding: 11px 14px; margin-bottom: 8px;
+}
+.eyebrow {
+  font-family: var(--baloo); font-weight: 700; font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: rgba(248,241,222,0.45); text-align: center; margin-bottom: 8px;
+}
+.chip-row { display: flex; flex-wrap: nowrap; gap: 5px; justify-content: center; margin-bottom: 14px; }
+.chip {
+  font-family: var(--baloo); font-weight: 700; font-size: 10.5px; padding: 5px 7px;
+  border-radius: 999px; white-space: nowrap;
+}
+.chip.amber { background: var(--amber); color: var(--on-amber); }
+.chip.clay { background: var(--clay); color: var(--on-clay); }
+.chip.sky { background: var(--sky); color: var(--on-sky); }
+.chip.lavender { background: var(--lavender); color: var(--on-lavender); }
+.chip.chartreuse { background: var(--chartreuse); color: var(--on-chartreuse); }
+.icon-circle {
+  width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.welcome-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.welcome-hero img { width: 168px; margin-bottom: 18px; filter: drop-shadow(0 10px 24px rgba(0,0,0,0.35)); }
+.greeting { font-family: var(--baloo); font-weight: 800; font-size: 34px; color: var(--chartreuse); line-height: 1; }
+.im-ben { font-family: var(--baloo); font-weight: 800; font-size: 28px; color: var(--chartreuse); margin-bottom: 14px; }
+.mini-cards { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.mini-card { min-width: 104px; background: var(--cream); border-radius: 14px; padding: 10px; }
+.mini-card .who { font-family: var(--baloo); font-weight: 700; font-size: 12px; color: var(--on-cream); }
+.mini-card .amt { font-family: var(--baloo); font-weight: 800; font-size: 15px; color: var(--on-cream-strong); }
+.mini-card .when { font-size: 11px; color: var(--on-cream-muted); }
+.method {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  padding: 14px; border: none; border-radius: 20px; background: var(--cream); margin-bottom: 10px; cursor: pointer;
+}
+.method h4 { font-family: var(--baloo); font-weight: 700; font-size: 16px; color: var(--on-cream); }
+.method p { font-size: 12px; color: var(--on-cream-muted); }
+.method.disabled { opacity: 0.55; cursor: default; }
+.stat-num { font-family: var(--baloo); font-weight: 800; font-size: 48px; color: var(--on-cream-strong); text-align: center; }
+.plan-row { display: flex; gap: 11px; align-items: flex-start; padding: 13px; border-radius: 20px; background: var(--row-fill); border: 1.5px solid var(--row-stroke); margin-bottom: 10px; }
+.check { width: 34px; height: 34px; border-radius: 50%; background: var(--chartreuse); color: var(--on-chartreuse); display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+.field { background: var(--cream); border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
+.field label { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--on-cream-muted); margin-bottom: 4px; }
+.field .val { font-family: var(--baloo); font-weight: 700; font-size: 16px; color: var(--on-cream); }
+.hero-amt { font-family: var(--baloo); font-weight: 800; font-size: 42px; text-align: center; margin-top: 8px; }
+.dots { display: flex; justify-content: center; gap: 7px; margin: 8px 0; }
+.dots span { width: 7px; height: 7px; border-radius: 999px; background: rgba(248,241,222,0.18); }
+.dots span.on { width: 22px; background: var(--chartreuse); }
+.suggest {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--cream); color: var(--on-cream);
+  font-family: var(--baloo); font-weight: 700; font-size: 14px; padding: 10px 14px; border-radius: 999px;
+  border: none; cursor: pointer; margin: 0 6px 8px 0;
+}
+.note { font-size: 12px; color: rgba(248,241,222,0.5); text-align: center; margin-top: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Onboarding click-through</h1>
+  <p class="sub">Current Ben flow. Tap through as a user would — Back lives top-left after welcome. Answers stick if you go back and change them.</p>
+</header>
+
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="island"></div>
+    <div class="topbar">
+      <button class="back-btn" id="backBtn" type="button">‹ Back</button>
+    </div>
+    <div class="screen-area" id="area"></div>
+    <div class="cta-bar" id="cta"></div>
+  </div>
+</div>
+
+<script>
+const BEN = "assets/ben-character.png";
+const answers = {
+  intent: null, sources: [], volume: null, lateFees: null, feeling: null, reminder: null, overdue: "every_second_day"
+};
+
+const COPY = {
+  intent: {
+    just_bought_home: { label: "Just bought a home", emoji: "🏡", echo: "New house, new bills. Rates, water, insurance, all firsts.", plan: "I'll catch the first-time bills you've never had before. Rates, water, strata, nothing slips." },
+    moved_in_together: { label: "Moved in with someone", emoji: "💚", echo: "Two people, two inboxes, and bills falling in the gap.", plan: "One shared picture of every bill, whoever's name it's in. No more 'I thought you paid it'." },
+    bills_piling_up: { label: "Bills piling up lately", emoji: "🌊", echo: "The pile got on top of you. That ends today.", plan: "We'll clear the pile one photo at a time, and I'll take the watching from here." },
+    getting_organised: { label: "Just getting organised", emoji: "✨", echo: "You want one tidy place for everything. Sensible.", plan: "Every bill in one place, categorised and exportable. Tidy enough to make your accountant smile." }
+  },
+  sources: {
+    paper: { label: "Paper, in a drawer somewhere", emoji: "📄", echo: "That drawer's retired. One photo and the paper's my problem." },
+    email: { label: "Buried in my email", emoji: "📧", echo: "Forward them straight in. Your inbox stops being a filing cabinet." },
+    apps: { label: "Scattered across apps", emoji: "📱", echo: "One place instead of five apps. That's the whole point of me." },
+    partner: { label: "My partner handles some", emoji: "👥", echo: "Both of you see the same picture, whoever's name it's in." },
+    dog: { label: "The dog eats them", emoji: "🐕", echo: "Snap them before the dog does. Photo, PDF or inbox, they all beat him." }
+  },
+  volume: {
+    "1_3": { label: "1–3", detail: "Just the basics", echo: "That's often just power and rent. Most people have twice that once streaming, phone and gym are in.", n: 24 },
+    "4_7": { label: "4–7", detail: "A regular household", echo: "5-ish things a month means something's due almost every week. No wonder it hums.", n: 66 },
+    "8_12": { label: "8–12", detail: "A busy one", echo: "10 a month is a part-time job you never applied for.", n: 120 },
+    lost_count: { label: "Honestly? Lost count", detail: "That's exactly why Ben exists", echo: "Step one: we'll count them. Step two: you stop counting forever.", n: 100 }
+  },
+  fees: {
+    never: { label: "Never", detail: "But the worrying is work too", echo: "Then my job is keeping it that way, and taking the worrying off your plate too." },
+    once: { label: "Once", detail: "~$25 you didn't need to spend", echo: "Noted. My job is making that number $0 and keeping it there." },
+    few: { label: "A few times", detail: "That adds up fast", echo: "Noted. My job is making that number $0 and keeping it there." },
+    rather_not: { label: "Rather not think about it", detail: "Fair. Ben will.", echo: "Noted. My job is making that number $0 and keeping it there." }
+  },
+  feeling: {
+    dread: { label: "Due-date dread", emoji: "😰", echo: "No more opening the banking app with one eye closed. You'll always know what's coming." },
+    load: { label: "It's always in the back of my mind", emoji: "🧠", echo: "That background hum of 'wait, is something due?' That's the part I take off you." },
+    fights: { label: "It causes arguments at home", emoji: "⚡", echo: "One shared source of truth. The 'did you pay it' conversation stops." },
+    mess: { label: "It's just… messy", emoji: "🌀", echo: "Photos in, order out. You'll never file anything again." }
+  },
+  reminder: {
+    few_days_early: { label: "A few days early", detail: "A heads-up three days out, time to sort it without rushing." },
+    just_before: { label: "Just before it's due", detail: "A mention on the day, plus Ben on your Lock Screen until it's sorted." },
+    both: { label: "Both, for big bills", detail: "Three days out, then again on the day with Ben on your Lock Screen." }
+  },
+  overdue: {
+    every_day: { label: "Every day", detail: "A daily mention until it's sorted, for the must-not-miss." },
+    every_second_day: { label: "Every second day", detail: "Persistent without being a pest." },
+    weekly: { label: "Once a week", detail: "A gentle weekly check-in." },
+    once: { label: "Just the once", detail: "One mention the day after, then silence." }
+  }
+};
+
+const STEPS = [
+  "welcome","demo","intent","sources","volume","maths","lateFees","feeling",
+  "mirror","odds","reminder","plan","upload","capture","confirm","reminders",
+  "overdue","setState","commit","paywall","gift","offer","second","locked"
+];
+
+let step = "welcome";
+let history = [];
+let paywallPage = 0;
+
+function echoCard(text) {
+  if (!text) return "";
+  return `<div class="echo show"><img src="${BEN}" alt=""><p>${text}</p></div>`;
+}
+function pills(items, selected, multi) {
+  return items.map(([id, label, detail]) => {
+    const on = multi ? selected.includes(id) : selected === id;
+    return `<button class="pill${on ? " selected" : ""}" data-id="${id}" type="button">${label}${detail ? `<small>${detail}</small>` : ""}</button>`;
+  }).join("");
+}
+function cta(label, disabled, extra = "") {
+  return `<button class="btn-primary" id="go" ${disabled ? "disabled" : ""}>${label}</button>${extra}`;
+}
+
+const screens = {
+  welcome() {
+    return {
+      html: `<div class="welcome-hero">
+        <img src="${BEN}" alt="Ben">
+        <div class="greeting">G'day</div>
+        <div class="im-ben">I'm Ben.</div>
+        <p class="voice">Give me your bills and I'll tell you when they matter. First, watch me read one.</p>
+      </div>`,
+      cta: cta("Watch Ben work") + `<button class="btn-text" type="button">I already have an account</button>`
+    };
+  },
+  demo() {
+    return {
+      html: `<p class="q-title" style="font-size:22px">A sample bill. Watch.</p>
+        <div class="card" style="margin-bottom:10px">
+          <div style="font-family:var(--baloo);font-weight:700;font-size:16px">AGL Electricity</div>
+          <div style="font-size:12px;color:var(--on-cream-muted);margin-bottom:8px">Tax Invoice · Account 3344 5566</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span>Usage this quarter</span><span>$198.40</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span>Supply charge</span><span>$44.60</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:var(--baloo);font-weight:700;margin:6px 0"><span>Amount due</span><span>$243.00</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span>Due date</span><span>24 July</span></div>
+        </div>
+        <div class="row-surface" style="display:flex;justify-content:space-between"><span>Issuer</span><span style="color:var(--chartreuse)">AGL ✓</span></div>
+        <div class="row-surface" style="display:flex;justify-content:space-between"><span>Amount</span><span style="color:var(--chartreuse)">$243.00 ✓</span></div>
+        <div class="row-surface" style="display:flex;justify-content:space-between"><span>Due date</span><span style="color:var(--chartreuse)">24 July ✓</span></div>
+        <div class="card" style="display:flex;gap:10px;align-items:flex-start;margin:8px 0">
+          <img src="${BEN}" alt="" style="width:30px">
+          <div><div style="font-family:var(--baloo);font-weight:700;font-size:13px">Ben</div>
+          <div style="font-size:12px;color:var(--on-cream-muted)">Ben here. AGL is due Friday. That's all.</div></div>
+        </div>
+        <div class="row-surface" style="display:flex;gap:10px;align-items:flex-start">
+          <img src="${BEN}" alt="" style="width:36px">
+          <p class="voice quiet">Works the same for Netflix renewals, gym fees, insurance — anything with a due date.</p>
+        </div>
+        <div class="mini-cards">
+          <div class="mini-card"><div class="who">Netflix</div><div class="amt">$17.99</div><div class="when">Renews 12 Aug</div></div>
+          <div class="mini-card"><div class="who">Kayo</div><div class="amt">$30.00</div><div class="when">Renews 18 Aug</div></div>
+          <div class="mini-card"><div class="who">Gym</div><div class="amt">$59.95</div><div class="when">Due 1 Sep</div></div>
+        </div>`,
+      cta: cta("That, but for my bills")
+    };
+  },
+  intent() {
+    const items = Object.entries(COPY.intent).map(([id, v]) => [id, `${v.emoji}  ${v.label}`]);
+    const echo = answers.intent ? COPY.intent[answers.intent].echo : "";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">What's changed lately?</p>
+        <p class="q-intro">Bills apps get downloaded on a day something shifted. What was yours?</p>
+        ${pills(items, answers.intent)}
+        ${echoCard(echo)}
+        <div class="spacer"></div>`,
+      cta: cta("Continue", !answers.intent)
+    };
+  },
+  sources() {
+    const items = Object.entries(COPY.sources).map(([id, v]) => [id, `${v.emoji}  ${v.label}`]);
+    let echo = "";
+    if (answers.sources.length === 1) echo = COPY.sources[answers.sources[0]].echo;
+    else if (answers.sources.length > 1) echo = "However they arrive, they all funnel into Ben: photo, PDF, or straight from the inbox.";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">Where do your\nbills end up?</p>
+        <p class="q-intro">Pick all that's true. No judgement.</p>
+        ${pills(items, answers.sources, true)}
+        ${echoCard(echo)}
+        <div class="spacer"></div>`,
+      cta: cta("Continue", answers.sources.length === 0)
+    };
+  },
+  volume() {
+    const items = Object.entries(COPY.volume).map(([id, v]) => [id, v.label, v.detail]);
+    const echo = answers.volume ? COPY.volume[answers.volume].echo : "";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">What hits your account\nevery month?</p>
+        <p class="q-intro">Utilities, streaming, gym, insurance — if it renews, it counts.</p>
+        <div class="eyebrow">All of these count</div>
+        <div class="chip-row">
+          <span class="chip amber">AGL</span>
+          <span class="chip clay">Netflix</span>
+          <span class="chip clay">Kayo</span>
+          <span class="chip lavender">Gym</span>
+          <span class="chip sky">Telstra</span>
+          <span class="chip chartreuse">Council</span>
+        </div>
+        ${pills(items, answers.volume)}
+        ${echoCard(echo)}
+        <div class="spacer"></div>`,
+      cta: cta("Continue", !answers.volume)
+    };
+  },
+  maths() {
+    const v = COPY.volume[answers.volume || "lost_count"];
+    const sub = answers.volume === "lost_count"
+      ? "a year at the average Aussie household, give or take"
+      : "currently tracked by memory at your place";
+    const voice = answers.volume === "lost_count"
+      ? "Sounds about right for lost count. We'll pin down your real number as bills land. Mine either way."
+      : "From today: zero. I hold every one of them.";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">Here's what that means.</p>
+        <div class="card" style="text-align:center">
+          <div class="eyebrow" style="color:var(--on-cream-muted)">Due dates a year, roughly</div>
+          <div class="stat-num">${v.n}${answers.volume === "lost_count" ? "+" : ""}</div>
+          <div style="font-size:13px;color:var(--on-cream-muted)">${sub}</div>
+        </div>
+        <p class="voice" style="margin-top:14px">${voice}</p>
+        <div class="spacer"></div>`,
+      cta: cta("Take them off me")
+    };
+  },
+  lateFees() {
+    const items = Object.entries(COPY.fees).map(([id, v]) => [id, v.label, v.detail]);
+    const echo = answers.lateFees ? COPY.fees[answers.lateFees].echo : "";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">Copped a late fee\nin the last year?</p>
+        <p class="q-intro">Be honest, this is exactly the thing I'm for.</p>
+        ${pills(items, answers.lateFees)}
+        ${echoCard(echo)}
+        <div class="spacer"></div>`,
+      cta: cta("Continue", !answers.lateFees)
+    };
+  },
+  feeling() {
+    const items = Object.entries(COPY.feeling).map(([id, v]) => [id, `${v.emoji}  ${v.label}`]);
+    const echo = answers.feeling ? COPY.feeling[answers.feeling].echo : "";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">What does bill stress\nfeel like for you?</p>
+        ${pills(items, answers.feeling)}
+        ${echoCard(echo)}
+        <div class="spacer"></div>`,
+      cta: cta("Continue", !answers.feeling)
+    };
+  },
+  mirror() {
+    const chips = [];
+    if (answers.intent) chips.push(COPY.intent[answers.intent].label);
+    answers.sources.forEach(id => chips.push(COPY.sources[id].label.split(",")[0]));
+    if (answers.volume) chips.push(`${COPY.volume[answers.volume].label} bills a month`);
+    if (answers.lateFees) chips.push(`Fees: ${COPY.fees[answers.lateFees].label}`);
+    if (answers.feeling) chips.push(COPY.feeling[answers.feeling].label);
+    const voice = answers.feeling ? COPY.feeling[answers.feeling].echo : "";
+    const moment = answers.intent ? COPY.intent[answers.intent].echo : "";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">Here's what I heard.</p>
+        <div class="card">
+          <div class="eyebrow" style="text-align:left;color:var(--on-cream-muted)">Your bill picture</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px">
+            ${chips.map(c => `<span style="font-family:var(--baloo);font-weight:700;font-size:12px;padding:5px 12px;border-radius:999px;background:rgba(47,74,38,0.08);color:var(--on-cream-strong)">${c}</span>`).join("")}
+          </div>
+          <p style="font-size:13px;color:var(--on-cream-muted)">${moment}</p>
+        </div>
+        <p class="voice" style="margin-top:14px">${voice}</p>
+        <div class="spacer"></div>`,
+      cta: cta("That's me")
+    };
+  },
+  odds() {
+    const voice = answers.lateFees === "never"
+      ? "You've dodged them so far. Let's make that permanent."
+      : "You told me they've caught you before. That stops today.";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">The bit nobody plans for.</p>
+        <div class="card" style="text-align:center">
+          <div class="eyebrow" style="color:var(--on-cream-muted)">Missed bills, nationally</div>
+          <div class="stat-num">1 in 3</div>
+          <div style="font-size:13px;color:var(--on-cream-muted)">Australians have missed a power bill payment</div>
+        </div>
+        <p class="voice" style="margin-top:14px">${voice}</p>
+        <div class="spacer"></div>`,
+      cta: cta("Not me anymore")
+    };
+  },
+  reminder() {
+    const items = Object.entries(COPY.reminder).map(([id, v]) => [id, v.label, v.detail]);
+    const echo = answers.reminder ? `Locked in: ${COPY.reminder[answers.reminder].label.toLowerCase()}. And never otherwise.` : "";
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">When should I speak up?</p>
+        <p class="q-intro">I only talk when a bill needs you. No streaks, no check-ins, no noise.</p>
+        ${pills(items, answers.reminder)}
+        ${echoCard(echo)}
+        <div class="spacer"></div>`,
+      cta: cta("Continue", !answers.reminder)
+    };
+  },
+  plan() {
+    const rows = [];
+    if (answers.intent) rows.push([`"${COPY.intent[answers.intent].label}"`, COPY.intent[answers.intent].plan]);
+    const src = answers.sources.map(id => COPY.sources[id].label.toLowerCase().split(",")[0]).join(", ");
+    rows.push([src ? `your bills live in: ${src}` : "wherever your bills live", "Photo, PDF, or email them in. Each one takes about 20 seconds."]);
+    if (answers.reminder) rows.push([`"${COPY.reminder[answers.reminder].label}"`, "That's exactly when I'll speak, and never otherwise."]);
+    if (answers.feeling) rows.push([`"${COPY.feeling[answers.feeling].label}"`, COPY.feeling[answers.feeling].echo]);
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">Your plan, then.</p>
+        ${rows.map(r => `<div class="plan-row"><div class="check">✓</div><div><div style="font-size:12px;font-style:italic;color:rgba(248,241,222,0.55)">You said: ${r[0]}</div><div style="font-family:var(--baloo);font-weight:700;font-size:14px;margin-top:2px">${r[1]}</div></div></div>`).join("")}
+        <div class="spacer"></div>`,
+      cta: cta("Let's do the first bill")
+    };
+  },
+  upload() {
+    return {
+      html: `<p class="screen-title">Your first bill</p>
+        <div class="card" style="margin-bottom:14px">
+          ${[
+            ["sky", "I read the issuer, amount and due date, nothing else."],
+            ["chartreuse", "You confirm everything before it's saved."],
+            ["amber", "Delete any bill, any time."],
+            ["clay", "Your bills stay yours. Your data is never the product."]
+          ].map(([c, t]) => `<div style="display:flex;gap:12px;align-items:center;margin:10px 0"><div class="icon-circle" style="background:var(--${c});color:var(--on-${c})">•</div><div style="font-size:15px">${t}</div></div>`).join("")}
+        </div>
+        <p style="font-family:var(--baloo);font-weight:700;font-size:17px;margin-bottom:10px">How do you want to hand it over?</p>
+        <button class="method" data-next="capture" type="button"><div class="icon-circle" style="background:var(--chartreuse);color:var(--on-chartreuse)">📷</div><div><h4>Take a photo</h4><p>Point it at the bill and I'll do the reading</p></div></button>
+        <button class="method" data-next="capture" type="button"><div class="icon-circle" style="background:var(--chartreuse);color:var(--on-chartreuse)">🖼</div><div><h4>Upload a photo</h4><p>From your photo library</p></div></button>
+        <button class="method" data-next="capture" type="button"><div class="icon-circle" style="background:var(--sky);color:var(--on-sky)">📄</div><div><h4>Upload a PDF or file</h4><p>Straight from an email attachment</p></div></button>
+        <div class="method disabled"><div class="icon-circle" style="background:var(--clay);color:var(--on-clay)">✉️</div><div><h4 style="opacity:.7">Forward an email</h4><p>Available after setup</p></div></div>`,
+      cta: `<button class="btn-text" type="button">I don't have a bill handy</button>`
+    };
+  },
+  capture() {
+    return {
+      html: `<p class="screen-title">Add your bill</p>
+        <button class="method" data-next="confirm" type="button"><div class="icon-circle" style="background:var(--chartreuse)">🖼</div><div><h4>Upload a photo</h4></div></button>
+        <button class="method" data-next="confirm" type="button"><div class="icon-circle" style="background:var(--sky)">📷</div><div><h4>Take a photo</h4></div></button>
+        <button class="method" data-next="confirm" type="button"><div class="icon-circle" style="background:var(--amber)">📄</div><div><h4>Upload a PDF or file</h4></div></button>
+        <p class="note">Prototype: any of these jumps to the AGL confirm screen.</p>`,
+      cta: ""
+    };
+  },
+  confirm() {
+    return {
+      html: `<div class="hero-amt">$243.00</div>
+        <p class="q-intro" style="margin-top:4px">AGL Electricity</p>
+        <p class="voice quiet" style="margin-bottom:12px">Give this a once-over so everything stays accurate. I'd rather be checked than wrong.</p>
+        <div class="field"><label>From</label><div class="val">AGL Electricity</div></div>
+        <div class="field"><label>Amount</label><div class="val">$243.00</div></div>
+        <div class="field"><label>Due date</label><div class="val">24 July</div></div>`,
+      cta: cta("Looks right, track it")
+    };
+  },
+  reminders() {
+    const items = Object.entries(COPY.reminder).map(([id, v]) => [id, v.label, v.detail]);
+    return {
+      html: `<p class="screen-title">The deal on reminders</p>
+        <p class="voice quiet" style="margin-bottom:14px">Your AGL bill is due 24 July. I'll mention it on the 21st — sound right? After that, silence until it matters.</p>
+        ${pills(items, answers.reminder || "few_days_early")}
+        <div class="card" style="margin-top:8px">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="icon-circle" style="background:var(--amber)">🔔</div>
+            <div><div style="font-family:var(--baloo);font-weight:700">Monday 21 July</div>
+            <div style="font-size:12px;color:var(--on-cream-muted)">9:00 am, one mention, that's all</div></div>
+          </div>
+        </div>`,
+      cta: cta("Sounds right, set it up")
+    };
+  },
+  overdue() {
+    const items = Object.entries(COPY.overdue).map(([id, v]) => [id, v.label, v.detail]);
+    return {
+      html: `<p class="screen-title">If one slips</p>
+        <p class="voice quiet" style="margin-bottom:14px">Most bills won't get past us. If one does slip overdue, how often should I mention it?</p>
+        ${pills(items, answers.overdue)}
+        <p class="note">Whatever you pick, it stops the moment you mark the bill paid.</p>`,
+      cta: cta("That works")
+    };
+  },
+  setState() {
+    return {
+      html: `<p class="q-title" style="font-size:40px;text-align:left;margin-top:12px">Done.</p>
+        <p class="voice quiet" style="margin-bottom:16px">AGL Electricity, $243, due 24 July is my problem now. Nothing else needs your attention.</p>
+        <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div class="icon-circle" style="background:var(--amber)">⚡</div>
+          <div style="flex:1"><div style="font-family:var(--baloo);font-weight:700">AGL Electricity</div>
+          <div style="font-size:12px;color:var(--on-cream-muted)">Due 24 July</div></div>
+          <div style="font-family:var(--baloo);font-weight:700">$243.00</div>
+        </div>
+        <p style="font-family:var(--baloo);font-weight:700;color:var(--chartreuse);margin-bottom:4px">Save this setup</p>
+        <p style="font-size:13px;color:rgba(248,241,222,0.6)">So your bills and your plan stay with you — even if you change phones. Takes a moment, then we can set up your trial.</p>`,
+      cta: cta("Continue with Apple") + `<button class="btn-secondary" id="goAlt" type="button">Continue with Google</button>`
+    };
+  },
+  commit() {
+    return {
+      html: `<div class="spacer"></div>
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-family:var(--baloo);font-weight:700;font-size:15px">AGL Electricity</div>
+          <div style="font-size:12px;color:var(--on-cream-muted)">Due 24 July</div></div>
+          <div style="font-family:var(--baloo);font-weight:800;font-size:20px">$243.00</div>
+        </div>
+        <p class="q-title" style="margin-top:16px">This bill gets\npaid on time.</p>
+        <p class="voice">I do the remembering.\nYou do the paying. That's the pact.</p>
+        <div class="spacer"></div>`,
+      cta: cta("Press to commit")
+    };
+  },
+  paywall() {
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title" style="text-align:left;font-size:30px">Never get surprised by a bill again. And never hear from Ben otherwise.</p>
+        <p class="voice quiet">Every bill tracked, one calm reminder when it matters, silence the rest of the time.</p>
+        <div class="spacer"></div>
+        <div class="dots"><span class="on"></span><span></span><span></span><span></span><span></span></div>`,
+      cta: cta("Continue")
+    };
+  },
+  gift() {
+    return {
+      html: `<div class="spacer"></div>
+        <p class="q-title">7 days on the house.</p>
+        <p class="voice">Full Ben. Then a quiet reminder two days before the trial ends. No surprise charge.</p>
+        <div class="spacer"></div>
+        <div class="dots"><span></span><span class="on"></span><span></span><span></span><span></span></div>`,
+      cta: cta("Continue")
+    };
+  },
+  offer() {
+    return {
+      html: `<div class="dots"><span></span><span></span><span></span><span></span><span class="on"></span></div>
+        <div class="spacer"></div>
+        <img src="${BEN}" alt="" style="width:78px;margin:0 auto 8px;display:block">
+        <p class="q-title">G'day.\nKeep Ben on the job.</p>
+        <div class="card" style="margin-bottom:12px;font-size:13px;color:var(--on-cream-muted)">
+          AGL on the board. Reminders locked. Late fees heading to $0.
+        </div>
+        <p style="font-size:14px;margin:4px 0">✓ Bills tracked and reminded, calmly</p>
+        <p style="font-size:14px;margin:4px 0">✓ Payment details ready to copy and pay</p>
+        <p style="font-size:14px;margin:4px 0">✓ $0 due today. 7 days free first</p>
+        <div class="spacer"></div>
+        <p class="note">No payment due now. Cancel anytime</p>`,
+      cta: cta("Start for $0.00") + `<button class="btn-text" type="button">Show me other plans</button>
+        <p class="note">Equivalent to US$4.17/month · 7 days free, then US$49.99/yr</p>`
+    };
+  },
+  second() {
+    return {
+      html: `<p class="screen-title">One bill down</p>
+        <p class="voice quiet" style="margin-bottom:14px">Got internet or insurance floating around an inbox somewhere? Add it now, forward it later, or leave it with me.</p>
+        <p class="note" style="text-align:left;margin-bottom:8px">People tracking electricity usually also track</p>
+        <div>
+          <button class="suggest" data-next="locked" type="button">internet</button>
+          <button class="suggest" data-next="locked" type="button">water</button>
+          <button class="suggest" data-next="locked" type="button">insurance</button>
+        </div>
+        <div class="card" style="display:flex;gap:12px;margin-top:10px">
+          <div class="icon-circle" style="background:var(--sky)">✉️</div>
+          <div><div style="font-family:var(--baloo);font-weight:700">Email bills in</div>
+          <div style="font-size:12px;color:var(--on-cream-muted)">Get your own forwarding address. Send any bill email, Ben does the rest.</div></div>
+        </div>`,
+      cta: cta("Add another bill now") + `<button class="btn-text" id="later" type="button">Later's fine</button>`
+    };
+  },
+  locked() {
+    return {
+      html: `<p class="q-title" style="font-size:40px;text-align:left;margin-top:12px">Locked in.</p>
+        <p class="voice quiet" style="margin-bottom:16px">This one's locked in and not going to be missed. Two bills on the board — that's usually enough to stop the background worry.</p>
+        <div class="card" style="display:flex;align-items:center;gap:12px">
+          <div class="icon-circle" style="background:var(--sky)">💧</div>
+          <div style="flex:1"><div style="font-family:var(--baloo);font-weight:700">Sydney Water</div>
+          <div style="font-size:12px;color:var(--on-cream-muted)">Due 8 August</div></div>
+          <div style="font-family:var(--baloo);font-weight:700">$86.40</div>
+        </div>`,
+      cta: cta("See my bills")
+    };
+  }
+};
+
+function goTo(next, push = true) {
+  if (push && next !== step) history.push(step);
+  step = next;
+  render();
+}
+function goBack() {
+  if (!history.length) return;
+  step = history.pop();
+  render();
+}
+function nextStep() {
+  const i = STEPS.indexOf(step);
+  if (i < STEPS.length - 1) goTo(STEPS[i + 1]);
+}
+
+function render() {
+  const view = screens[step]();
+  document.getElementById("area").innerHTML = `<div class="screen active">${view.html}</div>`;
+  document.getElementById("cta").innerHTML = view.cta;
+  document.getElementById("backBtn").classList.toggle("show", step !== "welcome" && history.length > 0);
+
+  document.querySelectorAll(".pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      if (step === "intent") answers.intent = id;
+      if (step === "sources") {
+        const i = answers.sources.indexOf(id);
+        if (i >= 0) answers.sources.splice(i, 1); else answers.sources.push(id);
+      }
+      if (step === "volume") answers.volume = id;
+      if (step === "lateFees") answers.lateFees = id;
+      if (step === "feeling") answers.feeling = id;
+      if (step === "reminder" || step === "reminders") answers.reminder = id;
+      if (step === "overdue") answers.overdue = id;
+      render();
+    });
+  });
+
+  const go = document.getElementById("go");
+  if (go) go.addEventListener("click", () => {
+    if (step === "second") goTo("locked");
+    else if (step === "locked") { history = []; goTo("welcome", false); }
+    else nextStep();
+  });
+  const later = document.getElementById("later");
+  if (later) later.addEventListener("click", () => { history = []; goTo("welcome", false); });
+  const alt = document.getElementById("goAlt");
+  if (alt) alt.addEventListener("click", nextStep);
+
+  document.querySelectorAll("[data-next]").forEach(el => {
+    el.addEventListener("click", () => goTo(el.dataset.next));
+  });
+}
+
+document.getElementById("backBtn").addEventListener("click", goBack);
+render();
+</script>
+</body>
+</html>

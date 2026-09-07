@@ -43,19 +43,19 @@ struct BillDocumentLightbox: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            Color.black.ignoresSafeArea()
-
-            ZoomableImageView(image: image)
-                .ignoresSafeArea()
-
-            BenCircleButton(systemName: "xmark", accessibilityLabel: "Close") {
-                dismiss()
+        NavigationStack {
+            ZStack {
+                Color.black.ignoresSafeArea()
+                ZoomableImageView(image: image)
+                    .ignoresSafeArea()
             }
-            .padding(.top, 16)
-            .padding(.trailing, 20)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(role: .close) { dismiss() }
+                }
+            }
+            .toolbarBackground(.hidden, for: .navigationBar)
         }
-        .statusBarHidden(true)
     }
 }
 

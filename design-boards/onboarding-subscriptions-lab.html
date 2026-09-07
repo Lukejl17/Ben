@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ben — Onboarding subscriptions lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest-top: #25401C;
+  --forest-bottom: #1B3015;
+  --chartreuse: #D3E97A;
+  --on-chartreuse: #22361B;
+  --cream: #FAF3E3;
+  --on-cream: #293223;
+  --on-cream-strong: #2F4A26;
+  --on-cream-muted: #6B6B57;
+  --forest-ink: #F8F1DE;
+  --voice: #EFE8D2;
+  --row-fill: rgba(248,241,222,0.07);
+  --row-stroke: rgba(248,241,222,0.15);
+  --amber: #E9A13B;
+  --sky: #9CC0CF;
+  --clay: #D08D66;
+  --lavender: #E7CFF2;
+  --baloo: 'Baloo 2', system-ui, sans-serif;
+  --figtree: 'Figtree', system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #101810;
+  font-family: var(--figtree);
+  color: var(--forest-ink);
+  min-height: 100vh;
+  padding: 32px 24px 48px;
+}
+
+header {
+  max-width: 1100px;
+  margin: 0 auto 28px;
+}
+
+h1 {
+  font-family: var(--baloo);
+  font-weight: 800;
+  color: var(--chartreuse);
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.sub {
+  color: rgba(248,241,222,0.62);
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 720px;
+}
+
+.layout {
+  display: flex;
+  gap: 36px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Phone */
+.phone-wrap { flex: 0 0 auto; }
+
+.phone {
+  width: 360px;
+  height: 780px;
+  border-radius: 44px;
+  border: 8px solid #0d130c;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(420px 420px at 85% -10%, rgba(62,107,46,0.55), transparent),
+    radial-gradient(420px 420px at -10% 110%, rgba(23,48,20,0.55), transparent),
+    linear-gradient(168deg, var(--forest-top), var(--forest-bottom));
+  box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+}
+
+.island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 26px;
+  border-radius: 14px;
+  background: #0d130c;
+  z-index: 2;
+}
+
+.screen-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 52px 24px 16px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  animation: fadeIn 0.28s ease;
+}
+
+.screen.active { display: flex; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Shared onboarding pieces */
+.q-title {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 27px;
+  line-height: 1.12;
+  color: var(--chartreuse);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.q-intro {
+  font-size: 15px;
+  line-height: 1.45;
+  color: rgba(248,241,222,0.65);
+  text-align: center;
+  margin-bottom: 18px;
+  padding: 0 4px;
+}
+
+.spacer { flex: 1; min-height: 12px; }
+
+.pill {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1.5px solid var(--row-stroke);
+  background: var(--row-fill);
+  color: var(--forest-ink);
+  font-family: var(--baloo);
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+
+.pill small {
+  display: block;
+  font-family: var(--figtree);
+  font-weight: 400;
+  font-size: 12px;
+  color: rgba(248,241,222,0.55);
+  margin-top: 2px;
+}
+
+.pill:hover { background: rgba(248,241,222,0.1); }
+.pill.selected {
+  background: rgba(211,233,122,0.14);
+  border-color: rgba(211,233,122,0.45);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+  justify-content: center;
+  margin-bottom: 16px;
+  max-width: 100%;
+}
+
+.chip {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 10.5px;
+  padding: 5px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chip.amber { background: var(--amber); color: #2A2A20; }
+.chip.clay { background: var(--clay); color: #3B2415; }
+.chip.sky { background: var(--sky); color: #1E3540; }
+.chip.lavender { background: var(--lavender); color: #4A2F5E; }
+.chip.chartreuse { background: var(--chartreuse); color: var(--on-chartreuse); }
+
+.chip-label {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(248,241,222,0.45);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.echo {
+  display: none;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  background: var(--cream);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  margin-top: 8px;
+}
+
+.echo.show { display: flex; animation: fadeIn 0.3s ease; }
+
+.echo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.echo p {
+  font-family: var(--baloo);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--on-cream);
+}
+
+.cta-bar {
+  padding: 0 24px 22px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--chartreuse);
+  color: var(--on-chartreuse);
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 17px;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+}
+
+.btn-primary:hover { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+.nav-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(248,241,222,0.2);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dot.active { background: var(--chartreuse); }
+
+.nav-arrows {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+.nav-arrows button {
+  background: none;
+  border: none;
+  color: rgba(248,241,222,0.55);
+  font-family: var(--figtree);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.nav-arrows button:hover { color: var(--chartreuse); }
+
+/* Welcome */
+.welcome-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.welcome-hero img {
+  width: 150px;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.35));
+}
+
+.voice {
+  font-family: var(--baloo);
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--voice);
+  max-width: 280px;
+}
+
+.voice em {
+  font-style: normal;
+  color: var(--chartreuse);
+}
+
+/* Demo */
+.demo-label {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--chartreuse);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.bill-card {
+  background: var(--cream);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  margin-bottom: 10px;
+}
+
+.bill-card h3 {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--on-cream);
+  margin-bottom: 2px;
+}
+
+.bill-card .meta {
+  font-size: 12px;
+  color: var(--on-cream-muted);
+  margin-bottom: 10px;
+}
+
+.bill-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--on-cream-muted);
+  padding: 5px 0;
+  border-bottom: 1px dashed rgba(107,107,87,0.3);
+}
+
+.bill-line strong { color: var(--on-cream); font-family: var(--baloo); font-weight: 700; }
+
+.found-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: rgba(248,241,222,0.7);
+  padding: 6px 0;
+}
+
+.found-row span:last-child {
+  font-family: var(--baloo);
+  font-weight: 700;
+  color: var(--chartreuse);
+}
+
+.demo-note {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(248,241,222,0.06);
+  border: 1px solid var(--row-stroke);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.demo-note img { width: 36px; flex-shrink: 0; }
+
+.demo-note p {
+  font-family: var(--baloo);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--voice);
+}
+
+.mini-cards {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.mini-card {
+  flex: 0 0 auto;
+  width: 118px;
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 10px 12px;
+  opacity: 0.85;
+}
+
+.mini-card .issuer {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--on-cream);
+}
+
+.mini-card .amt {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--on-cream-strong);
+  margin-top: 4px;
+}
+
+.mini-card .due {
+  font-size: 11px;
+  color: var(--on-cream-muted);
+  margin-top: 2px;
+}
+
+/* Notes panel */
+.notes {
+  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
+}
+
+.notes h2 {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--chartreuse);
+  margin-bottom: 12px;
+}
+
+.note-card {
+  background: rgba(248,241,222,0.05);
+  border: 1px solid var(--row-stroke);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.note-card h3 {
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--forest-ink);
+  margin-bottom: 8px;
+}
+
+.note-card p, .note-card li {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(248,241,222,0.62);
+}
+
+.note-card ul { padding-left: 18px; }
+.note-card li { margin-bottom: 4px; }
+
+.compare-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.compare-toggle button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--row-stroke);
+  background: transparent;
+  color: rgba(248,241,222,0.6);
+  font-family: var(--baloo);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.compare-toggle button.active {
+  background: rgba(211,233,122,0.12);
+  border-color: rgba(211,233,122,0.4);
+  color: var(--chartreuse);
+}
+
+.strike { text-decoration: line-through; opacity: 0.5; }
+.new { color: var(--chartreuse); }
+
+.badge {
+  display: inline-block;
+  font-family: var(--baloo);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(211,233,122,0.15);
+  color: var(--chartreuse);
+  margin-bottom: 8px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Onboarding — subscriptions lab</h1>
+  <p class="sub">Click through the flow. <strong>Demo</strong> and <strong>Volume</strong> are the proposed changes — welcome stays as-is.</p>
+</header>
+
+<div class="layout">
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="island"></div>
+      <div class="screen-area">
+
+        <!-- S1 Welcome -->
+        <div class="screen active" data-screen="0">
+          <div class="welcome-hero">
+            <img src="assets/ben-character.png" alt="Ben">
+            <p class="voice" id="welcome-voice">
+              Give me your bills and I'll tell you when they matter. First, watch me read one.
+            </p>
+          </div>
+        </div>
+
+        <!-- S2 Demo -->
+        <div class="screen" data-screen="1">
+          <p class="demo-label">A sample bill. Watch.</p>
+          <div class="bill-card">
+            <h3>AGL Electricity</h3>
+            <p class="meta">Tax Invoice · Account 3344 5566</p>
+            <div class="bill-line"><span>Amount due</span><strong>$243.00</strong></div>
+            <div class="bill-line"><span>Due date</span><strong>24 July</strong></div>
+          </div>
+          <div class="found-row"><span>Issuer</span><span>AGL</span></div>
+          <div class="found-row"><span>Amount</span><span>$243.00</span></div>
+          <div class="found-row"><span>Due date</span><span>24 July</span></div>
+          <div class="demo-note">
+            <img src="assets/ben-character.png" alt="">
+            <p>Works the same for Netflix renewals, gym fees, insurance — anything with a due date.</p>
+          </div>
+          <div class="mini-cards">
+            <div class="mini-card"><div class="issuer">Netflix</div><div class="amt">$17.99</div><div class="due">Renews 12 Aug</div></div>
+            <div class="mini-card"><div class="issuer">Kayo</div><div class="amt">$30.00</div><div class="due">Renews 18 Aug</div></div>
+            <div class="mini-card"><div class="issuer">Gym</div><div class="amt">$59.95</div><div class="due">Due 1 Sep</div></div>
+          </div>
+          <div class="spacer"></div>
+        </div>
+
+        <!-- S5 Volume -->
+        <div class="screen" data-screen="2">
+          <div id="volume-current" style="display:none">
+            <h2 class="q-title">How many bills land at your place each month?</h2>
+            <p class="q-intro">Count the sneaky ones too. Netflix, Kayo, the gym you swear you'll use. If it leaves your account, it's a bill.</p>
+          </div>
+          <div id="volume-proposed">
+            <h2 class="q-title">What hits your account every month?</h2>
+            <p class="q-intro">Utilities, streaming, gym, insurance — if it renews, it counts.</p>
+            <p class="chip-label">All of these count</p>
+            <div class="chip-row">
+              <span class="chip amber">AGL</span>
+              <span class="chip clay">Netflix</span>
+              <span class="chip clay">Kayo</span>
+              <span class="chip lavender">Gym</span>
+              <span class="chip sky">Telstra</span>
+              <span class="chip chartreuse">Council</span>
+            </div>
+          </div>
+          <button class="pill" data-volume="1-3" onclick="selectVolume(this)">
+            1–3
+            <small>Just the basics</small>
+          </button>
+          <button class="pill" data-volume="4-7" onclick="selectVolume(this)">
+            4–7
+            <small>A regular household</small>
+          </button>
+          <button class="pill" data-volume="8-12" onclick="selectVolume(this)">
+            8–12
+            <small>A busy one</small>
+          </button>
+          <button class="pill" data-volume="lost" onclick="selectVolume(this)">
+            Honestly? Lost count
+            <small>That's exactly why Ben exists</small>
+          </button>
+          <div class="echo" id="volume-echo">
+            <img src="assets/ben-character.png" alt="">
+            <p id="volume-echo-text"></p>
+          </div>
+          <div class="spacer"></div>
+        </div>
+
+      </div>
+
+      <div class="cta-bar">
+        <button class="btn-primary" id="cta-btn" onclick="nextScreen()">Watch Ben work</button>
+        <div class="nav-arrows">
+          <button onclick="prevScreen()">← Back</button>
+          <button onclick="nextScreen()">Next →</button>
+        </div>
+        <div class="nav-dots" id="dots"></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    <h2 id="note-title">Screen 1 — Welcome</h2>
+    <div class="note-card" id="note-body">
+      <span class="badge">Unchanged</span>
+      <h3>Welcome stays as you have it</h3>
+      <p>Included here for click-through context only. No copy changes on this screen.</p>
+    </div>
+
+    <div class="compare-toggle" id="volume-toggle" style="display:none">
+      <button class="active" onclick="setVolumeMode('proposed')">Proposed</button>
+      <button onclick="setVolumeMode('current')">Current</button>
+    </div>
+
+    <div class="note-card">
+      <h3>What we're not doing</h3>
+      <p>No extra onboarding step, no checklist survey, no gamification. Same number of taps — just louder framing on screens that already exist.</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+const screens = document.querySelectorAll('.screen');
+const ctaLabels = ['Watch Ben work', 'That, but for my bills', 'Continue'];
+const notes = [
+  {
+    title: 'Screen 1 — Welcome',
+    badge: 'Unchanged',
+    heading: 'Welcome stays as you have it',
+    body: `<p>Included for click-through context only. No copy changes on this screen.</p>`
+  },
+  {
+    title: 'Screen 2 — Demo scan',
+    badge: 'Proposed',
+    heading: 'Ben says subscriptions count, before the interview',
+    body: `<p>After the AGL extraction, Ben speaks: works for Netflix, gym, insurance. Optional mini-cards below show the range visually — same magic, wider scope.</p>
+      <ul><li>Keeps the AGL demo (trust through proof)</li><li>Adds one voice line + visual examples</li><li>No extra tap</li></ul>`
+  },
+  {
+    title: 'Screen 5 — Volume',
+    badge: 'Proposed',
+    heading: 'Shout it with chips + smarter echo',
+    body: `<p>Retitle the question away from "bills". Chip row shows utilities + streaming + gym in one glance. When someone picks 1–3, Ben nudges: that's often just power and rent.</p>
+      <ul><li>Toggle <strong>Current / Proposed</strong> above to compare</li><li>Tap a volume option to see the echo</li></ul>`
+  }
+];
+
+const echoCopy = {
+  proposed: {
+    '1-3': "That's often just power and rent. Most people have twice that once streaming, phone and gym are in.",
+    '4-7': "5-ish things a month means something's due almost every week. No wonder it hums.",
+    '8-12': "10 a month is a part-time job you never applied for.",
+    'lost': "Step one: we'll count them. Step two: you stop counting forever."
+  },
+  current: {
+    '1-3': "Even 3 bills a month is 3 things you shouldn't have to remember.",
+    '4-7': "5-ish bills a month means something's due almost every week. No wonder it hums.",
+    '8-12': "10 bills a month is a part-time job you never applied for.",
+    'lost': "Step one: we'll count them. Step two: you stop counting forever."
+  }
+};
+
+let current = 0;
+let volumeMode = 'proposed';
+let selectedVolume = null;
+
+const dotsEl = document.getElementById('dots');
+screens.forEach((_, i) => {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function updateUI() {
+  screens.forEach((s, i) => s.classList.toggle('active', i === current));
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  document.getElementById('cta-btn').textContent = ctaLabels[current];
+  document.getElementById('volume-toggle').style.display = current === 2 ? 'flex' : 'none';
+
+  const n = notes[current];
+  document.getElementById('note-title').textContent = n.title;
+  document.getElementById('note-body').innerHTML =
+    `<span class="badge">${n.badge}</span><h3>${n.heading}</h3>${n.body}`;
+}
+
+function goTo(i) {
+  current = Math.max(0, Math.min(screens.length - 1, i));
+  updateUI();
+}
+
+function nextScreen() { goTo(current + 1); }
+function prevScreen() { goTo(current - 1); }
+
+function setVolumeMode(mode) {
+  volumeMode = mode;
+  document.getElementById('volume-current').style.display = mode === 'current' ? 'block' : 'none';
+  document.getElementById('volume-proposed').style.display = mode === 'proposed' ? 'block' : 'none';
+  document.querySelectorAll('.compare-toggle button').forEach((b, i) => {
+    b.classList.toggle('active', (mode === 'proposed' && i === 0) || (mode === 'current' && i === 1));
+  });
+  if (selectedVolume) showEcho(selectedVolume);
+}
+
+function selectVolume(el) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedVolume = el.dataset.volume;
+  showEcho(selectedVolume);
+}
+
+function showEcho(key) {
+  const echo = document.getElementById('volume-echo');
+  const text = document.getElementById('volume-echo-text');
+  text.textContent = echoCopy[volumeMode][key];
+  echo.classList.add('show');
+}
+
+updateUI();
+</script>
+</body>
+</html>

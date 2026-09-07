@@ -224,7 +224,7 @@ struct ReminderSetupView: View {
             bill.notificationIDs = identifiers
             bill.reminderStyleRaw = style.rawValue
             if BillDueLiveActivityPolicy.shouldPresent(
-                style: style, dueDate: bill.dueDate, paidAt: bill.paidAt
+                dueDate: bill.dueDate, paidAt: bill.paidAt
             ) {
                 _ = await LiveActivityManager.start(
                     billID: bill.uuid,
@@ -238,7 +238,7 @@ struct ReminderSetupView: View {
                 let raw = UserDefaults.standard.string(forKey: OverdueCadence.storageKey)
                 let cadence = OverdueCadence(rawValue: raw ?? "") ?? .everySecondDay
                 let overdueIDs = await services.scheduler.scheduleOverdueReminders(
-                    billID: bill.uuid, issuer: bill.issuer, dueDate: bill.dueDate, cadence: cadence
+                    billID: bill.uuid, issuer: bill.issuer, amount: bill.amount, dueDate: bill.dueDate, cadence: cadence
                 )
                 bill.notificationIDs.append(contentsOf: overdueIDs)
             }

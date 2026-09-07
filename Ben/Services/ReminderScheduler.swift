@@ -208,14 +208,13 @@ struct ReminderScheduler: Sendable {
             }
             content.body = body
             content.sound = .default
-            content.userInfo = [
-                "billID": billID,
-                "kind": "bill_reminder",
-                "issuer": issuer,
-                "amount": NSDecimalNumber(decimal: amount).stringValue ?? "0",
-                "dueDate": dueDate.timeIntervalSince1970,
-                "isDueDay": offset == 0
-            ]
+            content.userInfo = Self.reminderUserInfo(
+                billID: billID,
+                issuer: issuer,
+                amount: amount,
+                dueDate: dueDate,
+                isDueDay: offset == 0
+            )
             content.categoryIdentifier = "bill_reminder"
             let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger)
             let identifier = "bill-\(billID)-\(components.day ?? 0)-\(components.month ?? 0)"
@@ -240,6 +239,7 @@ struct ReminderScheduler: Sendable {
     func scheduleOverdueReminders(
         billID: String,
         issuer: String,
+        amount: Decimal = 0,
         dueDate: Date,
         cadence: OverdueCadence,
         now: Date = .now,
@@ -253,7 +253,14 @@ struct ReminderScheduler: Sendable {
             content.title = "Ben"
             content.body = Self.overdueBody(issuer: issuer, dueDate: dueDate, calendar: calendar)
             content.sound = .default
-            content.userInfo = ["billID": billID, "kind": "bill_reminder"]
+            content.userInfo = Self.reminderUserInfo(
+                billID: billID,
+                issuer: issuer,
+                amount: amount,
+                dueDate: dueDate,
+                isDueDay: true
+            )
+            content.categoryIdentifier = "bill_reminder"
             let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger)
             let identifier = "bill-\(billID)-overdue-\(index)"
             let request = UNNotificationRequest(
@@ -269,6 +276,24 @@ struct ReminderScheduler: Sendable {
             }
         }
         return identifiers
+    }
+
+    /// String-only payload so Bool/Double survive the notification round-trip as NSNumber.
+    static func reminderUserInfo(
+        billID: String,
+        issuer: String,
+        amount: Decimal,
+        dueDate: Date,
+        isDueDay: Bool
+    ) -> [AnyHashable: Any] {
+        [
+            "billID": billID,
+            "kind": "bill_reminder",
+            "issuer": issuer,
+            "amount": NSDecimalNumber(decimal: amount).stringValue ?? "0",
+            "dueDate": String(dueDate.timeIntervalSince1970),
+            "isDueDay": isDueDay ? "1" : "0"
+        ]
     }
 }
 

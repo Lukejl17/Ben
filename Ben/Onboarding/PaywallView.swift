@@ -2,8 +2,15 @@ import SwiftUI
 
 /// S15 — the paywall, flow F from the lab: outcome, gift + bell, trial rail,
 /// late fees vs Ben, then the offer. Hard paywall: the only way past without
-/// a trial is leaving the app.
+/// a trial or subscription is leaving the app.
 struct PaywallView: View {
+    enum Mode {
+        /// First run, inside onboarding — success continues to the second-bill bridge.
+        case onboarding
+        /// Returning user with no entitlement — success unlocks home.
+        case gate
+    }
+
     enum Page: Int, CaseIterable {
         case outcome, gift, rail, compare, offer, plans
 
@@ -19,12 +26,22 @@ struct PaywallView: View {
         }
     }
 
+    var mode: Mode = .onboarding
+
     @Environment(OnboardingCoordinator.self) private var coordinator
+    @Environment(SubscriptionController.self) private var subscriptions
     @Environment(\.services) private var services
     @Environment(\.scenePhase) private var scenePhase
-    @State private var page: Page = .outcome
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var page: Page
     @State private var trackedPages: Set<Int> = []
     @State private var abandonmentTracked = false
+    @State private var purchaseError: String?
+
+    init(mode: Mode = .onboarding) {
+        self.mode = mode
+        _page = State(initialValue: mode == .gate ? .offer : .outcome)
+    }
 
     var body: some View {
         ZStack {
@@ -37,13 +54,21 @@ struct PaywallView: View {
                 case .compare: FeeCompareView { advance(to: .offer) }
                 case .offer:
                     PaywallOfferView(
-                        onStart: startTrial,
-                        onOtherPlans: { advance(to: .plans) }
+                        onStart: { Task { await purchase(.annual) } },
+                        onOtherPlans: { advance(to: .plans) },
+                        isBusy: subscriptions.isBusy,
+                        errorLine: purchaseError,
+                        onRestore: { Task { await restore() } },
+                        pricing: subscriptions.pricing
                     )
                 case .plans:
                     PaywallPlansView(
-                        onStart: startTrial,
-                        onBack: { advance(to: .offer) }
+                        onPurchase: { plan in Task { await purchase(plan) } },
+                        onBack: { advance(to: .offer) },
+                        isBusy: subscriptions.isBusy,
+                        errorLine: purchaseError,
+                        onRestore: { Task { await restore() } },
+                        pricing: subscriptions.pricing
                     )
                 }
             }
@@ -51,7 +76,7 @@ struct PaywallView: View {
         }
         .animation(.spring(duration: 0.35), value: page)
         .onAppear {
-            trackPage(.outcome)
+            trackPage(page)
             syncBackInterceptor(for: page)
         }
         .onChange(of: page) { _, newPage in
@@ -59,9 +84,10 @@ struct PaywallView: View {
             syncBackInterceptor(for: newPage)
         }
         .onDisappear { coordinator.backInterceptor = nil }
+        .task { await subscriptions.refresh() }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background && !abandonmentTracked
-                && services.subscriptions.state() == .notStarted {
+                && !subscriptions.isEntitled {
                 abandonmentTracked = true
                 services.analytics.track(.trialAbandonedAtPaywall)
             }
@@ -99,7 +125,7 @@ struct PaywallView: View {
 
     private func syncBackInterceptor(for current: Page) {
         coordinator.backInterceptor = {
-            guard let previous = current.previous else { return false }
+            guard mode == .onboarding, let previous = current.previous else { return false }
             withAnimation(.spring(duration: 0.35)) { page = previous }
             return true
         }
@@ -111,14 +137,40 @@ struct PaywallView: View {
         services.analytics.track(.paywallViewed(pageDepth: page.rawValue + 1))
     }
 
-    private func startTrial() {
-        // HUMAN: App Store Connect products (annual US$49.99 with 7-day intro
-        // trial, monthly US$5.99, and the US$69.99 anchor price the 29%-off
-        // badge claims) + RevenueCat purchase flow replace this stub. The
-        // welcome-offer countdown must map to a real time-boxed intro offer.
-        services.subscriptions.startTrial(preChargeReminderDaysBeforeEnd: 2)
-        services.analytics.track(.trialStarted)
-        coordinator.advance(to: .secondBill)
+    private func purchase(_ plan: SubscriptionPlan) async {
+        purchaseError = nil
+        subscriptions.rememberPreChargeReminder(daysBeforeEnd: 2)
+        if let userID = services.accounts.account?.id {
+            await subscriptions.identify(userID: userID)
+        }
+        do {
+            let outcome = try await subscriptions.purchase(plan)
+            guard outcome == .entitled else { return }
+            if plan == .annual, subscriptions.pricing.annualHasIntro {
+                services.analytics.track(.trialStarted)
+            }
+            finishIfEntitled()
+        } catch {
+            purchaseError = error.localizedDescription
+        }
+    }
+
+    private func restore() async {
+        purchaseError = nil
+        do {
+            let outcome = try await subscriptions.restore()
+            guard outcome == .entitled else { return }
+            finishIfEntitled()
+        } catch {
+            purchaseError = error.localizedDescription
+        }
+    }
+
+    private func finishIfEntitled() {
+        guard subscriptions.isEntitled else { return }
+        if mode == .onboarding, !hasCompletedOnboarding {
+            coordinator.advance(to: .secondBill)
+        }
     }
 }
 
@@ -135,4 +187,12 @@ struct PaywallDots: View {
             }
         }
     }
+}
+
+#Preview {
+    PaywallView(mode: .onboarding)
+        .environment(OnboardingCoordinator())
+        .environment(SubscriptionController(service: StubSubscriptionService()))
+        .environment(\.services, AppServices.fromLaunchArguments(["-freshTrial", "-stubAccount"]))
+        .tint(.chartreuse)
 }
