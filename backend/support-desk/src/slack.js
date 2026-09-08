@@ -1,14 +1,15 @@
-// Slack request verification and Block Kit helpers.
+// Slack signature verification and chat.postMessage helpers.
 
 const SLACK_API = "https://slack.com/api";
 
-/** Verify Slack signing secret per https://api.slack.com/authentication/verifying-requests-from-slack */
-export async function verifySlackRequest(request, signingSecret, rawBody) {
+/** Verify Slack request signature (v0). Returns false on mismatch or stale timestamp. */
+export async function verifySlackSignature(request, signingSecret, rawBody) {
   if (!signingSecret) return false;
 
-  const timestamp = request.headers.get("x-slack-request-timestamp") ?? "";
   const signature = request.headers.get("x-slack-signature") ?? "";
-  if (!timestamp || !signature) return false;
+  const timestamp = request.headers.get("x-slack-request-timestamp") ?? "";
+
+  if (!signature.startsWith("v0=") || !timestamp) return false;
 
   const age = Math.abs(Date.now() / 1000 - Number(timestamp));
   if (!Number.isFinite(age) || age > 60 * 5) return false;
@@ -21,110 +22,98 @@ export async function verifySlackRequest(request, signingSecret, rawBody) {
     false,
     ["sign"]
   );
-  const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(base));
+  const mac = await crypto.subtle.sign("key", key, new TextEncoder().encode(base));
   const expected = `v0=${toHex(mac)}`;
 
   return timingSafeEqual(signature, expected);
 }
 
-export async function postSupportTicketMessage({ token, channel, ticket }) {
-  const text = `Support from ${ticket.from_email}: ${ticket.subject}`;
-  const blocks = buildTicketBlocks(ticket);
+export async function postTicketMessage({ botToken, channelId, ticket }) {
+  const preview = truncate(ticket.body_text ?? ticket.draft_body, 400);
+  const text = [
+    `*Support ticket* \`${ticket.id}\``,
+    `*From:* ${formatFrom(ticket)}`,
+    `*Subject:* ${ticket.subject}`,
+    `*Playbook:* ${ticket.playbook_id}`,
+    "",
+    `*Inbound:*`,
+    preview,
+    "",
+    `*Draft reply:*`,
+    `_${ticket.draft_subject}_`,
+    truncate(ticket.draft_body, 600),
+  ].join("\n");
 
-  const response = await slackApi(token, "chat.postMessage", {
-    channel,
-    text,
-    blocks,
-  });
-  return response;
-}
-
-export async function updateTicketMessage({ token, channel, messageTs, ticket, statusNote }) {
-  const text = `Support from ${ticket.from_email}: ${ticket.subject} — ${statusNote}`;
-  const blocks = buildTicketBlocks(ticket, statusNote);
-
-  return slackApi(token, "chat.update", {
-    channel,
-    ts: messageTs,
-    text,
-    blocks,
-  });
-}
-
-function buildTicketBlocks(ticket, statusNote = null) {
-  const preview = truncate(ticket.draft_body, 1200);
-  const blocks = [
-    {
-      type: "header",
-      text: { type: "plain_text", text: "Ben support ticket", emoji: false },
-    },
-    {
-      type: "section",
-      fields: [
-        { type: "mrkdwn", text: `*From:*\n${ticket.from_email}` },
-        { type: "mrkdwn", text: `*Playbook:*\n${ticket.playbook_id}` },
-        { type: "mrkdwn", text: `*Subject:*\n${ticket.subject}` },
-        {
-          type: "mrkdwn",
-          text: `*Status:*\n${statusNote ?? ticket.status}`,
-        },
-      ],
-    },
-    {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*Draft reply*\n\`\`\`${preview}\`\`\``,
+  const response = await slackApi("chat.postMessage", botToken, {
+    channel: channelId,
+    text: `Support ticket ${ticket.id}`,
+    blocks: [
+      {
+        type: "section",
+        text: { type: "mrkdwn", text },
       },
-    },
-  ];
+      {
+        type: "actions",
+        block_id: `ticket_${ticket.id}`,
+        elements: [
+          {
+            type: "button",
+            text: { type: "plain_text", text: "Approve" },
+            style: "primary",
+            action_id: "approve_ticket",
+            value: ticket.id,
+          },
+          {
+            type: "button",
+            text: { type: "plain_text", text: "Reject" },
+            style: "danger",
+            action_id: "reject_ticket",
+            value: ticket.id,
+          },
+        ],
+      },
+    ],
+  });
 
-  if (!statusNote || statusNote === "pending") {
-    blocks.push({
-      type: "actions",
-      block_id: `ticket_${ticket.id}`,
-      elements: [
-        {
-          type: "button",
-          text: { type: "plain_text", text: "Approve", emoji: false },
-          style: "primary",
-          action_id: "support_approve",
-          value: ticket.id,
-        },
-        {
-          type: "button",
-          text: { type: "plain_text", text: "Reject", emoji: false },
-          style: "danger",
-          action_id: "support_reject",
-          value: ticket.id,
-        },
-        {
-          type: "button",
-          text: { type: "plain_text", text: "Edit", emoji: false },
-          action_id: "support_edit",
-          value: ticket.id,
-        },
-      ],
-    });
-  }
-
-  return blocks;
+  return { channel: response.channel, ts: response.ts };
 }
 
-async function slackApi(token, method, body) {
+export async function updateTicketMessage({ botToken, channel, ts, ticket, statusLabel }) {
+  const text = [
+    `*Support ticket* \`${ticket.id}\` — *${statusLabel}*`,
+    `*From:* ${formatFrom(ticket)}`,
+    `*Subject:* ${ticket.subject}`,
+    `*Playbook:* ${ticket.playbook_id}`,
+  ].join("\n");
+
+  await slackApi("chat.update", botToken, {
+    channel,
+    ts,
+    text,
+    blocks: [{ type: "section", text: { type: "mrkdwn", text } }],
+  });
+}
+
+async function slackApi(method, botToken, body) {
   const response = await fetch(`${SLACK_API}/${method}`, {
     method: "POST",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${botToken}`,
       "content-type": "application/json; charset=utf-8",
     },
     body: JSON.stringify(body),
   });
+
   const data = await response.json();
   if (!data.ok) {
     throw new Error(`Slack ${method} failed: ${data.error ?? response.status}`);
   }
   return data;
+}
+
+function formatFrom(ticket) {
+  if (ticket.from_name) return `${ticket.from_name} <${ticket.from_email}>`;
+  return ticket.from_email;
 }
 
 function truncate(text, max) {

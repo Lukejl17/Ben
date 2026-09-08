@@ -1,0 +1,16 @@
+{
+  "id": "privacy",
+  "title": "Privacy and data",
+  "keywords": [
+    "privacy",
+    "personal data",
+    "secure",
+    "security",
+    "encrypt",
+    "share",
+    "third party",
+    "tracking"
+  ],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for your question about privacy.\n\nBen keeps your bills on your device by default. Bill photos and details are not uploaded to our servers unless you use email-in, in which case attachments are held briefly so the app can fetch them, then removed after you confirm.\n\nWe do not sell your data. Our privacy policy is at https://benandbill.app/privacy if you would like the full detail.\n\nIf you have a specific concern, reply and we will answer it directly.\n\nKind regards,\nBen support"
+}

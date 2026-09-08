@@ -1,23 +1,24 @@
 // Pure playbook matching and draft rendering. No Worker or I/O dependencies.
+// Playbooks are bundled from src/playbooks/ at deploy time (sync from docs/support-playbook/).
 
-import billing from "../../../docs/support-playbook/billing.json" with { type: "json" };
-import deleteAccount from "../../../docs/support-playbook/delete-account.json" with { type: "json" };
-import addBill from "../../../docs/support-playbook/add-bill.json" with { type: "json" };
-import notifications from "../../../docs/support-playbook/notifications.json" with { type: "json" };
-import privacy from "../../../docs/support-playbook/privacy.json" with { type: "json" };
-import refundTrial from "../../../docs/support-playbook/refund-trial.json" with { type: "json" };
-import bugReport from "../../../docs/support-playbook/bug-report.json" with { type: "json" };
-import general from "../../../docs/support-playbook/general.json" with { type: "json" };
+import addBill from "./playbooks/add-bill.json" with { type: "json" };
+import billing from "./playbooks/billing.json" with { type: "json" };
+import bugReport from "./playbooks/bug-report.json" with { type: "json" };
+import deleteAccount from "./playbooks/delete-account.json" with { type: "json" };
+import general from "./playbooks/general.json" with { type: "json" };
+import notifications from "./playbooks/notifications.json" with { type: "json" };
+import privacy from "./playbooks/privacy.json" with { type: "json" };
+import refundTrial from "./playbooks/refund-trial.json" with { type: "json" };
 
-/** Playbooks in priority order; `general` is the fallback. */
+/** Playbooks in priority order for tie-breaking; `general` is the fallback. */
 export const DEFAULT_PLAYBOOKS = [
-  billing,
   deleteAccount,
-  addBill,
-  notifications,
-  privacy,
   refundTrial,
   bugReport,
+  addBill,
+  notifications,
+  billing,
+  privacy,
   general,
 ];
 

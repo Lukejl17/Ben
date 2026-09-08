@@ -18,6 +18,7 @@ approval → Postmark outbound reply.
 
 - [docs/support/SETUP.md](../../docs/support/SETUP.md) — deploy, secrets, Postmark
 - [docs/support/SLACK.md](../../docs/support/SLACK.md) — Slack app checklist
+- [docs/support/POSTMARK.md](../../docs/support/POSTMARK.md) — inbound server setup
 - [docs/support-playbook/](../../docs/support-playbook/) — reply templates
 
 ## Tests

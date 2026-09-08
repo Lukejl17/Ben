@@ -1,3 +1,4 @@
+*.local
 .webhook-secret.local
 .postmark*
 .wrangler/

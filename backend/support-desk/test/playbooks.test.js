@@ -67,6 +67,16 @@ describe("matchPlaybook", () => {
     const result = match("I was charged twice for my subscription", DEFAULT_PLAYBOOKS);
     assert.equal(result.id, "billing");
   });
+
+  it("matches bundled playbooks for common topics", async () => {
+    const { DEFAULT_PLAYBOOKS, matchPlaybook: match } = await import("../src/playbooks.js");
+    assert.equal(match("App crash\nBen crashes when I open a bill", DEFAULT_PLAYBOOKS).id, "bug-report");
+    assert.equal(match("Trial\nI would like a refund for my subscription", DEFAULT_PLAYBOOKS).id, "refund-trial");
+    assert.equal(match("Help\nHow do I upload a new bill?", DEFAULT_PLAYBOOKS).id, "add-bill");
+    assert.equal(match("Quiet\nI am not receiving notifications for my bills", DEFAULT_PLAYBOOKS).id, "notifications");
+    assert.equal(match("Hi\nQuestion about privacy and tracking", DEFAULT_PLAYBOOKS).id, "privacy");
+    assert.equal(match("Account\nPlease delete account and my data", DEFAULT_PLAYBOOKS).id, "delete-account");
+  });
 });
 
 describe("renderDraft", () => {
