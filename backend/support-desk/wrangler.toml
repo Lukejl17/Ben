@@ -1,0 +1,28 @@
+# Ben support desk worker. Deploy: `npx wrangler deploy` (needs a Cloudflare
+# API token in the environment or `npx wrangler login` once).
+#
+# Distinct from ben-email-in (bill attachments). Uses its own webhook secret,
+# Postmark inbound address, and D1 database.
+name = "ben-support-desk"
+main = "src/worker.js"
+compatibility_date = "2026-07-01"
+workers_dev = true
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[d1_databases]]
+binding = "TICKETS"
+database_name = "ben-support-tickets"
+database_id = "00000000-0000-0000-0000-000000000000" # HUMAN: replace after `wrangler d1 create`
+
+# Secrets (set with `npx wrangler secret put <NAME>`), never commit values:
+#   WEBHOOK_SECRET          shared secret Postmark appends as ?secret=... on /inbound
+#   SLACK_BOT_TOKEN         xoxb-... bot token with chat:write for #ben-support
+#   SLACK_SIGNING_SECRET    Slack app signing secret for /slack/interactions
+#   POSTMARK_SERVER_TOKEN   Postmark server API token for outbound replies
+#   SUPPORT_FROM_EMAIL      support@benandbill.app (also set as a var default below)
+#   SLACK_CHANNEL_ID        channel id for #ben-support (e.g. C0123...)
+[vars]
+SUPPORT_FROM_EMAIL = "support@benandbill.app"

@@ -1,0 +1,8 @@
+{
+  "name": "ben-support-desk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.js"
+  }
+}
