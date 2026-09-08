@@ -73,6 +73,35 @@ struct BillHeuristicsTests {
         #expect(heuristics.dollarAmounts(in: "no money here") == [])
     }
 
+    @Test func prefersGSTInclusiveTotalOverExclFees() {
+        let lines = [
+            "McCartney Young Lawyers",
+            "Professional fees",
+            "$980.00",
+            "GST",
+            "$98.00",
+            "Amount due (including GST)",
+            "$1,078.00",
+            "Due date 3 Aug 2026"
+        ]
+        #expect(heuristics.extract(from: lines).amount == Decimal(string: "1078.00"))
+    }
+
+    @Test func skipsExcludingGSTKeywordLine() {
+        let lines = [
+            "Acme Plumbing",
+            "Total excluding GST $200.00",
+            "Amount due $220.00",
+            "Due 1 Sep 2026"
+        ]
+        #expect(heuristics.extract(from: lines).amount == Decimal(220))
+    }
+
+    @Test func gstPairPrefersInclusiveEvenWithoutKeywords() {
+        let amounts = [Decimal(980), Decimal(98), Decimal(string: "1078.00")!]
+        #expect(heuristics.preferGSTInclusive(among: amounts) == Decimal(string: "1078.00"))
+    }
+
     // MARK: Date formats (AU)
 
     @Test func parsesNamedMonthFormats() {

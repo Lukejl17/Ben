@@ -61,7 +61,7 @@ struct ExpectedSection: View {
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .buttonStyle(BenPressable())
+                .buttonStyle(BenPressable(haptic: .light))
                 .background(Color.rowFill.opacity(0.5), in: RoundedRectangle(cornerRadius: 26, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 26, style: .continuous)
@@ -69,11 +69,11 @@ struct ExpectedSection: View {
                 )
             }
             .confirmationDialog(
-                dialogTarget.map { "\($0.issuer) — expected around \($0.expectedDate.formatted(.dateTime.day().month(.wide)))" } ?? "",
+                dialogTarget.map { "\($0.issuer), expected around \($0.expectedDate.formatted(.dateTime.day().month(.wide)))" } ?? "",
                 isPresented: Binding(get: { dialogTarget != nil }, set: { if !$0 { dialogTarget = nil } }),
                 titleVisibility: .visible
             ) {
-                Button("It's arrived — add it now") {
+                Button("It's arrived, add it now") {
                     dialogTarget = nil
                     onArrived()
                 }

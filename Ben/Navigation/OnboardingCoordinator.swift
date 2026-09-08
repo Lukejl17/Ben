@@ -27,11 +27,17 @@ final class OnboardingCoordinator {
         case commit           // 14 — the pact, thumb on it
         case paywall          // 15 — S9
         case secondBill       // 16 — S10
+        /// After the second bill's reminder is set — calm close before home.
+        case secondBillLockedIn
         /// Terminal for the add-a-bill flow launched from home.
         case done
     }
 
     var step: Step = .welcome
+    private(set) var navigationHistory: [Step] = []
+    /// When set, handles back within a multi-beat screen (paywall pages, etc.).
+    var backInterceptor: (() -> Bool)?
+    var suppressBackButton = false
 
     // Collected along the way
     var intent: IntentContext?
@@ -44,22 +50,43 @@ final class OnboardingCoordinator {
     var uploadMethod: UploadMethod = .photo
     var pendingImageData: Data?
     var parsed: ParsedBill?
+    /// R2 key of the emailed bill being confirmed — claimed (deleted) on save.
+    var pendingEmailKey: String?
     /// True while walking the B1 sample bill — nothing is saved.
     var isSampleWalkthrough = false
-    /// Set by S6 confirm; S7/S8 read it.
+    /// Set by S6 confirm; S7/S8 read it (soonest instalment when split).
     var confirmedBill: Bill?
+    /// All bills saved from the latest confirm — one item, or several instalments.
+    var confirmedBills: [Bill] = []
     /// S7 outcome, read by S8 and analytics.
     var notificationsGranted: Bool?
 
     /// Adding a bill from the home screen reuses S4–S7 without the intro steps.
     var isAddingSubsequentBill = false
 
+    var canGoBack: Bool {
+        guard step != .welcome, step != .done else { return false }
+        return !suppressBackButton && !navigationHistory.isEmpty
+    }
+
     func advance(to next: Step) {
+        guard step != next else { return }
+        navigationHistory.append(step)
+        backInterceptor = nil
+        suppressBackButton = false
         step = next
     }
 
-    /// Persists the interview answers as user attributes. Called whenever an
-    /// answer lands so a drop-off mid-flow still leaves useful segmentation.
+    func goBack() {
+        if backInterceptor?() == true { return }
+        guard let previous = navigationHistory.popLast() else { return }
+        backInterceptor = nil
+        suppressBackButton = false
+        step = previous
+    }
+
+    /// Persists the interview answers as user attributes. Called on each
+    /// screen's Continue tap so the stored values always match the final choice.
     func saveAttributes() {
         OnboardingAttributes.save(.init(
             moment: intent,
@@ -76,21 +103,42 @@ final class OnboardingCoordinator {
         isSampleWalkthrough = true
         uploadMethod = .sample
         parsed = MockBillParser.aglFixture
-        step = .confirm
+        advance(to: .confirm)
     }
 
     func endSampleWalkthrough() {
         isSampleWalkthrough = false
         parsed = nil
         pendingImageData = nil
-        step = .upload
+        goBack()
+    }
+
+    /// Sign-out: back to the handshake with no leftover flow state.
+    func resetToWelcome() {
+        pendingImageData = nil
+        parsed = nil
+        confirmedBill = nil
+        confirmedBills = []
+        pendingEmailKey = nil
+        isSampleWalkthrough = false
+        isAddingSubsequentBill = false
+        uploadMethod = .photo
+        navigationHistory.removeAll()
+        backInterceptor = nil
+        suppressBackButton = false
+        step = .welcome
     }
 
     func resetForSecondBill() {
         pendingImageData = nil
         parsed = nil
         confirmedBill = nil
+        confirmedBills = []
         uploadMethod = .photo
+        pendingEmailKey = nil
+        navigationHistory.removeAll()
+        backInterceptor = nil
+        suppressBackButton = false
         step = .upload
     }
 }

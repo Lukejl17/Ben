@@ -41,20 +41,24 @@ struct BillRow: View {
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(BenPressable())
+        .buttonStyle(BenPressable(haptic: .light))
         .benRowSurface(radius: 26)
         .contextMenu {
             if bill.status != .paid {
                 Button("Mark as paid", systemImage: "checkmark.circle") {
                     bill.paidAt = .now
                     services.scheduler.cancel(identifiers: bill.notificationIDs)
+                    let billID = bill.uuid
+                    Task { await LiveActivityManager.markPaid(billID: billID) }
                     bill.notificationIDs = []
                     bill.hasNotification = false
                     try? modelContext.save()
                 }
             }
-            Button("Delete", systemImage: "trash", role: .destructive) {
+            Button("Remove", systemImage: "trash", role: .destructive) {
                 services.scheduler.cancel(identifiers: bill.notificationIDs)
+                let billID = bill.uuid
+                Task { await LiveActivityManager.end(billID: billID) }
                 modelContext.delete(bill)
                 try? modelContext.save()
             }

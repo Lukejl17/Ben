@@ -1,5 +1,4 @@
 import Foundation
-import PDFKit
 import UIKit
 import Vision
 
@@ -15,32 +14,10 @@ struct VisionBillParser: BillParsing {
     // MARK: Input handling
 
     private static func cgImage(from data: Data) throws -> CGImage {
-        if data.starts(with: Data("%PDF".utf8)) {
-            return try renderFirstPDFPage(data)
-        }
-        guard let image = UIImage(data: data)?.cgImage else {
+        guard let image = BillDocumentImage.uiImage(from: data),
+              let cgImage = image.cgImage else {
             throw BillParsingError.unreadableImage
         }
-        return image
-    }
-
-    private static func renderFirstPDFPage(_ data: Data) throws -> CGImage {
-        guard let document = PDFDocument(data: data),
-              let page = document.page(at: 0) else {
-            throw BillParsingError.unreadableImage
-        }
-        let bounds = page.bounds(for: .mediaBox)
-        let scale: CGFloat = 2.0
-        let size = CGSize(width: bounds.width * scale, height: bounds.height * scale)
-        let renderer = UIGraphicsImageRenderer(size: size)
-        let image = renderer.image { context in
-            UIColor.white.setFill()
-            context.fill(CGRect(origin: .zero, size: size))
-            context.cgContext.translateBy(x: 0, y: size.height)
-            context.cgContext.scaleBy(x: scale, y: -scale)
-            page.draw(with: .mediaBox, to: context.cgContext)
-        }
-        guard let cgImage = image.cgImage else { throw BillParsingError.unreadableImage }
         return cgImage
     }
 

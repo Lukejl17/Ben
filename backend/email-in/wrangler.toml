@@ -1,0 +1,25 @@
+# Ben inbound email worker. Deploy: `npx wrangler deploy` (needs a Cloudflare
+# API token in the environment or `npx wrangler login` once).
+name = "ben-email-in"
+main = "src/worker.js"
+compatibility_date = "2026-07-01"
+workers_dev = true
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[r2_buckets]]
+binding = "INBOUND"
+bucket_name = "ben-inbound-bills"
+
+[[d1_databases]]
+binding = "ACCOUNTS"
+database_name = "ben-accounts"
+database_id = "c168eb91-f567-4730-97e6-64ab5751c888"
+
+# Secrets (set with `npx wrangler secret put <NAME>`), never commit values:
+#   WEBHOOK_SECRET      shared secret Postmark appends as ?secret=... on /inbound
+#   FIREBASE_PROJECT_ID your Firebase project id, used to validate login tokens
+[vars]
+# non-secret defaults can go here

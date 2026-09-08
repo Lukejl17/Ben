@@ -4,6 +4,10 @@ import SwiftUI
 /// widget, tool rows, quiet app info.
 struct SettingsView: View {
     @Environment(\.services) private var services
+    @Environment(\.modelContext) private var modelContext
+    @Environment(OnboardingCoordinator.self) private var coordinator
+    @Environment(PendingEmailMonitor.self) private var pendingMonitor
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     private enum Sheet: String, Identifiable {
         case account, export, emailIn
@@ -57,7 +61,7 @@ struct SettingsView: View {
 
                     sectionLabel("About")
                     infoRow(title: "Version", value: appVersion)
-                    infoRow(title: "Your data", value: "On this device")
+                    infoRow(title: "Your data", value: "On this device · cleared on sign out")
                     Text("You pay for Ben, so your data is never the product.")
                         .font(.benMeta)
                         .foregroundStyle(Color.forestInk.opacity(0.5))
@@ -65,8 +69,16 @@ struct SettingsView: View {
 
                     if account != nil {
                         Button {
+                            LocalAccountSession.wipeDeviceData(
+                                modelContext: modelContext,
+                                scheduler: services.scheduler,
+                                pendingEmails: pendingMonitor
+                            )
                             services.accounts.signOut()
-                            withAnimation(.spring(duration: 0.3)) { account = nil }
+                            account = nil
+                            // Back to the front door: onboard again or sign in.
+                            coordinator.resetToWelcome()
+                            hasCompletedOnboarding = false
                         } label: {
                             Text("Sign out")
                                 .font(.benLabel)
@@ -172,7 +184,7 @@ struct SettingsView: View {
         let line: (String, String) = switch services.subscriptions.state() {
         case .notStarted: ("Trial not started", "The paywall must have been kind to you.")
         case .active(let days): (
-            days == 1 ? "Trial — last day" : "Trial — \(days) days left",
+            days == 1 ? "Trial: last day" : "Trial: \(days) days left",
             "Full access. Cancel anytime in one tap."
         )
         case .lapsed: ("Trial ended", "Bills stay visible; reminders are off.")

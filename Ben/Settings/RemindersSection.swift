@@ -80,11 +80,12 @@ struct RemindersSection: View {
             let style = ReminderStyle(rawValue: bill.reminderStyleRaw) ?? .fewDaysEarly
             let billID = bill.uuid
             let issuer = bill.issuer
+            let amount = bill.amount
             let dueDate = bill.dueDate
             Task {
                 scheduler.cancel(identifiers: oldIDs)
                 let newIDs = await scheduler.scheduleReminders(
-                    billID: billID, issuer: issuer, dueDate: dueDate, style: style
+                    billID: billID, issuer: issuer, amount: amount, dueDate: dueDate, style: style
                 )
                 bill.notificationIDs.removeAll { oldIDs.contains($0) }
                 bill.notificationIDs.append(contentsOf: newIDs)

@@ -1,0 +1,7 @@
+{
+  "id": "general",
+  "title": "General enquiry",
+  "keywords": [],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for getting in touch.\n\nWe have your message and will reply once we have looked into it. If your question is about a bill, adding bills, notifications, billing, or your account, a few extra details will help us answer in one go.\n\nKind regards,\nBen support"
+}

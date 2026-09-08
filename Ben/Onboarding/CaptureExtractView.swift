@@ -79,21 +79,16 @@ struct CaptureExtractView: View {
         BenScreen(title: "Add your bill") {
             VStack(spacing: 12) {
                 captureCard(symbol: "photo.on.rectangle.angled", fill: .chartreuse, iconColor: .onChartreuse,
-                            label: "Choose a photo") { showPhotoPicker = true }
+                            label: "Upload a photo") { showPhotoPicker = true }
                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
                     captureCard(symbol: "camera.fill", fill: .sky, iconColor: .onSky,
                                 label: "Take a photo") { showCamera = true }
                 }
                 captureCard(symbol: "doc.fill", fill: .amber, iconColor: .onAmber,
-                            label: "Choose a PDF or file") { showFileImporter = true }
+                            label: "Upload a PDF or file") { showFileImporter = true }
             }
         } cta: {
-            if !coordinator.isAddingSubsequentBill {
-                BenTextButton(title: "Back") {
-                    coordinator.advance(to: .upload)
-                }
-                .frame(maxWidth: .infinity)
-            }
+            EmptyView()
         }
     }
 

@@ -19,6 +19,9 @@ struct CommitView: View {
             }
         }
         .animation(.spring(duration: 0.4), value: stage == .pact)
+        .onChange(of: stage, initial: true) { _, newStage in
+            coordinator.suppressBackButton = newStage != .pact
+        }
     }
 
     // MARK: Beat 1 — the promise, with the thumb on a bottom sheet

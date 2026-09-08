@@ -29,7 +29,7 @@ enum BillCategory {
     }
 
     static func all(defaults: UserDefaults = .standard) -> [String] {
-        standard.dropLast() + customs(defaults: defaults) + ["other"]
+        Array(standard.dropLast()) + customs(defaults: defaults) + ["other"]
     }
 
     // MARK: Styling

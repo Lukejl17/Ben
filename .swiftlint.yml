@@ -1,5 +1,7 @@
 included:
   - Ben
+  - BenShared
+  - BenWidgets
   - BenTests
   - BenUITests
 line_length:
@@ -7,10 +9,17 @@ line_length:
   error: 200
 identifier_name:
   min_length: 2
-  excluded: [x, y, i]
+  excluded: [x, y, i, a, b]
 trailing_whitespace:
   ignores_empty_lines: true
 function_body_length:
   # UI walkthrough tests are linear scripts; splitting them hurts readability.
   warning: 120
   error: 140
+# Home / Insights / email sheets are intentionally vertical; keep them readable.
+file_length:
+  warning: 520
+  error: 650
+type_body_length:
+  warning: 480
+  error: 550

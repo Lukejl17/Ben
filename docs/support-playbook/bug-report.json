@@ -1,0 +1,18 @@
+{
+  "id": "bug-report",
+  "title": "Bug or something broken",
+  "keywords": [
+    "bug",
+    "broken",
+    "crash",
+    "crashes",
+    "error",
+    "freeze",
+    "stuck",
+    "not working",
+    "issue",
+    "glitch"
+  ],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for letting us know something is not working as expected.\n\nTo help us track it down, it would help to know your iOS version, which screen you were on, and what you did just before it happened. A screenshot is useful if you have one.\n\nWe will look into it and get back to you once we know more. No need to resend unless you notice new details.\n\nKind regards,\nBen support"
+}

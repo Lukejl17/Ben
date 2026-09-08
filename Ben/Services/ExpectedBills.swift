@@ -15,7 +15,7 @@ enum BillRecurrence: String, CaseIterable, Sendable {
 
     var detail: String? {
         switch self {
-        case .none: "No expectations — I'll wait for the next photo."
+        case .none: "No expectations. I'll wait for the next photo."
         case .monthly: "Like phone or internet."
         case .quarterly: "Like power or water."
         case .yearly: "Like insurance or rego."

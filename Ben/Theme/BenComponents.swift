@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: - Ben Design System v3 · Forest Bold components
 // Cream widgets float on the forest; secondary rows are translucent.
@@ -129,6 +130,23 @@ private struct BenSheetCloseModifier: ViewModifier {
 
 extension View {
     func benSheetClose() -> some View { modifier(BenSheetCloseModifier()) }
+
+    /// Done above the keyboard / number pad — decimal pads have no return key.
+    func benKeyboardDoneToolbar() -> some View {
+        toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") {
+                    UIApplication.shared.sendAction(
+                        #selector(UIResponder.resignFirstResponder),
+                        to: nil, from: nil, for: nil
+                    )
+                }
+                .font(.benLabel)
+                .foregroundStyle(Color.chartreuse)
+            }
+        }
+    }
 }
 
 /// Widget eyebrow: tiny tracked uppercase label.
@@ -241,10 +259,17 @@ struct BenCircleButton: View {
 }
 
 struct BenPressable: ButtonStyle {
+    /// Medium for CTAs / onboarding; light for browsing into bills and rows.
+    var haptic: UIImpactFeedbackGenerator.FeedbackStyle = .medium
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.spring(duration: 0.25), value: configuration.isPressed)
+            .onChange(of: configuration.isPressed) { _, pressed in
+                guard pressed else { return }
+                UIImpactFeedbackGenerator(style: haptic).impactOccurred(intensity: 0.9)
+            }
     }
 }
 
@@ -357,6 +382,7 @@ struct BenScreen<Content: View, CTA: View>: View {
             }
             .scrollDismissesKeyboard(.interactively)
         }
+        .benKeyboardDoneToolbar()
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 10) {
                 cta

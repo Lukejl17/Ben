@@ -29,6 +29,8 @@ enum AnalyticsEvent: Sendable {
     case trialAbandonedAtPaywall
     case secondBillPromptShown
     case forwardingSetup
+    /// Funnel end — `path` is `second_bill` or `deferred` (S10 “Later's fine”).
+    case onboardingCompleted(path: String)
     case activationDeferred
     case notificationTriggered
     case appOpenedFromNotification
@@ -53,6 +55,7 @@ enum AnalyticsEvent: Sendable {
         case .trialAbandonedAtPaywall: "trial_abandoned_at_paywall"
         case .secondBillPromptShown: "second_bill_prompt_shown"
         case .forwardingSetup: "forwarding_setup"
+        case .onboardingCompleted: "onboarding_completed"
         case .activationDeferred: "activation_deferred"
         case .notificationTriggered: "notification_triggered"
         case .appOpenedFromNotification: "app_opened_from_notification"
@@ -77,6 +80,8 @@ enum AnalyticsEvent: Sendable {
             ]
         case .paywallViewed(let depth):
             ["page_depth": .int(depth)]
+        case .onboardingCompleted(let path):
+            ["path": .string(path)]
         default:
             [:]
         }

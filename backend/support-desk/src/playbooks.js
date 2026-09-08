@@ -1,0 +1,115 @@
+// Pure playbook matching and draft rendering. No Worker or I/O dependencies.
+// Playbooks are bundled from src/playbooks/ at deploy time (sync from docs/support-playbook/).
+
+import addBill from "./playbooks/add-bill.json" with { type: "json" };
+import billing from "./playbooks/billing.json" with { type: "json" };
+import bugReport from "./playbooks/bug-report.json" with { type: "json" };
+import deleteAccount from "./playbooks/delete-account.json" with { type: "json" };
+import general from "./playbooks/general.json" with { type: "json" };
+import notifications from "./playbooks/notifications.json" with { type: "json" };
+import privacy from "./playbooks/privacy.json" with { type: "json" };
+import refundTrial from "./playbooks/refund-trial.json" with { type: "json" };
+
+/** Playbooks in priority order for tie-breaking; `general` is the fallback. */
+export const DEFAULT_PLAYBOOKS = [
+  deleteAccount,
+  refundTrial,
+  bugReport,
+  addBill,
+  notifications,
+  billing,
+  privacy,
+  general,
+];
+
+const FALLBACK_ID = "general";
+
+/**
+ * Score playbooks against inbound text. Higher score = stronger match.
+ * Keyword hits are weighted; longer multi-word phrases score more.
+ */
+export function scorePlaybook(playbook, text) {
+  const haystack = normalise(text);
+  if (!haystack) return 0;
+
+  let score = 0;
+  for (const keyword of playbook.keywords ?? []) {
+    const needle = normalise(keyword);
+    if (!needle) continue;
+    if (haystack.includes(needle)) {
+      score += needle.includes(" ") ? 3 : 1;
+    }
+  }
+  return score;
+}
+
+/** Pick the best-matching playbook, or the fallback when nothing scores. */
+export function matchPlaybook(text, playbooks = DEFAULT_PLAYBOOKS) {
+  const candidates = playbooks.filter((p) => p.id !== FALLBACK_ID);
+  let best = null;
+  let bestScore = 0;
+
+  for (const playbook of candidates) {
+    const score = scorePlaybook(playbook, text);
+    if (score > bestScore) {
+      bestScore = score;
+      best = playbook;
+    }
+  }
+
+  if (best) return best;
+  return playbooks.find((p) => p.id === FALLBACK_ID) ?? playbooks[playbooks.length - 1];
+}
+
+/** Build searchable text from a Postmark-style inbound message. */
+export function inboundSearchText(message) {
+  const parts = [
+    message.Subject ?? "",
+    message.TextBody ?? "",
+    stripHtml(message.HtmlBody ?? ""),
+    message.From ?? "",
+  ];
+  return parts.join("\n");
+}
+
+/** Render subject/body templates with calm defaults. */
+export function renderDraft(playbook, context) {
+  const vars = buildTemplateVars(context);
+  return {
+    playbookId: playbook.id,
+    subject: applyTemplate(playbook.subject ?? "Re: {original_subject}", vars),
+    body: applyTemplate(playbook.body ?? "", vars),
+  };
+}
+
+export function buildTemplateVars(context) {
+  const fromName = (context.fromName ?? "").trim();
+  const fromEmail = (context.fromEmail ?? "").trim();
+  const originalSubject = (context.originalSubject ?? "Your message").trim() || "Your message";
+
+  const fromNameGreeting = fromName ? ` ${fromName}` : "";
+
+  return {
+    from_name: fromName,
+    from_email: fromEmail,
+    from_name_greeting: fromNameGreeting,
+    original_subject: originalSubject,
+  };
+}
+
+function applyTemplate(template, vars) {
+  return template.replace(/\{([a-z_]+)\}/g, (_, key) => vars[key] ?? "");
+}
+
+function normalise(text) {
+  return (text ?? "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function stripHtml(html) {
+  return (html ?? "")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}

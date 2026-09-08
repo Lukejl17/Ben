@@ -43,9 +43,27 @@ struct BillTextHeuristics: Sendable {
         "Council Rates", "Foxtel", "Jemena", "Ausgrid"
     ]
 
-    private static let amountKeywords = [
+    /// Strong pay-this labels — prefer these over weak "total" / line items.
+    private static let strongAmountKeywords = [
         "amount due", "total due", "total amount due", "amount payable",
-        "total payable", "please pay", "balance due", "new charges", "total"
+        "total payable", "please pay", "balance due", "amount to pay",
+        "invoice total", "total amount", "pay this amount", "total incl"
+    ]
+
+    private static let weakAmountKeywords = [
+        "new charges", "total"
+    ]
+
+    /// Lines that usually hold excl-GST / fee lines — never win over a real total.
+    private static let amountDeprioritize = [
+        "excluding gst", "excl. gst", "excl gst", "ex gst", "ex-gst",
+        "before gst", "without gst", "gst free", "gst-free", "subtotal",
+        "sub total", "professional fees", "our fees", "fee for"
+    ]
+
+    private static let amountPrefer = [
+        "including gst", "incl. gst", "incl gst", "inc gst", "inc. gst",
+        "gst inclusive", "total incl", "amount due"
     ]
 
     private static let dueDateKeywords = [
@@ -75,17 +93,66 @@ struct BillTextHeuristics: Sendable {
     // MARK: Amount
 
     func extractAmount(cleaned: [String], lowercased: [String]) -> Decimal? {
-        // Pass 1: the largest $ amount on a keyword line or the line after it —
-        // labels precede values on bills, so never look backwards.
-        var keywordAmounts: [Decimal] = []
-        for (index, line) in lowercased.enumerated() where Self.amountKeywords.contains(where: line.contains) {
+        let strong = amountsNearKeywords(
+            cleaned: cleaned, lowercased: lowercased, keywords: Self.strongAmountKeywords
+        )
+        if let best = preferredAmount(from: strong) { return best }
+
+        let weak = amountsNearKeywords(
+            cleaned: cleaned, lowercased: lowercased, keywords: Self.weakAmountKeywords
+        )
+        if let best = preferredAmount(from: weak) { return best }
+
+        // Fallback: largest $ anywhere, still skipping clear excl-GST lines.
+        let anywhere = cleaned.enumerated().flatMap { index, line -> [Decimal] in
+            let lower = lowercased[index]
+            if Self.amountDeprioritize.contains(where: lower.contains) { return [] }
+            return dollarAmounts(in: line)
+        }
+        return preferGSTInclusive(among: anywhere) ?? anywhere.max()
+    }
+
+    private func amountsNearKeywords(
+        cleaned: [String], lowercased: [String], keywords: [String]
+    ) -> [(amount: Decimal, line: String)] {
+        var hits: [(amount: Decimal, line: String)] = []
+        for (index, line) in lowercased.enumerated() where keywords.contains(where: line.contains) {
             for neighbour in index...min(cleaned.count - 1, index + 1) {
-                keywordAmounts.append(contentsOf: dollarAmounts(in: cleaned[neighbour]))
+                let lower = lowercased[neighbour]
+                if Self.amountDeprioritize.contains(where: lower.contains) { continue }
+                for amount in dollarAmounts(in: cleaned[neighbour]) {
+                    hits.append((amount, lower))
+                }
             }
         }
-        if let best = keywordAmounts.max() { return best }
-        // Pass 2: largest $ amount anywhere.
-        return cleaned.flatMap(dollarAmounts(in:)).max()
+        return hits
+    }
+
+    private func preferredAmount(from hits: [(amount: Decimal, line: String)]) -> Decimal? {
+        guard !hits.isEmpty else { return nil }
+        let preferred = hits.filter { hit in
+            Self.amountPrefer.contains(where: hit.line.contains)
+        }
+        let pool = preferred.isEmpty ? hits.map(\.amount) : preferred.map(\.amount)
+        return preferGSTInclusive(among: pool) ?? pool.max()
+    }
+
+    /// When both excl and incl GST appear (A and A×1.1), prefer the inclusive total.
+    func preferGSTInclusive(among amounts: [Decimal]) -> Decimal? {
+        let unique = Array(Set(amounts)).sorted()
+        guard !unique.isEmpty else { return nil }
+        guard unique.count >= 2 else { return unique.first }
+        for excl in unique {
+            let incl = excl * Decimal(string: "1.1")!
+            if let match = unique.first(where: { absDiff($0, incl) <= Decimal(string: "0.02")! }) {
+                return match
+            }
+        }
+        return unique.max()
+    }
+
+    private func absDiff(_ a: Decimal, _ b: Decimal) -> Decimal {
+        a > b ? a - b : b - a
     }
 
     func dollarAmounts(in line: String) -> [Decimal] {
