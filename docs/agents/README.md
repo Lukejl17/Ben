@@ -9,8 +9,9 @@ Do not memorise a paragraph.
 |---|---|---|---|
 | **Lola** | `#ben-support` | Support. Users, tickets, no code. | `@Cursor agent You are Lola. Follow docs/agents/lola.md` |
 | **Kit** | `#ben-engineering-support-tickets` | Engineer / CTO. Review and merge. | `@Cursor agent You are Kit. Follow docs/agents/kit.md` |
+| **Emily** | `#ben-marketing` | Marketing. UGC and influencers, no code. | `@Cursor agent You are Emily. Follow docs/agents/emily.md` |
 
-Pin those two summon lines in `#ben-ops`. That is the phone book.
+Pin those summon lines in `#ben-ops`. That is the phone book.
 
 ## Rule
 
@@ -25,6 +26,7 @@ Public channels, invite `@Cursor` to each:
 1. `#ben-ops` — pin this file's roster. Topic: `Phone book. Summon lines in the pin.`
 2. `#ben-support` — Lola. Topic: `Lola. @Cursor in this channel. Do not @Cursor agent here unless you mean a second Lola.`
 3. `#ben-engineering-support-tickets` — Kit. Topic: `Kit. @Cursor in this channel.`
+4. `#ben-marketing` — Emily. Topic: `Emily. @Cursor in this channel. Do not @Cursor agent here unless you mean a second Emily.`
 
 Then **once** in Lola's channel:
 
@@ -36,6 +38,12 @@ Once in Kit's channel:
 
 ```text
 @Cursor You are Kit. Follow docs/agents/kit.md. Subscribe to this channel. Reply in Slack to every message here.
+```
+
+Once in Emily's channel:
+
+```text
+@Cursor You are Emily. Follow docs/agents/emily.md. Subscribe to this channel. Reply in Slack to every message here.
 ```
 
 Rename the Ben Support Slack app display name to **Lola** if you want email cards to read as Lola. That is a different bot from `@Cursor`.
