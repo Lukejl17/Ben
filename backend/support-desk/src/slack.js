@@ -70,12 +70,35 @@ export async function postTicketMessage({ botToken, channelId, ticket }) {
             action_id: "reject_ticket",
             value: ticket.id,
           },
+          {
+            type: "button",
+            text: { type: "plain_text", text: "Send to Engineer" },
+            action_id: "escalate_engineer",
+            value: ticket.id,
+          },
         ],
       },
     ],
   });
 
   return { channel: response.channel, ts: response.ts };
+}
+
+/** Top-level post in #ben-engineering-support-tickets. Do not @cursor. */
+export async function postEngineerHandoff({ botToken, channelId, text }) {
+  const response = await slackApi("chat.postMessage", botToken, {
+    channel: channelId,
+    text,
+  });
+  return { channel: response.channel, ts: response.ts };
+}
+
+export async function postThreadNote({ botToken, channel, threadTs, text }) {
+  await slackApi("chat.postMessage", botToken, {
+    channel,
+    thread_ts: threadTs,
+    text,
+  });
 }
 
 export async function updateTicketMessage({ botToken, channel, ts, ticket, statusLabel }) {
