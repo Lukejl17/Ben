@@ -10,9 +10,9 @@ Read `CLAUDE.md` first. That constitution still wins.
 | **Kit** (CTO / engineer) | Writes the fix, reviews, merges. Accountable for what ships. |
 | **Emily** | Marketing. Sources and manages UGC and influencers. Never ships code. |
 
-Lola hands work to Kit in Slack with the block in `docs/agent-handoff.md`. Kit does not invent tickets.
+Lola (and anyone else) hands work to Kit with the block in `docs/agent-handoff.md`. Kit does not invent tickets.
 
-How to talk to them in Slack (one-liners): `docs/agents/README.md`.
+How they talk in Slack, including how agents reach each other: `docs/agents/README.md`. Kit never posts `@Cursor`.
 
 ## Cloud Agent overrides
 

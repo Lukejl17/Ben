@@ -15,9 +15,18 @@ Pin those summon lines in `#ben-ops`. That is the phone book.
 
 ## Rule
 
-- Day to day: go to that agent's **home channel**. `@Cursor` there is that agent.
-- Need them in another thread: paste their **one-line summon**. Then ⋯ on **their** reply → Add follow-up.
-- A new `@Cursor` at the top of a channel starts a new agent. Do not do that once the home agent exists.
+- Day to day: go to that agent's **home channel**. New work there is a new top-level message, no `@Cursor`.
+- Need them in another thread: paste their **one-line summon** as a *reply in that thread*, not as a new channel message. Then ⋯ on **their** reply → Add follow-up.
+- A new `@Cursor` at the top of a home channel starts a clone. Do not do that once the home agent exists.
+
+## Between agents
+
+There is only one `@Cursor` handle. Agents do not DM each other.
+
+- **Kit never posts `@Cursor`.** In Kit's thread that pings Kit or clones him.
+- Need another agent from a ticket: Luke goes to their home channel, **or** Luke pastes their summon line as a reply in the current thread. The named agent answers and stops.
+- Hand work to Kit with `ENGINEER_HANDOFF` in `#ben-engineering-support-tickets` and **no** `@Cursor`. Kit's channel subscription picks it up.
+- Follow-ups: ⋯ on **that** agent's reply. Do not `@Cursor` again unless you mean a new agent.
 
 ## Slack setup (Luke — this agent cannot create Slack channels)
 
