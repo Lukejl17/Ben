@@ -30,3 +30,5 @@ If the VM cannot run `xcodebuild` (Linux cloud images cannot), say so in Slack a
 ## Stay in the ticket thread
 
 Reply in the same Slack thread Lola used. Start messages with `Engineer · Ben`. Do not post to other channels.
+
+If this conversation's Slack subscription expires, recreate it or use `docs/cursor-automations/engineer.md`.
