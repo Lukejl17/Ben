@@ -1,13 +1,13 @@
 // Pure playbook matching and draft rendering. No Worker or I/O dependencies.
 
-import billing from "../../../docs/support-playbook/billing.json" assert { type: "json" };
-import deleteAccount from "../../../docs/support-playbook/delete-account.json" assert { type: "json" };
-import addBill from "../../../docs/support-playbook/add-bill.json" assert { type: "json" };
-import notifications from "../../../docs/support-playbook/notifications.json" assert { type: "json" };
-import privacy from "../../../docs/support-playbook/privacy.json" assert { type: "json" };
-import refundTrial from "../../../docs/support-playbook/refund-trial.json" assert { type: "json" };
-import bugReport from "../../../docs/support-playbook/bug-report.json" assert { type: "json" };
-import general from "../../../docs/support-playbook/general.json" assert { type: "json" };
+import billing from "../../../docs/support-playbook/billing.json" with { type: "json" };
+import deleteAccount from "../../../docs/support-playbook/delete-account.json" with { type: "json" };
+import addBill from "../../../docs/support-playbook/add-bill.json" with { type: "json" };
+import notifications from "../../../docs/support-playbook/notifications.json" with { type: "json" };
+import privacy from "../../../docs/support-playbook/privacy.json" with { type: "json" };
+import refundTrial from "../../../docs/support-playbook/refund-trial.json" with { type: "json" };
+import bugReport from "../../../docs/support-playbook/bug-report.json" with { type: "json" };
+import general from "../../../docs/support-playbook/general.json" with { type: "json" };
 
 /** Playbooks in priority order; `general` is the fallback. */
 export const DEFAULT_PLAYBOOKS = [

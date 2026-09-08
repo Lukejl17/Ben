@@ -1,0 +1,18 @@
+{
+  "id": "add-bill",
+  "title": "How to add a bill",
+  "keywords": [
+    "add bill",
+    "upload",
+    "scan",
+    "photo",
+    "camera",
+    "import",
+    "forward",
+    "email in",
+    "how do i",
+    "new bill"
+  ],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for asking about adding a bill.\n\nIn Ben you can add a bill by taking a photo, choosing a PDF from Files, or forwarding a bill email to your personal Ben address (you will find that address in Settings → Email in).\n\nAfter Ben reads the bill, you will see the details on screen to check before anything is saved. Nothing is stored until you confirm.\n\nIf a particular bill is not reading correctly, reply with what you tried (photo, PDF, or email) and we can help.\n\nKind regards,\nBen support"
+}

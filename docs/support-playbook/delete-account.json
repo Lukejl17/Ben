@@ -1,0 +1,14 @@
+{
+  "id": "delete-account",
+  "title": "Delete account and data",
+  "keywords": [
+    "delete account",
+    "remove account",
+    "erase",
+    "close account",
+    "deactivate",
+    "gdpr"
+  ],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for getting in touch about deleting your account.\n\nBen stores your bills on your device. To remove everything from this phone, delete the Ben app. That clears local data on that device.\n\nIf you also want any server-side records we hold (such as your email-in forwarding token) removed, reply to confirm the email address you use with Ben and we will process the deletion.\n\nThere is no rush on our side — take the time you need.\n\nKind regards,\nBen support"
+}
