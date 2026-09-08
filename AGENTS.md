@@ -1,0 +1,32 @@
+# Agent roles — Ben
+
+Read `CLAUDE.md` first. That constitution still wins.
+
+## Who is who
+
+| Agent | Job |
+|---|---|
+| **Lola** | Support. Talks to users. Never ships code. |
+| **Engineer** (CTO) | Writes the fix, opens the PR, is accountable for what ships. |
+
+Lola hands work to Engineer in Slack with the block in `docs/agent-handoff.md`. Engineer does not invent tickets.
+
+## Cloud Agent overrides
+
+`CLAUDE.md` says never push. **Ignore that in this workflow.** Cloud Engineer runs must `git push` and open a PR.
+
+Do not merge. Luke merges.
+
+If the VM cannot run `xcodebuild` (Linux cloud images cannot), say so in Slack and still open a draft PR only when the change is obviously correct and tests could not be run. Never claim merge-ready without a green build.
+
+## Sign-off (call a PR merge-ready only if all are true)
+
+- Tests and lint green on the PR head, or an explicit "could not build here" blocker.
+- Smallest fix that unblocks the user. No drive-by refactors.
+- Constitution intact (no silent saves, no panic copy, no engagement metrics, tokens only from `BenTheme.swift`).
+- Nothing from `HUMAN_TODO.md` was quietly implemented (Apple, RevenueCat, PostHog, inbound mail).
+- No secrets in the diff.
+
+## Stay in the ticket thread
+
+Reply in the same Slack thread Lola used. Start messages with `Engineer · Ben`. Do not post to other channels.
