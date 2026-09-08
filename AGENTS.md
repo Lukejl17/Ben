@@ -8,6 +8,7 @@ Read `CLAUDE.md` first. That constitution still wins.
 |---|---|
 | **Lola** | Support. Talks to users. Never ships code. |
 | **Kit** (CTO / engineer) | Writes the fix, reviews, merges. Accountable for what ships. |
+| **Emily** | Marketing. Sources and manages UGC and influencers. Never ships code. |
 
 Lola hands work to Kit in Slack with the block in `docs/agent-handoff.md`. Kit does not invent tickets.
 
