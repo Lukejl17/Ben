@@ -13,7 +13,7 @@ Read `CLAUDE.md` first. That constitution still wins.
 
 Lola (and anyone else) hands work to Kit with the block in `docs/agent-handoff.md`. Kit does not invent tickets.
 
-How they talk in Slack, including how agents reach each other: `docs/agents/README.md`. Kit never posts `@Cursor`.
+How they talk in Slack, including how agents reach each other: `docs/agents/README.md`. Nobody posts `@Cursor`. The roster in that file is how agents learn new colleagues.
 
 ## Cloud Agent overrides
 
