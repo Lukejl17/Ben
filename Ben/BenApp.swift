@@ -1,3 +1,5 @@
+import FirebaseCore
+import GoogleSignIn
 import SwiftData
 import SwiftUI
 import UserNotifications
@@ -6,10 +8,17 @@ import UserNotifications
 struct BenApp: App {
     @State private var coordinator = OnboardingCoordinator()
     @State private var router: NotificationRouter
+    @State private var pendingEmailMonitor = PendingEmailMonitor()
+    @State private var subscriptions: SubscriptionController
     private let services: AppServices
     private let notificationDelegate: NotificationDelegate
 
     init() {
+        // Real logins need Firebase; previews/tests run fine without it.
+        if FirebaseApp.app() == nil,
+           Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+        }
         let services = AppServices.fromLaunchArguments()
         let router = NotificationRouter()
         let delegate = NotificationDelegate(router: router, analytics: services.analytics)
@@ -22,6 +31,7 @@ struct BenApp: App {
         UNUserNotificationCenter.current().setNotificationCategories([category])
         self.services = services
         self._router = State(initialValue: router)
+        self._subscriptions = State(initialValue: SubscriptionController(service: services.subscriptions))
         self.notificationDelegate = delegate
         Self.applyForestBoldChrome()
     }
@@ -31,11 +41,34 @@ struct BenApp: App {
             ContentView()
                 .environment(coordinator)
                 .environment(router)
+                .environment(pendingEmailMonitor)
+                .environment(subscriptions)
                 .environment(\.services, services)
                 .tint(.chartreuse)
                 .background(Color.forestBottom)
                 // Forest Bold is one committed world — no light variant.
                 .preferredColorScheme(.dark)
+                // Google Sign-In returns via the reversed client ID URL scheme.
+                .onOpenURL { url in
+                    if GIDSignIn.sharedInstance.handle(url) { return }
+                    // Live Activity / widget deep link: ben://bill/<uuid>
+                    if url.scheme == "ben", url.host == "bill" {
+                        let id = url.pathComponents.dropFirst().first ?? url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                        if !id.isEmpty {
+                            router.openBillID = id
+                        }
+                    }
+                }
+                .benInstallKeyboardDismiss()
+                .task {
+                    await subscriptions.refresh()
+                    if let userID = services.accounts.account?.id {
+                        await subscriptions.identify(userID: userID)
+                    }
+                    // Window may not be key on first appear — retry shortly.
+                    try? await Task.sleep(for: .milliseconds(200))
+                    KeyboardDismissInstaller.installIfNeeded()
+                }
         }
         .modelContainer(Self.makeContainer())
     }

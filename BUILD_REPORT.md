@@ -80,6 +80,7 @@ Also `dynamic-type-xxxl.png` (S1 at the largest non-accessibility size — wraps
 
 Apple Developer team ID · Sign in with Apple entitlement · RevenueCat +
 App Store Connect products · PostHog key · email-forwarding backend ·
+Events include `onboarding_completed` (path: second_bill | deferred) as funnel end.
 Ben's final illustration. Markers are in code as `// HUMAN:` comments.
 
 ## Suggested next-session priorities

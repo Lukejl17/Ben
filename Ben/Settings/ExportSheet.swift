@@ -72,7 +72,7 @@ struct ExportSheet: View {
                     .foregroundStyle(Color.chartreuse)
                     .padding(.top, 28)
 
-                Text("A tidy CSV — opens in Numbers, Excel, or lands straight in an email to your accountant.")
+                Text("A tidy CSV that opens in Numbers or Excel, or lands straight in an email to your accountant.")
                     .font(.benBody)
                     .foregroundStyle(Color.forestInk.opacity(0.65))
 
@@ -135,7 +135,7 @@ struct ExportSheet: View {
                     }
                     .benShadow(.glow)
                 } else {
-                    Text("No bills in this window — widen the range and they'll appear here.")
+                    Text("No bills in this window. Widen the range and they'll appear here.")
                         .font(.benMeta)
                         .foregroundStyle(Color.forestInk.opacity(0.55))
                         .frame(maxWidth: .infinity)

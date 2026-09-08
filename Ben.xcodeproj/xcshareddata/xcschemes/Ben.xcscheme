@@ -21,6 +21,20 @@
                ReferencedContainer = "container:Ben.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "87D7149CF62FFFF03128A668"
+               BuildableName = "BenWidgets.appex"
+               BlueprintName = "BenWidgets"
+               ReferencedContainer = "container:Ben.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

@@ -97,7 +97,7 @@ struct ReminderSchedulerTests {
 
     @Test func overdueCopyIsFactualAndNamesTheDate() {
         let body = ReminderScheduler.overdueBody(issuer: "AGL", dueDate: date(24), calendar: calendar)
-        #expect(body == "Ben here — AGL was due 24 July and still needs a look.")
+        #expect(body == "Ben here. AGL was due 24 July and still needs a look.")
     }
 
     // MARK: B1 tonight nudge
@@ -125,14 +125,14 @@ struct ReminderSchedulerTests {
         let body = ReminderScheduler.reminderBody(
             issuer: "AGL", dueDate: date(24), triggerDate: date(24, hour: 9), calendar: calendar
         )
-        #expect(body == "Ben here — AGL is due today.")
+        #expect(body == "Ben here. AGL is due today.")
     }
 
     @Test func copySaysTomorrowOneDayOut() {
         let body = ReminderScheduler.reminderBody(
             issuer: "Telstra", dueDate: date(24), triggerDate: date(23, hour: 9), calendar: calendar
         )
-        #expect(body == "Ben here — Telstra is due tomorrow.")
+        #expect(body == "Ben here. Telstra is due tomorrow.")
     }
 
     @Test func copyUsesWeekdayInsideAWeek() {
@@ -140,13 +140,13 @@ struct ReminderSchedulerTests {
         let body = ReminderScheduler.reminderBody(
             issuer: "AGL", dueDate: date(24), triggerDate: date(21, hour: 9), calendar: calendar
         )
-        #expect(body == "Ben here — AGL is due Friday.")
+        #expect(body == "Ben here. AGL is due Friday.")
     }
 
     @Test func copyUsesDateBeyondAWeek() {
         let body = ReminderScheduler.reminderBody(
             issuer: "Sydney Water", dueDate: date(24), triggerDate: date(13, hour: 9), calendar: calendar
         )
-        #expect(body == "Ben here — Sydney Water is due 24 July.")
+        #expect(body == "Ben here. Sydney Water is due 24 July.")
     }
 }

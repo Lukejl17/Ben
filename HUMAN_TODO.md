@@ -2,12 +2,18 @@
 
 Pre-seeded — these need Luke, not Claude:
 
-- [ ] Apple Developer account + DEVELOPMENT_TEAM in project.yml (device builds / TestFlight)
-- [ ] Sign in with Apple capability + entitlement (S8 account save is stubbed until then)
-- [ ] RevenueCat account + API key → replace StubSubscriptionService (S9)
-- [ ] App Store Connect products: annual US$49.99 / monthly US$5.99, 7-day intro trial
+- [x] Apple Developer account + DEVELOPMENT_TEAM in project.yml (device builds / TestFlight)
+      Team ID `4CGY239475` · Repertoire Studio Pty Ltd · set 3 Aug 2026
+- [x] Sign in with Apple capability + entitlement (App ID + Ben/Ben.entitlements)
+- [x] RevenueCat project **Ben** — Test Store + Apple app `com.repertoirestudio.Ben`,
+      entitlement `ben_pro`, offerings `$rc_annual` / `$rc_monthly`. Confirm the signup email.
+- [x] Apple public SDK key (`appl_…`) in `RevenueCatConfig.publicAPIKey` (Release);
+      Test Store key used in Debug.
+- [x] App Store Connect products: yearly US$49.99 / monthly US$5.99, 7-day intro trial
+      (IDs `com.repertoirestudio.Ben.pro.yearly` / `.monthly`, group Ben Pro).
+      Submit with the next app version.
 - [ ] PostHog project + API key → replace LocalAnalytics
-- [ ] Email forwarding ingestion backend (S10 forwarding address is display-only)
+- [x] Email forwarding ingestion backend (S10 forwarding address is display-only)
 - [ ] Ben's illustration (clay + ink palette, one calm expression, ≤44pt — replaces SF Symbol placeholder)
 
 Added overnight (14 Jul 2026):
@@ -26,10 +32,49 @@ Added overnight (14 Jul 2026):
 
 Added 15 Jul 2026 (settings/accounts/email-in build):
 
-- [ ] Replace StubAccountService internals with real auth: Sign in with Apple
-      (capability + entitlement — same item as above) AND Google Sign-In SDK
-      (OAuth client ID in Google Cloud console). Protocol + all call sites stay.
-- [ ] Email ingestion backend: provision per-account addresses matching
-      StubAccountService.forwardingAddress format (bills-<8 chars>@ben.app),
-      parse inbound MIME → ParsedBill → push to app for S6 confirm.
-      Requires owning ben.app inbound mail (e.g. SES/Postmark inbound).
+- [x] Real auth — DONE 19 Jul via Firebase Authentication (FirebaseAccountService):
+      email/password + Google live; Apple button is wired but needs the Developer
+      membership + Sign in with Apple capability to light up (below).
+- [x] Email ingestion backend — DONE 19 Jul: Postmark → Worker → R2, D1 maps
+      Firebase uid → forwarding token, app polls /pending and feeds S6 confirm.
+
+Added 19 Jul 2026 (Firebase + email-in production build):
+
+- [x] Apple Developer membership approved. App ID `com.repertoirestudio.Ben` registered
+      with Sign in with Apple. App Store Connect app created (Apple ID 6797410242,
+      name "Ben: Bill Reminders & Tracker"). Remaining for Apple login in Firebase:
+      create a Sign in with Apple key + enable the Apple provider in Firebase Console.
+- [ ] Verify Firebase Console has Email/Password + Google + Apple providers enabled
+      (project: repertoirestudio-ben).
+- [ ] Google OAuth branding: Google Cloud Console → APIs & Services → OAuth consent
+      screen → App name = "Ben" (and optional logo). This is what users see instead of
+      a Firebase hostname on consent. Native Google Sign-In SDK is wired in-app (Aug 2026);
+      if anything still shows `*.firebaseapp.com`, check Auth → Settings → Authorized domains
+      / custom auth domain later.
+- [ ] Postmark: move off the sandbox/test tier when real user mail should flow
+      (request approval in their dashboard).
+
+## TestFlight (next human step in Xcode)
+Version **1.0**, build **6** is set on `feat/revenuecat-entitlements` (above TestFlight 1.0(5)).
+Archive cannot run from this Linux agent — do it on the Mac:
+
+1. Checkout `feat/revenuecat-entitlements` and pull (`61cbb51` or later, including the build bump).
+2. Open `Ben.xcodeproj` → destination **Any iOS Device**.
+3. Product → Archive → Distribute App → App Store Connect → Upload.
+4. In App Store Connect (Repertoire Studio team): wait for the build, add it to the 1.0 version, **Add for Review** the Ben Pro group + both subscriptions on the **same** submission as that build.
+5. Enable Internal Testing in TestFlight.
+
+## Paywall (flow F)
+Code is live on this branch: hard gate, RevenueCat SDK, restore, StoreKit prices, identity on sign-in.
+ASC group **Ben Pro** exists with yearly/monthly products. Submit them with the next app version.
+
+1. [x] App ID `com.repertoirestudio.Ben` → In-App Purchase (always-on for iOS)
+2. [x] App Store Connect subscription group **Ben Pro**
+      - `com.repertoirestudio.Ben.pro.yearly` — US$49.99/year, 7-day free intro
+      - `com.repertoirestudio.Ben.pro.monthly` — US$5.99/month, no trial
+      - [ ] Optional standing price US$69.99/year if we keep the 29% off / was-price badge (ACCC + App Review)
+      - [ ] Submit the group with the next TestFlight/app version (Apple requires this for the first subscription group)
+3. [x] RevenueCat iOS app + P8 key + Apple products on entitlement `ben_pro`
+4. [x] Apple public SDK key (`appl_…`) in Release builds
+- [x] Restore purchase, Privacy Policy and T&Cs URLs on the offer screen
+- [ ] Source the fee-comparison figures (credit card ~$30, utility ~$15, telco ~$15) properly before ads go live; the $119 Finder yearly average is already cited.

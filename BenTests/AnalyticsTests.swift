@@ -29,6 +29,7 @@ struct AnalyticsTests {
             (.trialAbandonedAtPaywall, "trial_abandoned_at_paywall"),
             (.secondBillPromptShown, "second_bill_prompt_shown"),
             (.forwardingSetup, "forwarding_setup"),
+            (.onboardingCompleted(path: "second_bill"), "onboarding_completed"),
             (.activationDeferred, "activation_deferred"),
             (.notificationTriggered, "notification_triggered"),
             (.appOpenedFromNotification, "app_opened_from_notification")
@@ -36,6 +37,13 @@ struct AnalyticsTests {
         for (event, name) in expectations {
             #expect(event.name == name)
         }
+    }
+
+    @Test func onboardingCompletedCarriesPath() {
+        #expect(
+            AnalyticsEvent.onboardingCompleted(path: "deferred").properties["path"]
+                == .string("deferred")
+        )
     }
 
     @Test func billUploadCompletedCarriesAllSpeccedProperties() {

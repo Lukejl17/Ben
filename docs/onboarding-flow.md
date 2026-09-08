@@ -72,6 +72,9 @@ Forwarding address card (stub): "bills@… — forward any bill email and I'll d
 Decline is first-class: "Later's fine. I'll mention it once this week — that's all."
 > Ben: "One bill down. Got internet or insurance floating around an inbox somewhere? Add it now, forward it later, or leave it with me."
 Events: `second_bill_prompt_shown`, `forwarding_setup`.
+After a second bill is confirmed + reminder set → locked-in screen, then
+`onboarding_completed (path: second_bill)`. “Later's fine” →
+`onboarding_completed (path: deferred)`. That event is the funnel end.
 
 ## Post-session second-bill system (days 0–7)
 | Trigger | Message |
@@ -82,5 +85,5 @@ Events: `second_bill_prompt_shown`, `forwarding_setup`.
 | Abandoned at B1/B2 | One recovery nudge naming the exact stopping point |
 
 ## Metrics (and anti-metrics)
-Track: activation rate, second-bill-within-7-days, paywall view rate (≥85% of installs, session one), trial start rate, day-0 trial cancellations, trial→paid at day 7, % trialists receiving ≥1 real due-date reminder before day 7, notification retention, per-screen drop-offs segmented by failure point.
+Track: activation rate, second-bill-within-7-days, paywall view rate (≥85% of installs, session one), trial start rate, day-0 trial cancellations, trial→paid at day 7, % trialists receiving ≥1 real due-date reminder before day 7, notification retention, per-screen drop-offs segmented by failure point, onboarding completion rate (`onboarding_completed` / `onboarding_started`, segmented by `path`).
 NEVER: DAU, session length, streaks, screens/session.

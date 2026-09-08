@@ -8,14 +8,17 @@ struct AppServices {
     var scheduler: ReminderScheduler
     var subscriptions: any SubscriptionService
     var accounts: any AccountService
+    var emailIn: any EmailInFetching
 
     static func live() -> AppServices {
-        AppServices(
+        let emailIn = EmailInClient()
+        return AppServices(
             analytics: LocalAnalytics(),
             parser: VisionBillParser(),
             scheduler: ReminderScheduler(),
-            subscriptions: StubSubscriptionService(),
-            accounts: StubAccountService()
+            subscriptions: RevenueCatSubscriptionService(),
+            accounts: FirebaseAccountService(emailIn: emailIn),
+            emailIn: emailIn
         )
     }
 
@@ -34,6 +37,11 @@ struct AppServices {
             let suite = UserDefaults(suiteName: "ui-test-account")!
             suite.removePersistentDomain(forName: "ui-test-account")
             services.accounts = StubAccountService(defaults: suite)
+            services.emailIn = MockEmailInClient()
+        }
+        if arguments.contains("-stubAccount") {
+            services.accounts = StubAccountService()
+            services.emailIn = MockEmailInClient()
         }
         if arguments.contains("-freshTrial") {
             let suite = UserDefaults(suiteName: "ui-test-trial")!
@@ -50,7 +58,8 @@ private struct AppServicesKey: EnvironmentKey {
         parser: MockBillParser(),
         scheduler: ReminderScheduler(),
         subscriptions: StubSubscriptionService(),
-        accounts: StubAccountService()
+        accounts: StubAccountService(),
+        emailIn: MockEmailInClient()
     )
 }
 

@@ -113,14 +113,14 @@ final class ScreenshotTests: XCTestCase {
     private func walkFirstBill(_ app: XCUIApplication) {
         XCTAssertTrue(app.staticTexts["You confirm everything before it's saved."].waitForExistence(timeout: 5))
         snap(app, "s4-trust-upload")
-        app.buttons["Choose a photo"].tap()
+        app.buttons["Upload a photo"].tap()
 
-        let confirmCTA = app.buttons["Looks right — track it"]
+        let confirmCTA = app.buttons["Looks right, track it"]
         XCTAssertTrue(confirmCTA.waitForExistence(timeout: 10))
         snap(app, "s6-confirm")
         confirmCTA.tap()
 
-        let setUp = app.buttons["Sounds right — set it up"]
+        let setUp = app.buttons["Sounds right, set it up"]
         XCTAssertTrue(setUp.waitForExistence(timeout: 10))
         snap(app, "s7-reminder-setup")
         setUp.tap()
@@ -136,10 +136,10 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "s7c-overdue-style")
         overdueCTA.tap()
 
-        let s8Continue = app.buttons["Continue"]
-        XCTAssertTrue(s8Continue.waitForExistence(timeout: 15))
+        let apple = app.buttons["Continue with Apple"]
+        XCTAssertTrue(apple.waitForExistence(timeout: 15))
         snap(app, "s13-set-state")
-        s8Continue.tap()
+        apple.tap()
     }
 
     private func walkCommitAndPaywall(_ app: XCUIApplication) {
@@ -152,16 +152,35 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "s14-commit-done")
         sealed.tap()
 
-        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again — and never hear from Ben otherwise."]
+        XCTAssertTrue(app.staticTexts["Never get surprised by a bill again. And never hear from Ben otherwise."]
             .waitForExistence(timeout: 5))
         snap(app, "s15-paywall-outcome")
         app.buttons["Continue"].tap()
-        XCTAssertTrue(app.staticTexts["How the trial works"].waitForExistence(timeout: 5))
-        snap(app, "s15-paywall-timeline")
+
+        let giftCTA = app.buttons["Sounds fair"]
+        XCTAssertTrue(giftCTA.waitForExistence(timeout: 5))
+        sleep(1)  // bell swings, badge pops
+        snap(app, "s15-paywall-gift")
+        giftCTA.tap()
+
+        XCTAssertTrue(app.staticTexts["How your 7 free\ndays work"].waitForExistence(timeout: 5))
+        snap(app, "s15-paywall-rail")
         app.buttons["Continue"].tap()
-        let startTrial = app.buttons["Start my 7-day trial"]
+
+        let compareCTA = app.buttons["Fair enough"]
+        XCTAssertTrue(compareCTA.waitForExistence(timeout: 5))
+        sleep(2)  // bars grow in
+        snap(app, "s15-paywall-compare")
+        compareCTA.tap()
+
+        let startTrial = app.buttons["Start for $0.00"]
         XCTAssertTrue(startTrial.waitForExistence(timeout: 5))
-        snap(app, "s15-paywall-price")
+        snap(app, "s15-paywall-offer")
+        app.buttons["Show me other plans"].tap()
+        XCTAssertTrue(app.staticTexts["Plans, plainly."].waitForExistence(timeout: 5))
+        snap(app, "s15-paywall-plans")
+        app.buttons["Back to the offer"].tap()
+        XCTAssertTrue(startTrial.waitForExistence(timeout: 5))
         startTrial.tap()
 
         let later = app.buttons["Later's fine"]
@@ -177,12 +196,12 @@ final class ScreenshotTests: XCTestCase {
 
         // The add-bill dial, expanded
         app.buttons["Add a bill"].tap()
-        XCTAssertTrue(app.buttons["Choose a photo"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Upload a photo"].waitForExistence(timeout: 5))
         snap(app, "home-add-dial")
         app.buttons["Add a bill"].tap()  // collapse
         let dialGone = expectation(
             for: NSPredicate(format: "exists == FALSE"),
-            evaluatedWith: app.buttons["Choose a photo"]
+            evaluatedWith: app.buttons["Upload a photo"]
         )
         wait(for: [dialGone], timeout: 5)
 
@@ -205,9 +224,9 @@ final class ScreenshotTests: XCTestCase {
         XCTAssertTrue(app.buttons["3 months"].waitForExistence(timeout: 5))
         snap(app, "insights")
 
-        // Settings tab
+        // Settings tab — signed in from S8
         app.tabBars.buttons["Settings"].tap()
-        XCTAssertTrue(app.staticTexts["Not signed in"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Sign out"].waitForExistence(timeout: 5))
         snap(app, "settings")
 
         // Export sheet
@@ -218,16 +237,27 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "settings-export")
         app.swipeDown(velocity: .fast)
 
-        // Email-in (signed out) → account sheet → signed in
+        // Email-in: already signed in from S8 — capture signed-in, then sign out for the empty state.
         XCTAssertTrue(app.buttons["Email bills in"].waitForExistence(timeout: 5))
         app.buttons["Email bills in"].tap()
-        XCTAssertTrue(app.buttons["Set up my address"].waitForExistence(timeout: 5))
-        snap(app, "settings-emailin-signedout")
-        app.buttons["Set up my address"].tap()
-        XCTAssertTrue(app.buttons["Continue with Apple"].waitForExistence(timeout: 5))
-        snap(app, "settings-account-sheet")
-        app.buttons["Continue with Apple"].tap()
         XCTAssertTrue(app.buttons["Copy address"].waitForExistence(timeout: 5))
         snap(app, "settings-emailin-signedin")
+        app.swipeDown(velocity: .fast)
+
+        // Sign out kicks back to the welcome handshake.
+        XCTAssertTrue(app.buttons["Sign out"].waitForExistence(timeout: 5))
+        app.buttons["Sign out"].tap()
+        let signInCTA = app.buttons["I already have an account"]
+        XCTAssertTrue(signInCTA.waitForExistence(timeout: 5))
+        snap(app, "s01-welcome-signedout")
+
+        // The returning-user sign-in page, then straight back to home.
+        signInCTA.tap()
+        let apple = app.buttons["Continue with Apple"]
+        XCTAssertTrue(apple.waitForExistence(timeout: 5))
+        snap(app, "s01b-signin")
+        apple.tap()
+        // Signing back in lands on the Bills tab with the saved bill intact.
+        XCTAssertTrue(app.staticTexts["AGL"].waitForExistence(timeout: 10))
     }
 }

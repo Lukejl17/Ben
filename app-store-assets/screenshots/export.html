@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ben — App Store screenshot board</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Ben tokens (mirror of BenTheme.swift — do not invent new colours) ── */
+:root {
+  --forest-top: #25401C;
+  --forest-bottom: #1B3015;
+  --glow-warm: #3E6B2E;
+  --glow-deep: #173014;
+  --chartreuse: #D3E97A;
+  --on-chartreuse: #22361B;
+  --cream: #FAF3E3;
+  --on-cream: #293223;
+  --on-cream-strong: #2F4A26;
+  --on-cream-eyebrow: #5E7A3A;
+  --on-cream-muted: #6B6B57;
+  --forest-ink: #F8F1DE;
+  --amber: #E9A13B;
+  --lavender: #E7CFF2;
+  --on-lavender: #4A2F5E;
+  --sky: #9CC0CF;
+  --row-fill: rgba(248,241,222,0.07);
+  --row-stroke: rgba(248,241,222,0.15);
+  --baloo: 'Baloo 2', system-ui, sans-serif;
+  --figtree: 'Figtree', system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #101810;
+  font-family: var(--figtree);
+  padding: 48px 32px;
+  color: var(--forest-ink);
+}
+
+h1 { font-family: var(--baloo); font-weight: 800; color: var(--chartreuse); font-size: 28px; margin-bottom: 4px; }
+.board-note { color: rgba(248,241,222,0.6); font-size: 14px; margin-bottom: 40px; max-width: 720px; line-height: 1.5; }
+
+.board { display: flex; gap: 28px; overflow-x: auto; padding-bottom: 24px; }
+
+/* ── Frame: 1290×2796 at 0.28 scale = 361×783 ── */
+.shot {
+  flex: 0 0 auto;
+  width: 361px;
+  height: 783px;
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(420px 420px at 85% -10%, rgba(62,107,46,0.55), transparent),
+    radial-gradient(420px 420px at -10% 110%, rgba(23,48,20,0.55), transparent),
+    linear-gradient(168deg, var(--forest-top), var(--forest-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.shot .index {
+  position: absolute; top: 10px; left: 14px;
+  font-family: var(--baloo); font-weight: 700; font-size: 12px;
+  color: rgba(248,241,222,0.35);
+}
+
+/* Caption block — the ASO copy. HUGE type per the 1/10-size rule. */
+.caption {
+  padding: 52px 30px 24px;
+  text-align: center;
+}
+.caption h2 {
+  font-family: var(--baloo);
+  font-weight: 800;
+  font-size: 31px;
+  line-height: 1.12;
+  color: var(--chartreuse);
+  letter-spacing: -0.01em;
+}
+.caption h2 .ink { color: var(--forest-ink); }
+.caption p {
+  margin-top: 10px;
+  font-size: 14.5px;
+  color: rgba(248,241,222,0.72);
+  line-height: 1.4;
+}
+
+/* Device mock */
+.device {
+  width: 292px;
+  flex: 1;
+  margin-top: 8px;
+  border-radius: 40px 40px 0 0;
+  border: 7px solid #0d130c;
+  border-bottom: none;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(340px 340px at 85% -10%, rgba(62,107,46,0.55), transparent),
+    radial-gradient(340px 340px at -10% 110%, rgba(23,48,20,0.55), transparent),
+    linear-gradient(168deg, var(--forest-top), var(--forest-bottom));
+  box-shadow: 0 -6px 30px rgba(0,0,0,0.45);
+}
+.screen { padding: 40px 16px 16px; height: 100%; }
+.island {
+  position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+  width: 84px; height: 22px; border-radius: 12px; background: #0d130c;
+}
+
+/* ── In-screen components (mirroring real app UI) ── */
+.screen-title { font-family: var(--baloo); font-weight: 800; font-size: 24px; color: var(--chartreuse); margin: 4px 2px 12px; }
+
+.hero-card {
+  background: var(--cream); border-radius: 20px; padding: 16px;
+  box-shadow: 0 12px 22px rgba(0,0,0,0.35);
+  color: var(--on-cream);
+}
+.eyebrow { font-family: var(--baloo); font-weight: 700; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-cream-eyebrow); }
+.hero-card .biller { font-family: var(--baloo); font-weight: 700; font-size: 15px; margin-top: 6px; }
+.hero-card .amount { font-family: var(--baloo); font-weight: 800; font-size: 36px; color: var(--on-cream-strong); line-height: 1.1; }
+.hero-card .due { font-size: 11.5px; color: var(--on-cream-muted); margin-top: 2px; }
+.hero-head { display: flex; justify-content: space-between; align-items: flex-start; }
+.pill {
+  font-family: var(--baloo); font-weight: 700; font-size: 11px;
+  padding: 4px 12px; border-radius: 999px;
+}
+.pill.upcoming { background: var(--lavender); color: var(--on-lavender); }
+.pill.reminder { background: rgba(211,233,122,0.15); color: var(--chartreuse); }
+.pill.paid { background: rgba(211,233,122,0.15); color: var(--chartreuse); }
+
+.row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--row-fill); border: 1px solid var(--row-stroke);
+  border-radius: 16px; padding: 11px 12px; margin-top: 8px;
+}
+.row .dot {
+  width: 30px; height: 30px; border-radius: 999px; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.dot.amber { background: var(--amber); }
+.dot.sky { background: var(--sky); }
+.dot.lavender { background: var(--lavender); }
+.dot.chartreuse { background: var(--chartreuse); }
+.row .info { flex: 1; min-width: 0; }
+.row .name { font-family: var(--baloo); font-weight: 700; font-size: 13px; color: var(--forest-ink); }
+.row .meta { font-size: 10.5px; color: rgba(248,241,222,0.55); }
+.row .amt { font-family: var(--baloo); font-weight: 700; font-size: 13px; color: var(--forest-ink); }
+
+.section-h { font-family: var(--baloo); font-weight: 700; font-size: 13px; color: var(--chartreuse); margin: 14px 2px 2px; }
+
+/* scan frame (shot 2) */
+.scan-frame {
+  border: 2.5px dashed rgba(211,233,122,0.65); border-radius: 20px;
+  height: 300px; margin-top: 8px; position: relative; overflow: hidden;
+  background: rgba(248,241,222,0.04);
+  display: flex; align-items: center; justify-content: center;
+}
+.paper {
+  width: 78%; background: #fff; border-radius: 8px; padding: 14px;
+  color: #333; box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+  font-size: 9px; line-height: 1.6;
+  transform: rotate(-2deg);
+}
+.paper b { font-size: 11px; }
+.paper .big { font-size: 16px; font-weight: 700; color: #111; }
+.scan-line {
+  position: absolute; left: 8%; right: 8%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--chartreuse), transparent);
+  top: 46%; box-shadow: 0 0 14px var(--chartreuse);
+}
+.found {
+  background: var(--cream); border-radius: 16px; padding: 12px 14px; margin-top: 12px; color: var(--on-cream);
+  box-shadow: 0 12px 22px rgba(0,0,0,0.35);
+}
+.found .kv { display: flex; justify-content: space-between; font-size: 11.5px; padding: 4px 0; border-bottom: 1px solid rgba(41,50,35,0.08); }
+.found .kv:last-child { border-bottom: none; }
+.found .kv b { font-family: var(--baloo); }
+.confirm-btn {
+  margin-top: 12px; background: var(--chartreuse); color: var(--on-chartreuse);
+  font-family: var(--baloo); font-weight: 700; font-size: 14px;
+  border-radius: 999px; padding: 12px; text-align: center;
+  box-shadow: 0 6px 24px rgba(211,233,122,0.3);
+}
+
+/* notification (shot 3) */
+.notif {
+  background: rgba(250,243,227,0.96); border-radius: 18px; padding: 12px 14px;
+  color: var(--on-cream); box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+  display: flex; gap: 10px; align-items: flex-start; margin-top: 10px;
+}
+.notif .app-icon {
+  width: 34px; height: 34px; border-radius: 8.5px; flex: 0 0 auto;
+  background: linear-gradient(160deg, var(--forest-top), var(--forest-bottom));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--baloo); font-weight: 800; color: var(--chartreuse); font-size: 16px;
+}
+.notif .n-title { font-family: var(--baloo); font-weight: 700; font-size: 12.5px; }
+.notif .n-body { font-size: 11.5px; color: var(--on-cream-muted); margin-top: 1px; line-height: 1.35; }
+.notif .n-time { font-size: 9.5px; color: var(--on-cream-muted); margin-left: auto; flex: 0 0 auto; }
+.quiet-note {
+  text-align: center; margin-top: 22px; font-family: var(--baloo); font-weight: 600;
+  font-size: 13px; color: rgba(248,241,222,0.55);
+}
+
+/* pay card (shot 4) */
+.pay-card {
+  background: var(--cream); border-radius: 20px; padding: 14px; margin-top: 10px;
+  color: var(--on-cream); box-shadow: 0 12px 22px rgba(0,0,0,0.35);
+}
+.pay-card .kv {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11.5px; padding: 7px 0; border-bottom: 1px solid rgba(41,50,35,0.08);
+}
+.pay-card .kv:last-child { border-bottom: none; }
+.pay-card .kv .v { font-family: var(--baloo); font-weight: 700; }
+.copy-ic { opacity: 0.45; font-size: 11px; margin-left: 8px; }
+.copied-toast {
+  margin: 14px auto 0; width: fit-content;
+  background: var(--chartreuse); color: var(--on-chartreuse);
+  font-family: var(--baloo); font-weight: 700; font-size: 12px;
+  border-radius: 999px; padding: 8px 18px;
+  box-shadow: 0 6px 24px rgba(211,233,122,0.35);
+}
+
+/* privacy (shot 5) */
+.privacy-hero {
+  margin-top: 26px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.shield {
+  width: 110px; height: 110px; border-radius: 999px;
+  background: rgba(211,233,122,0.12); border: 2px solid rgba(211,233,122,0.5);
+  display: flex; align-items: center; justify-content: center; font-size: 44px;
+}
+.privacy-list { margin-top: 18px; }
+.p-row { display: flex; gap: 10px; align-items: center; padding: 9px 4px; font-size: 13px; color: var(--forest-ink); }
+.p-row .tick { color: var(--chartreuse); font-family: var(--baloo); font-weight: 800; }
+
+/* month view (shot 6) */
+.month-widgets { display: flex; gap: 8px; margin-top: 8px; }
+.mini {
+  flex: 1; border: 1px solid var(--row-stroke); background: var(--row-fill);
+  border-radius: 16px; padding: 12px;
+}
+.mini .eyebrow { color: rgba(211,233,122,0.8); }
+.mini .big { font-family: var(--baloo); font-weight: 800; font-size: 22px; color: var(--chartreuse); margin-top: 4px; }
+.mini .sub { font-size: 10px; color: rgba(248,241,222,0.55); }
+
+/* footer note */
+.export-note { margin-top: 36px; color: rgba(248,241,222,0.45); font-size: 13px; max-width: 720px; line-height: 1.6; }
+.export-note code { color: var(--chartreuse); }
+</style>
+
+<style id="export-override">
+body { padding: 0 !important; background: #000 !important; overflow: hidden !important; }
+h1, .board-note, .export-note, .index { display: none !important; }
+.board { display: block !important; gap: 0 !important; padding: 0 !important; overflow: visible !important; }
+.shot {
+  width: 1290px !important;
+  height: 2796px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  page-break-after: always;
+  transform: none !important;
+}
+.caption { padding: 160px 110px 80px !important; }
+.caption h2 { font-size: 96px !important; line-height: 1.1 !important; }
+.caption p { font-size: 42px !important; margin-top: 28px !important; }
+.device {
+  width: 980px !important;
+  border-radius: 72px 72px 0 0 !important;
+  border-width: 14px !important;
+  margin-top: 20px !important;
+}
+.island { width: 220px !important; height: 58px !important; top: 22px !important; border-radius: 30px !important; }
+.screen { padding: 100px 48px 48px !important; }
+.screen-title { font-size: 72px !important; margin: 12px 6px 36px !important; }
+.hero-card { border-radius: 48px !important; padding: 40px !important; }
+.eyebrow { font-size: 24px !important; }
+.hero-card .biller { font-size: 40px !important; }
+.hero-card .amount { font-size: 110px !important; }
+.hero-card .due { font-size: 30px !important; }
+.pill { font-size: 28px !important; padding: 10px 28px !important; }
+.row { gap: 24px !important; border-radius: 36px !important; padding: 28px 30px !important; margin-top: 18px !important; }
+.row .dot { width: 72px !important; height: 72px !important; font-size: 34px !important; }
+.row .name { font-size: 34px !important; }
+.row .meta { font-size: 26px !important; }
+.row .amt { font-size: 34px !important; }
+.section-h { font-size: 34px !important; margin: 36px 6px 8px !important; }
+.scan-frame { height: 900px !important; border-radius: 48px !important; border-width: 5px !important; }
+.paper { padding: 40px !important; font-size: 26px !important; border-radius: 20px !important; }
+.paper b { font-size: 32px !important; }
+.paper .big { font-size: 48px !important; }
+.found { border-radius: 40px !important; padding: 32px 36px !important; margin-top: 32px !important; }
+.found .kv { font-size: 30px !important; padding: 12px 0 !important; }
+.confirm-btn { font-size: 36px !important; padding: 32px !important; margin-top: 32px !important; border-radius: 999px !important; }
+.notif { border-radius: 44px !important; padding: 32px 36px !important; gap: 24px !important; margin-top: 28px !important; }
+.notif .app-icon { width: 84px !important; height: 84px !important; border-radius: 20px !important; font-size: 40px !important; }
+.notif .n-title { font-size: 32px !important; }
+.notif .n-body { font-size: 28px !important; }
+.notif .n-time { font-size: 24px !important; }
+.quiet-note { font-size: 34px !important; margin-top: 60px !important; }
+.pay-card { border-radius: 48px !important; padding: 36px !important; margin-top: 28px !important; }
+.pay-card .kv { font-size: 30px !important; padding: 18px 0 !important; }
+.copy-ic { font-size: 28px !important; }
+.copied-toast { font-size: 30px !important; padding: 20px 44px !important; margin-top: 36px !important; }
+.privacy-hero { margin-top: 70px !important; gap: 36px !important; }
+.shield { width: 280px !important; height: 280px !important; font-size: 110px !important; }
+.privacy-list { margin-top: 48px !important; }
+.p-row { gap: 24px !important; padding: 22px 10px !important; font-size: 34px !important; }
+.month-widgets { gap: 20px !important; margin-top: 20px !important; }
+.mini { border-radius: 40px !important; padding: 30px !important; }
+.mini .big { font-size: 58px !important; }
+.mini .sub { font-size: 24px !important; }
+</style>
+
+</head>
+<body>
+
+<h1>Ben — App Store screenshots</h1>
+<p class="board-note">
+Six frames, in listing order. Caption copy is locked in <code>docs/app-store-listing.md</code>;
+visuals are the riffing surface. Aspect is 1290×2796 (6.9″) at 28% scale.
+Rules baked in: benefit-first frame 1, trust by frame 5, scenario framing, huge caption type,
+AUD + AU dates, terracotta-never-red, no superlatives, no pricing.
+</p>
+
+<div class="board">
+
+  <!-- ── 1 · Hero benefit ── -->
+  <div class="shot">
+    <div class="index">1</div>
+    <div class="caption">
+      <h2>Know what's due —<br><span class="ink">without the stress.</span></h2>
+      <p>Every bill, one calm place.</p>
+    </div>
+    <div class="device"><div class="island"></div><div class="screen">
+      <div class="screen-title">Bills</div>
+      <div class="hero-card">
+        <div class="hero-head">
+          <span class="eyebrow">Next up</span>
+          <span class="pill upcoming">Upcoming</span>
+        </div>
+        <div class="biller">AGL · Electricity</div>
+        <div class="amount">$243.00</div>
+        <div class="due">Due Friday 24 July · reminder set</div>
+      </div>
+      <div class="section-h">Next 7 days</div>
+      <div class="row">
+        <div class="dot amber">⚡</div>
+        <div class="info"><div class="name">AGL</div><div class="meta">Electricity · due 24 Jul</div></div>
+        <div class="amt">$243.00</div>
+      </div>
+      <div class="row">
+        <div class="dot sky">💧</div>
+        <div class="info"><div class="name">Sydney Water</div><div class="meta">Water · due 28 Jul</div></div>
+        <div class="amt">$187.50</div>
+      </div>
+      <div class="row">
+        <div class="dot lavender">📶</div>
+        <div class="info"><div class="name">Telstra</div><div class="meta">Internet · due 1 Aug</div></div>
+        <div class="amt">$89.00</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ── 2 · Scan ── -->
+  <div class="shot">
+    <div class="index">2</div>
+    <div class="caption">
+      <h2>Snap a bill.<br><span class="ink">Ben reads the rest.</span></h2>
+      <p>Biller, amount, due date — found in seconds.</p>
+    </div>
+    <div class="device"><div class="island"></div><div class="screen">
+      <div class="scan-frame">
+        <div class="paper">
+          <b>AGL Energy</b><br>
+          Tax invoice · Account 3044 6621<br><br>
+          Amount due<br>
+          <span class="big">$243.00</span><br>
+          Due date: 24 July 2026<br>
+          BPAY biller code 93880
+        </div>
+        <div class="scan-line"></div>
+      </div>
+      <div class="found">
+        <span class="eyebrow">Ben found</span>
+        <div class="kv"><span>Biller</span><b>AGL Energy</b></div>
+        <div class="kv"><span>Amount</span><b>$243.00</b></div>
+        <div class="kv"><span>Due</span><b>Fri 24 July 2026</b></div>
+      </div>
+      <div class="confirm-btn">Looks right — save it</div>
+    </div></div>
+  </div>
+
+  <!-- ── 3 · Reminder ── -->
+  <div class="shot">
+    <div class="index">3</div>
+    <div class="caption">
+      <h2>A nudge before it's due.<br><span class="ink">Then quiet.</span></h2>
+      <p>One clear reminder. No nagging, ever.</p>
+    </div>
+    <div class="device"><div class="island"></div><div class="screen">
+      <div style="margin-top: 60px;">
+        <div class="notif">
+          <div class="app-icon">b</div>
+          <div>
+            <div class="n-title">Ben</div>
+            <div class="n-body">Your AGL bill ($243.00) is due this Friday. Payment details are ready when you are.</div>
+          </div>
+          <div class="n-time">Tue 9:00 am</div>
+        </div>
+        <div class="quiet-note">That's the only one you'll get.</div>
+        <div style="margin-top: 40px;">
+          <div class="row">
+            <div class="dot chartreuse">✓</div>
+            <div class="info"><div class="name">Telstra — paid</div><div class="meta">No reminder needed</div></div>
+            <span class="pill paid">Paid</span>
+          </div>
+          <div class="row">
+            <div class="dot sky">💧</div>
+            <div class="info"><div class="name">Sydney Water</div><div class="meta">Quiet until 26 July</div></div>
+            <span class="pill reminder">Reminder set</span>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ── 4 · Pay ── -->
+  <div class="shot">
+    <div class="index">4</div>
+    <div class="caption">
+      <h2>Pay in two taps.</h2>
+      <p>BPAY and account details, ready to paste into your banking app.</p>
+    </div>
+    <div class="device"><div class="island"></div><div class="screen">
+      <div class="screen-title" style="font-size:20px;">AGL · $243.00</div>
+      <div class="pay-card">
+        <span class="eyebrow">Pay this one</span>
+        <div class="kv"><span>BPAY biller code</span><span><span class="v">93880</span><span class="copy-ic">⧉</span></span></div>
+        <div class="kv"><span>BPAY reference</span><span><span class="v">2043 4455 6677</span><span class="copy-ic">⧉</span></span></div>
+        <div class="kv"><span>BSB</span><span><span class="v">062-000</span><span class="copy-ic">⧉</span></span></div>
+        <div class="kv"><span>Account</span><span><span class="v">13579246</span><span class="copy-ic">⧉</span></span></div>
+      </div>
+      <div class="copied-toast">BPAY reference copied ✓</div>
+      <div style="margin-top: 26px;">
+        <div class="confirm-btn">✓ Mark as paid</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ── 5 · Trust / privacy ── -->
+  <div class="shot">
+    <div class="index">5</div>
+    <div class="caption">
+      <h2>Your bills stay<br><span class="ink">on your phone.</span></h2>
+      <p>No bank logins. No account. Nothing leaves your device.</p>
+    </div>
+    <div class="device"><div class="island"></div><div class="screen">
+      <div class="privacy-hero">
+        <div class="shield">🔒</div>
+      </div>
+      <div class="privacy-list">
+        <div class="p-row"><span class="tick">✓</span> Bills read on-device, never uploaded</div>
+        <div class="p-row"><span class="tick">✓</span> No bank connections, ever</div>
+        <div class="p-row"><span class="tick">✓</span> No account to create</div>
+        <div class="p-row"><span class="tick">✓</span> Nothing saved without your say-so</div>
+        <div class="p-row"><span class="tick">✓</span> Your data is yours to delete, any time</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ── 6 · Scenario / breadth ── -->
+  <div class="shot">
+    <div class="index">6</div>
+    <div class="caption">
+      <h2>Rent, power, rego —<br><span class="ink">one calm place.</span></h2>
+      <p>Everything with a due date, sorted.</p>
+    </div>
+    <div class="device"><div class="island"></div><div class="screen">
+      <div class="screen-title">July</div>
+      <div class="month-widgets">
+        <div class="mini">
+          <span class="eyebrow">This month</span>
+          <div class="big">$2,314</div>
+          <div class="sub">6 bills</div>
+        </div>
+        <div class="mini">
+          <span class="eyebrow">All sorted</span>
+          <div class="big">6 of 6</div>
+          <div class="sub">reminders set</div>
+        </div>
+      </div>
+      <div class="section-h">Coming up</div>
+      <div class="row"><div class="dot lavender">🏠</div><div class="info"><div class="name">Rent</div><div class="meta">due 1 Aug</div></div><div class="amt">$1,540</div></div>
+      <div class="row"><div class="dot amber">⚡</div><div class="info"><div class="name">AGL</div><div class="meta">due 24 Jul</div></div><div class="amt">$243.00</div></div>
+      <div class="row"><div class="dot sky">🚗</div><div class="info"><div class="name">Rego — NSW</div><div class="meta">due 15 Aug</div></div><div class="amt">$389.00</div></div>
+      <div class="row"><div class="dot chartreuse">📺</div><div class="info"><div class="name">Netflix</div><div class="meta">due 30 Jul</div></div><div class="amt">$22.99</div></div>
+    </div></div>
+  </div>
+
+</div>
+
+<p class="export-note">
+To export at full App Store resolution: set <code>.shot</code> to 1290×2796 (remove the scale)
+and screenshot each frame, or rebuild the winning direction in Figma using these tokens.
+Fonts here are the real app fonts (Baloo 2 + Figtree via Google Fonts).
+Riff notes welcome — captions are locked in <code>docs/app-store-listing.md</code>, visuals are not.
+</p>
+
+</body>
+</html>

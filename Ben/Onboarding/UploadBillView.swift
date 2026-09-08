@@ -12,7 +12,7 @@ struct UploadBillView: View {
             BenCard {
                 VStack(alignment: .leading, spacing: 16) {
                     trustRow(symbol: "doc.text.viewfinder", fill: .sky, iconColor: .onSky,
-                             text: "I read the issuer, amount and due date — nothing else.")
+                             text: "I read the issuer, amount and due date, nothing else.")
                     trustRow(symbol: "checkmark.seal", fill: .chartreuse, iconColor: .onChartreuse,
                              text: "You confirm everything before it's saved.")
                     trustRow(symbol: "trash", fill: .amber, iconColor: .onAmber,
@@ -30,19 +30,19 @@ struct UploadBillView: View {
             VStack(spacing: 12) {
                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
                     methodCard(symbol: "camera.fill", chip: (.chartreuse, .onChartreuse),
-                               label: "Take a photo", detail: "Point it at the bill — I'll do the reading", method: .camera)
+                               label: "Take a photo", detail: "Point it at the bill and I'll do the reading", method: .camera)
                 }
                 methodCard(symbol: "photo.on.rectangle.angled", chip: (.chartreuse, .onChartreuse),
-                           label: "Choose a photo", detail: "From your photo library", method: .photo)
+                           label: "Upload a photo", detail: "From your photo library", method: .photo)
                 methodCard(symbol: "doc.fill", chip: (.sky, .onSky),
-                           label: "PDF or file", detail: "Straight from an email attachment", method: .pdf)
+                           label: "Upload a PDF or file", detail: "Straight from an email attachment", method: .pdf)
                 emailMethodRow
             }
 
             if tonightNudgeScheduled {
                 HStack(spacing: 10) {
                     BenIconCircle(systemName: "moon.fill", fill: .amber, iconColor: .onAmber, size: 36)
-                    BenVoiceText(text: "Done — I'll give you a nudge tonight. No rush.", quiet: true)
+                    BenVoiceText(text: "Done. I'll give you a nudge tonight. No rush.", quiet: true)
                 }
                 .padding(.top, 4)
             }
@@ -133,7 +133,7 @@ private struct NoBillSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
-            BenVoiceText(text: "No worries — bills have a way of turning up. Two options:", quiet: true)
+            BenVoiceText(text: "No worries, bills have a way of turning up. Two options:", quiet: true)
                 .padding(.top, 30)
 
             BenPrimaryButton(title: "Remind me tonight", systemImage: "moon.fill") {

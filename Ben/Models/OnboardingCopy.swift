@@ -67,9 +67,10 @@ enum OnboardingCopy {
 
     static func volumeEcho(_ volume: BillVolume) -> String {
         switch volume {
-        case .oneToThree: "Even 3 bills a month is 3 things you shouldn't have to remember."
-        case .fourToSeven: "5-ish bills a month means something's due almost every week. No wonder it hums."
-        case .eightToTwelve: "10 bills a month is a part-time job you never applied for."
+        case .oneToThree:
+            "That's often just power and rent. Most people have twice that once streaming, phone and gym are in."
+        case .fourToSeven: "5-ish things a month means something's due almost every week. No wonder it hums."
+        case .eightToTwelve: "10 a month is a part-time job you never applied for."
         case .lostCount: "Step one: we'll count them. Step two: you stop counting forever."
         }
     }
