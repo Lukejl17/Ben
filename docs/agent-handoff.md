@@ -43,7 +43,7 @@ On the support-desk worker (see PR stack on `copy/no-em-dashes`):
 2. Investigate in `github.com/Lukejl17/Ben`.
 3. Fix, test, open a PR. Cloud Linux VMs cannot run Xcode; say so if you could not build.
 4. Reply in the same Slack thread starting with `Kit · engineer`. Do not paste the PR URL (Cursor attaches it).
-5. Do not merge.
+5. Final-review and merge after sign-off. Luke merges only for a defined severity-1 case (none yet). If this environment cannot merge, say so.
 
 ## Slack replies (why "hey Kit" can be silent)
 

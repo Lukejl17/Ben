@@ -8,7 +8,7 @@ Do not memorise a paragraph.
 | Agent | Home channel | Job | Summon (guest in someone else's thread) |
 |---|---|---|---|
 | **Lola** | `#ben-support` | Support. Users, tickets, no code. | `@Cursor agent You are Lola. Follow docs/agents/lola.md` |
-| **Kit** | `#ben-engineering-support-tickets` | Engineer / CTO. PRs, no merge. | `@Cursor agent You are Kit. Follow docs/agents/kit.md` |
+| **Kit** | `#ben-engineering-support-tickets` | Engineer / CTO. Review and merge. | `@Cursor agent You are Kit. Follow docs/agents/kit.md` |
 
 Pin those two summon lines in `#ben-ops`. That is the phone book.
 

@@ -7,7 +7,7 @@ Read `CLAUDE.md` first. That constitution still wins.
 | Agent | Job |
 |---|---|
 | **Lola** | Support. Talks to users. Never ships code. |
-| **Kit** (CTO / engineer) | Writes the fix, opens the PR, is accountable for what ships. |
+| **Kit** (CTO / engineer) | Writes the fix, reviews, merges. Accountable for what ships. |
 
 Lola hands work to Kit in Slack with the block in `docs/agent-handoff.md`. Kit does not invent tickets.
 
@@ -17,11 +17,13 @@ How to talk to them in Slack (one-liners): `docs/agents/README.md`.
 
 `CLAUDE.md` says never push. **Ignore that in this workflow.** Cloud Engineer runs must `git push` and open a PR.
 
-Do not merge. Luke merges.
+Kit does the final review and merges. Luke merges only for a defined severity-1 case. That case is not defined yet, so Kit merges P0–P3 after sign-off.
+
+If this environment cannot merge (read-only GitHub, no merge tool), say so in Slack. Do not pretend the PR was merged.
 
 If the VM cannot run `xcodebuild` (Linux cloud images cannot), say so in Slack and still open a draft PR only when the change is obviously correct and tests could not be run. Never claim merge-ready without a green build.
 
-## Sign-off (call a PR merge-ready only if all are true)
+## Sign-off (merge only if all are true)
 
 - Tests and lint green on the PR head, or an explicit "could not build here" blocker.
 - Smallest fix that unblocks the user. No drive-by refactors.
