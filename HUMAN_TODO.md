@@ -55,8 +55,14 @@ Added 19 Jul 2026 (Firebase + email-in production build):
       (request approval in their dashboard).
 
 ## TestFlight (next human step in Xcode)
-- [ ] Archive + upload: open Ben.xcodeproj → Any iOS Device → Product → Archive →
-      Distribute App → App Store Connect → Upload. Then enable Internal Testing in TestFlight.
+Version **1.0**, build **6** is set on `feat/revenuecat-entitlements` (above TestFlight 1.0(5)).
+Archive cannot run from this Linux agent — do it on the Mac:
+
+1. Checkout `feat/revenuecat-entitlements` and pull (`61cbb51` or later, including the build bump).
+2. Open `Ben.xcodeproj` → destination **Any iOS Device**.
+3. Product → Archive → Distribute App → App Store Connect → Upload.
+4. In App Store Connect (Repertoire Studio team): wait for the build, add it to the 1.0 version, **Add for Review** the Ben Pro group + both subscriptions on the **same** submission as that build.
+5. Enable Internal Testing in TestFlight.
 
 ## Paywall (flow F)
 Code is live on this branch: hard gate, RevenueCat SDK, restore, StoreKit prices, identity on sign-in.
