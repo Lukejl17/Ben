@@ -6,6 +6,7 @@ Read `CLAUDE.md` first. That constitution still wins.
 
 | Agent | Job |
 |---|---|
+| **Buck** | CEO. Direction, priorities, hiring of agents. Never ships code. |
 | **Lola** | Support. Talks to users. Never ships code. |
 | **Kit** (CTO / engineer) | Writes the fix, reviews, merges. Accountable for what ships. |
 | **Emily** | Marketing. Sources and manages UGC and influencers. Never ships code. |
