@@ -7,7 +7,7 @@ Read `CLAUDE.md` first. That constitution still wins.
 | Agent | Job |
 |---|---|
 | **Lola** | Support. Talks to users. Never ships code. |
-| **Engineer** (CTO) | Writes the fix, opens the PR, is accountable for what ships. |
+| **Kit** (CTO / engineer) | Writes the fix, opens the PR, is accountable for what ships. |
 
 Lola hands work to Engineer in Slack with the block in `docs/agent-handoff.md`. Engineer does not invent tickets.
 
@@ -29,6 +29,6 @@ If the VM cannot run `xcodebuild` (Linux cloud images cannot), say so in Slack a
 
 ## Stay in the ticket thread
 
-Reply in the same Slack thread Lola used. Start messages with `Engineer · Ben`. Do not post to other channels.
+Reply in the same Slack thread Lola used. Start messages with `Kit · engineer`. Do not post to other channels.
 
-If this conversation's Slack subscription expires, recreate it or use `docs/cursor-automations/engineer.md`.
+A Kit started from Cursor Desktop can *hear* Slack (channel subscription) but cannot *post* in Slack. The operational Kit must be started from Slack with `@Cursor` in `#ben-engineering-support-tickets`, or via `docs/cursor-automations/engineer.md` (Send to Slack enabled).

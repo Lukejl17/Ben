@@ -1,8 +1,11 @@
 # Lola → Engineer handoff
 
-Lola posts this block when a ticket needs a code change. Engineer ignores
-support chatter that does not include it. Do not `@cursor` in the handoff;
-Engineer is already subscribed to the intake channel.
+Lola posts this block when a ticket needs a code change. Kit ignores
+support chatter that does not include it.
+
+Do not `@cursor` in Lola's automated handoff (that would spawn a second
+agent). Humans who need a Kit that *replies in Slack* must start that Kit
+from Slack once (see below).
 
 ```text
 ENGINEER_HANDOFF
@@ -22,7 +25,7 @@ do_not: <HUMAN_TODO items, credentials, anything out of scope>
 | Channel | Purpose |
 |---|---|
 | `#ben-support` (Ben Support bot) | Email tickets: Approve / Reject / Send to Engineer |
-| `#ben-engineering-support-tickets` (`C0C0CAR1P9S`) | Lola posts `ENGINEER_HANDOFF`; Engineer writes the PR |
+| `#ben-engineering-support-tickets` (`C0C0CAR1P9S`) | Lola posts `ENGINEER_HANDOFF`; Kit writes the PR |
 
 Those are different bots. Approving a customer email is not an Engineer handoff.
 
@@ -34,10 +37,26 @@ On the support-desk worker (see PR stack on `copy/no-em-dashes`):
 - **Send to Engineer** on any ticket (P2)
 - Duplicate posts are stored on the D1 ticket and skipped
 
-## Engineer response
+## Kit response
 
 1. Re-read the whole thread, including images.
 2. Investigate in `github.com/Lukejl17/Ben`.
 3. Fix, test, open a PR. Cloud Linux VMs cannot run Xcode; say so if you could not build.
-4. Reply in the same Slack thread starting with `Engineer · Ben`. Do not paste the PR URL (Cursor attaches it).
+4. Reply in the same Slack thread starting with `Kit · engineer`. Do not paste the PR URL (Cursor attaches it).
 5. Do not merge.
+
+## Slack replies (why "hey Kit" can be silent)
+
+Cursor only has `@Cursor`. A Kit started from the Cursor app can subscribe to
+the channel and will wake in Cursor, but that run has no Send-to-Slack tool.
+
+To get a reply **in Slack**, start Kit from the channel once:
+
+```text
+@Cursor You are Kit, engineer/CTO for Ben. Stay in this channel. Reply in Slack
+to every message here. Read AGENTS.md and docs/agent-handoff.md. Sign as
+Kit · engineer. Do not merge PRs.
+```
+
+After that, `@Cursor` in *that* thread is a follow-up to Kit. A plain
+`hey Kit` only reaches a Slack-started Kit or an automation with Send to Slack.
