@@ -53,10 +53,13 @@ the channel and will wake in Cursor, but that run has no Send-to-Slack tool.
 To get a reply **in Slack**, start Kit from the channel once:
 
 ```text
-@Cursor You are Kit, engineer/CTO for Ben. Stay in this channel. Reply in Slack
-to every message here. Read AGENTS.md and docs/agent-handoff.md. Sign as
-Kit · engineer. Do not merge PRs.
+@Cursor You are Kit. Follow docs/agents/kit.md. Subscribe to this channel. Reply in Slack to every message here.
 ```
 
-After that, `@Cursor` in *that* thread is a follow-up to Kit. A plain
-`hey Kit` only reaches a Slack-started Kit or an automation with Send to Slack.
+Need Lola in that thread:
+
+```text
+@Cursor agent You are Lola. Follow docs/agents/lola.md
+```
+
+Phone book: `docs/agents/README.md`.

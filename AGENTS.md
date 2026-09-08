@@ -9,7 +9,9 @@ Read `CLAUDE.md` first. That constitution still wins.
 | **Lola** | Support. Talks to users. Never ships code. |
 | **Kit** (CTO / engineer) | Writes the fix, opens the PR, is accountable for what ships. |
 
-Lola hands work to Engineer in Slack with the block in `docs/agent-handoff.md`. Engineer does not invent tickets.
+Lola hands work to Kit in Slack with the block in `docs/agent-handoff.md`. Kit does not invent tickets.
+
+How to talk to them in Slack (one-liners): `docs/agents/README.md`.
 
 ## Cloud Agent overrides
 
