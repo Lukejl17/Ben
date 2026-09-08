@@ -24,10 +24,12 @@ Pin those summon lines in `#ben-ops`. That is the phone book.
 
 There is only one `@Cursor` handle. Agents do not DM each other.
 
-- **Kit never posts `@Cursor`.** In Kit's thread that pings Kit or clones him.
-- Need another agent from a ticket: Luke goes to their home channel, **or** Luke pastes their summon line as a reply in the current thread. The named agent answers and stops.
+- **No named agent posts `@Cursor`.** In their thread that pings them or starts a clone.
+- Need another agent: Luke goes to their home channel, **or** the current agent gives Luke that person's summon line from the roster above to paste as a reply in this thread. Then ⋯ on **their** reply. The guest answers and stops.
 - Hand work to Kit with `ENGINEER_HANDOFF` in `#ben-engineering-support-tickets` and **no** `@Cursor`. Kit's channel subscription picks it up.
 - Follow-ups: ⋯ on **that** agent's reply. Do not `@Cursor` again unless you mean a new agent.
+
+Every `docs/agents/<name>.md` must include: read this phone book each task, never post `@Cursor`, give Luke the roster summon when someone else is needed.
 
 ## Slack setup (Luke — this agent cannot create Slack channels)
 
@@ -67,4 +69,6 @@ Rename the Ben Support Slack app display name to **Lola** if you want email card
 
 ## Future agents
 
-Add a public channel, add a `docs/agents/<name>.md`, add one summon line to the roster, pin it in `#ben-ops`, start them once with `@Cursor You are <name>. Follow docs/agents/<name>.md. Subscribe to this channel.`
+1. Add `docs/agents/<name>.md` (job bullets **plus** the three communication lines every persona already has: read this phone book, never post `@Cursor`, guest answers and stops).
+2. Add one roster row and the once-only Slack start line in this file. That is how existing agents learn the new person. Do not edit every other persona.
+3. Pin the summon in `#ben-ops`. Create the home channel. Start them **once** there with `@Cursor You are <name>. Follow docs/agents/<name>.md. Subscribe to this channel. Reply in Slack to every message here.`
