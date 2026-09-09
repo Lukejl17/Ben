@@ -1,0 +1,10 @@
+{
+  "name": "ben-support-desk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.js",
+    "sync-playbooks": "node scripts/sync-playbooks.js",
+    "go-live": "node scripts/go-live.mjs"
+  }
+}

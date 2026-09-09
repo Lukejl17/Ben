@@ -11,6 +11,11 @@ Pre-seeded — these need Luke, not Claude:
 - [ ] Upload the next build to TestFlight from a Mac (Product > Archive). This Linux agent cannot do that.
 - [ ] PostHog project + API key → replace LocalAnalytics
 - [ ] Email forwarding ingestion backend (S10 forwarding address is display-only)
+- [ ] Support desk go-live (logins, not git): Cloudflare D1 `ben-support-tickets`
+      + worker `ben-support-desk` secrets (`WEBHOOK_SECRET`, `SLACK_BOT_TOKEN`,
+      `SLACK_SIGNING_SECRET`, `POSTMARK_SERVER_TOKEN`), Postmark **Ben Support Desk**
+      inbound webhook, forward `support@benandbill.app`, invite `@Ben Support` to
+      `#ben-support` and `#ben-engineering-support-tickets`. Do not change bills inbound.
 - [ ] Ben's illustration (clay + ink palette, one calm expression, ≤44pt — replaces SF Symbol placeholder)
 
 Added overnight (14 Jul 2026):
