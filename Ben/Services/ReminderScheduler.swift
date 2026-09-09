@@ -363,4 +363,42 @@ extension ReminderScheduler {
     func cancel(identifiers: [String]) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
     }
+
+    /// Lapse: every pending local notification stops. Silence is the product.
+    func cancelAllPending() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
+
+    /// Pre-charge heads-up, scheduled from the trial start the user just confirmed.
+    @discardableResult
+    func schedulePreChargeReminder(
+        daysBeforeEnd: Int,
+        from start: Date = .now,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) async -> String? {
+        cancel(identifiers: [TrialChargeReminder.identifier])
+        guard let trigger = TrialChargeReminder.triggerDate(
+            daysBeforeEnd: daysBeforeEnd, from: start, now: now, calendar: calendar
+        ) else { return nil }
+        let content = UNMutableNotificationContent()
+        content.title = "Ben"
+        content.body = TrialChargeReminder.body(daysBeforeEnd: daysBeforeEnd)
+        content.sound = .default
+        content.userInfo = ["kind": "trial_pre_charge"]
+        let request = UNNotificationRequest(
+            identifier: TrialChargeReminder.identifier,
+            content: content,
+            trigger: UNCalendarNotificationTrigger(
+                dateMatching: calendar.dateComponents([.year, .month, .day, .hour, .minute], from: trigger),
+                repeats: false
+            )
+        )
+        do {
+            try await UNUserNotificationCenter.current().add(request)
+            return TrialChargeReminder.identifier
+        } catch {
+            return nil
+        }
+    }
 }

@@ -12,6 +12,8 @@ struct PaywallView: View {
     @State private var yearlySelected = true
     @State private var trackedPages: Set<Int> = []
     @State private var abandonmentTracked = false
+    @State private var isBusy = false
+    @State private var errorLine: String?
 
     var body: some View {
         ZStack {
@@ -35,12 +37,20 @@ struct PaywallView: View {
                         withAnimation(.spring(duration: 0.35)) { page += 1 }
                     }
                 } else {
-                    BenPrimaryButton(title: "Start my 7-day trial") { startTrial() }
+                    if let errorLine {
+                        Text(errorLine)
+                            .font(.benMeta)
+                            .foregroundStyle(Color.forestInk.opacity(0.7))
+                            .multilineTextAlignment(.center)
+                    }
+                    BenPrimaryButton(title: isBusy ? "Working…" : "Start my 7-day trial") { startTrial() }
+                        .disabled(isBusy)
                     Text(yearlySelected
-                         ? "US$49.99/yr after the trial · cancel anytime in one tap"
-                         : "US$5.99/mo after the trial · cancel anytime in one tap")
+                         ? "\(services.subscriptions.pricing.annualPrice)/yr after the trial · cancel anytime in one tap"
+                         : "\(services.subscriptions.pricing.monthlyPrice)/mo after the trial · cancel anytime in one tap")
                         .font(.benMeta)
                         .foregroundStyle(Color.forestInk.opacity(0.5))
+                    PaywallLegalRow(onRestore: restorePurchases)
                 }
             }
             .padding(.horizontal, 20)
@@ -56,6 +66,7 @@ struct PaywallView: View {
             }
         }
         .onAppear { trackPage(0) }
+        .task { await services.subscriptions.refresh() }
         .onChange(of: page) { _, newPage in trackPage(newPage) }
         .onChange(of: scenePhase) { _, phase in
             // Hard paywall: the only way out without a trial is leaving the app.
@@ -182,13 +193,16 @@ struct PaywallView: View {
                 recapCard
 
                 PriceCard(
-                    plan: .init(title: "Yearly", badge: "Best value", price: "US$49.99",
-                                cadence: "/yr", detail: "≈ US$4.17 a month"),
+                    plan: .init(title: "Yearly", badge: "Best value",
+                                price: services.subscriptions.pricing.annualPrice,
+                                cadence: "/yr",
+                                detail: "≈ \(services.subscriptions.pricing.annualPerMonth) a month"),
                     selected: yearlySelected
                 ) { yearlySelected = true }
 
                 PriceCard(
-                    plan: .init(title: "Monthly", badge: nil, price: "US$5.99",
+                    plan: .init(title: "Monthly", badge: nil,
+                                price: services.subscriptions.pricing.monthlyPrice,
                                 cadence: "/mo", detail: "Cancel anytime"),
                     selected: !yearlySelected
                 ) { yearlySelected = false }
@@ -246,11 +260,116 @@ struct PaywallView: View {
     }
 
     private func startTrial() {
-        // HUMAN: App Store Connect products (annual US$49.99 / monthly US$5.99,
-        // 7-day intro trial) + RevenueCat purchase flow replace this stub.
+        guard !isBusy else { return }
+        errorLine = nil
         services.subscriptions.startTrial(preChargeReminderDaysBeforeEnd: reminderDaysBeforeEnd)
+        if !services.subscriptions.usesRemoteEntitlements {
+            Task { await finishEntitledStart() }
+            return
+        }
+        isBusy = true
+        let plan: SubscriptionPlan = yearlySelected ? .annual : .monthly
+        let subscriptions = services.subscriptions
+        Task {
+            do {
+                let outcome = try await subscriptions.purchase(plan)
+                isBusy = false
+                switch outcome {
+                case .cancelled:
+                    break
+                case .entitled:
+                    await finishEntitledStart()
+                }
+            } catch {
+                isBusy = false
+                errorLine = error.localizedDescription
+            }
+        }
+    }
+
+    private func restorePurchases() {
+        guard !isBusy else { return }
+        errorLine = nil
+        isBusy = true
+        let subscriptions = services.subscriptions
+        Task {
+            do {
+                _ = try await subscriptions.restore()
+                isBusy = false
+                await finishEntitledStart()
+            } catch {
+                isBusy = false
+                errorLine = error.localizedDescription
+            }
+        }
+    }
+
+    @MainActor
+    private func finishEntitledStart() async {
+        await services.scheduler.schedulePreChargeReminder(daysBeforeEnd: reminderDaysBeforeEnd)
         services.analytics.track(.trialStarted)
         coordinator.advance(to: .secondBill)
+    }
+}
+
+/// Restore plus privacy, terms, and support. Quiet, at the thumb.
+struct PaywallLegalRow: View {
+    var onRestore: (() -> Void)?
+    @Environment(\.openURL) private var openURL
+    @Environment(\.services) private var services
+    @State private var restoreError: String?
+
+    var body: some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 8) {
+                Button(action: restore) {
+                    Text("Restore purchase")
+                        .font(.system(size: 11.5))
+                        .foregroundStyle(Color.forestInk.opacity(0.45))
+                }
+                divider
+                legal("Privacy", url: BenLegalLinks.privacy)
+                divider
+                legal("T&Cs", url: BenLegalLinks.terms)
+                divider
+                legal("Support", url: BenLegalLinks.support)
+            }
+            if let restoreError {
+                Text(restoreError)
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.6))
+            }
+        }
+    }
+
+    private var divider: some View {
+        Text("|").foregroundStyle(Color.forestInk.opacity(0.25)).font(.benMeta)
+    }
+
+    private func legal(_ label: String, url: URL) -> some View {
+        Button {
+            openURL(url)
+        } label: {
+            Text(label)
+                .font(.system(size: 11.5))
+                .foregroundStyle(Color.forestInk.opacity(0.45))
+        }
+    }
+
+    private func restore() {
+        if let onRestore {
+            onRestore()
+            return
+        }
+        restoreError = nil
+        let subscriptions = services.subscriptions
+        Task {
+            do {
+                _ = try await subscriptions.restore()
+            } catch {
+                restoreError = error.localizedDescription
+            }
+        }
     }
 }
 

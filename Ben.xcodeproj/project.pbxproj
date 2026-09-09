@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C1A2B3D4E5F60718293A4B03 /* RevenueCatSubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3D4E5F60718293A4B02 /* RevenueCatSubscriptionService.swift */; };
+		C1A2B3D4E5F60718293A4B05 /* TrialChargeReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3D4E5F60718293A4B04 /* TrialChargeReminder.swift */; };
+		C1A2B3D4E5F60718293A4B07 /* BenLegalLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3D4E5F60718293A4B06 /* BenLegalLinks.swift */; };
+		C1A2B3D4E5F60718293A4B09 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C1A2B3D4E5F60718293A4B08 /* PrivacyInfo.xcprivacy */; };
+		C1A2B3D4E5F60718293A4B01 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = C1A2B3D4E5F60718293A4B0B /* RevenueCat */; };
 		010EAE7CA74E583E5504C5CF /* Figtree-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0EB85E914FDAF24118261013 /* Figtree-OFL.txt */; };
 		0D64BDEC7E1257CFB8C1A0BD /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */; };
 		0EFF8DAA8068086F9F1A4EC4 /* ReminderStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992D3AAAD100AE4EBFCBFA41 /* ReminderStyleView.swift */; };
@@ -19,7 +24,6 @@
 		2724569FD26CFD971ABBB546 /* Baloo2-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = AFB59CB04E7AE7B9C1F20E17 /* Baloo2-OFL.txt */; };
 		290840CB65F5A8112D7FFD04 /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB8FDDA1965289582EAB498 /* CategoryPickerSheet.swift */; };
 		29FBB6B6C3799C225BF3A1AC /* BillStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF5FBAB28356CDDE316E68A /* BillStatusTests.swift */; };
-		2A9870AAD1857D8FB07CACE9 /* ConfettiBurst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D10B48F7915788B42436D5 /* ConfettiBurst.swift */; };
 		2DDF88E3C66E6F3FD45DFA75 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE7D358CE9DD7567DEE507 /* Analytics.swift */; };
 		30C0567FBE22A4A470816003 /* ReminderSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3694F56DE31849A2C2C49A /* ReminderSchedulerTests.swift */; };
 		3306C19B21C87B4D1CB6B5BA /* BenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C98855D95537CDA714CA2 /* BenTests.swift */; };
@@ -101,6 +105,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C1A2B3D4E5F60718293A4B02 /* RevenueCatSubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatSubscriptionService.swift; sourceTree = "<group>"; };
+		C1A2B3D4E5F60718293A4B04 /* TrialChargeReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialChargeReminder.swift; sourceTree = "<group>"; };
+		C1A2B3D4E5F60718293A4B06 /* BenLegalLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenLegalLinks.swift; sourceTree = "<group>"; };
+		C1A2B3D4E5F60718293A4B08 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0134544487EB6E60560B0ECF /* OnboardingAnswersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAnswersTests.swift; sourceTree = "<group>"; };
 		0B330F481868C852CC1118F7 /* AccountSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheet.swift; sourceTree = "<group>"; };
 		0CB8CCF1C3B5AC411FD338C2 /* BillRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillRow.swift; sourceTree = "<group>"; };
@@ -132,7 +140,6 @@
 		7EBCD7F4F8044A5C00421325 /* BenUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		802742BF58D4B5F84095413C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		80B76F4C029AF4124C7FBB17 /* PaymentDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDetailsTests.swift; sourceTree = "<group>"; };
-		83D10B48F7915788B42436D5 /* ConfettiBurst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiBurst.swift; sourceTree = "<group>"; };
 		85AAFF1EA8A85A8657AF1413 /* ConfirmBillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmBillView.swift; sourceTree = "<group>"; };
 		87989AA43748F65C5431A8CE /* SubscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionTests.swift; sourceTree = "<group>"; };
 		880CE6FA14E78D37DC9B2C79 /* InsightsMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsMath.swift; sourceTree = "<group>"; };
@@ -181,6 +188,17 @@
 		F76653553158ABD93AA95A68 /* OnboardingV2Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingV2Components.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		C1A2B3D4E5F60718293A4B0C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1A2B3D4E5F60718293A4B01 /* RevenueCat in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		0A189D815590F1831DFB2971 /* Models */ = {
 			isa = PBXGroup;
@@ -211,6 +229,7 @@
 				F620063485E9C32AEFFFCA9A /* BenApp.swift */,
 				7A884086B3F417CFBD382BA0 /* ContentView.swift */,
 				D1FEB6A681D22FBFC5617414 /* Info.plist */,
+				C1A2B3D4E5F60718293A4B08 /* PrivacyInfo.xcprivacy */,
 				4933FDDE8FEF95385269C564 /* Home */,
 				B91433100B73C4D99FF80C9D /* Insights */,
 				0A189D815590F1831DFB2971 /* Models */,
@@ -253,8 +272,8 @@
 			isa = PBXGroup;
 			children = (
 				D5F2CCEE2A9C323E66090979 /* BenComponents.swift */,
+				C1A2B3D4E5F60718293A4B06 /* BenLegalLinks.swift */,
 				48D4F001318AA2CE3A5FE684 /* BenTheme.swift */,
-				83D10B48F7915788B42436D5 /* ConfettiBurst.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -337,7 +356,9 @@
 				F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */,
 				9680FB75DCD09A1EF814B503 /* PaymentDetails.swift */,
 				A3FE7C86E066B7A77F16EA65 /* ReminderScheduler.swift */,
+				C1A2B3D4E5F60718293A4B02 /* RevenueCatSubscriptionService.swift */,
 				E9069EEDC762F738D1DD7364 /* Subscription.swift */,
+				C1A2B3D4E5F60718293A4B04 /* TrialChargeReminder.swift */,
 				2841117AF82C3AB361A867C2 /* VisionBillParser.swift */,
 			);
 			path = Services;
@@ -386,6 +407,7 @@
 			buildConfigurationList = 274B578A90C0995B1EFB9D20 /* Build configuration list for PBXNativeTarget "Ben" */;
 			buildPhases = (
 				22CD437722A6190564E81B61 /* Sources */,
+				C1A2B3D4E5F60718293A4B0C /* Frameworks */,
 				DB40E72A3CA0396FB317EB6C /* Resources */,
 			);
 			buildRules = (
@@ -394,6 +416,7 @@
 			);
 			name = Ben;
 			packageProductDependencies = (
+				C1A2B3D4E5F60718293A4B0B /* RevenueCat */,
 			);
 			productName = Ben;
 			productReference = 50A75E32DF28C87EAF49B530 /* Ben.app */;
@@ -445,13 +468,13 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					8A72EDE34CD5048E59B6F88A = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 4CGY239475;
 					};
 					A914CBA982E3E8C1A5375942 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 4CGY239475;
 					};
 					B526510B8CCDF8704FB5D37D = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 4CGY239475;
 						TestTargetID = 8A72EDE34CD5048E59B6F88A;
 					};
 				};
@@ -465,6 +488,9 @@
 			);
 			mainGroup = CF8D65C00845EE784B1A1BE8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C1A2B3D4E5F60718293A4B0A /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 158E7D901E4856F17A23C2E4 /* Products */;
 			projectDirPath = "";
@@ -487,6 +513,7 @@
 				FE5C73B74554461B38F1C992 /* Baloo2-Variable.ttf in Resources */,
 				010EAE7CA74E583E5504C5CF /* Figtree-OFL.txt in Resources */,
 				A1BF2CB391D822994EE18DDF /* Figtree-Variable.ttf in Resources */,
+				C1A2B3D4E5F60718293A4B09 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,7 +541,6 @@
 				1BF35BEC62CBA34E9491D64C /* CaptureExtractView.swift in Sources */,
 				290840CB65F5A8112D7FFD04 /* CategoryPickerSheet.swift in Sources */,
 				DDF0B27A443760BC4F922D3B /* CommitView.swift in Sources */,
-				2A9870AAD1857D8FB07CACE9 /* ConfettiBurst.swift in Sources */,
 				EB27BCBAFB7274AA519D35DB /* ConfirmBillView.swift in Sources */,
 				7F896B8291A920CCBB060D03 /* ContentView.swift in Sources */,
 				332B27E45AC2F1C476C88B21 /* DemoScanView.swift in Sources */,
@@ -543,6 +569,9 @@
 				7F951AF38A942A27521B9023 /* RecurrenceSheet.swift in Sources */,
 				4750C81187E6BDD96304987A /* ReminderOverrideSheet.swift in Sources */,
 				E8B177DBC1A4F227A48A5F3C /* ReminderScheduler.swift in Sources */,
+				C1A2B3D4E5F60718293A4B03 /* RevenueCatSubscriptionService.swift in Sources */,
+				C1A2B3D4E5F60718293A4B05 /* TrialChargeReminder.swift in Sources */,
+				C1A2B3D4E5F60718293A4B07 /* BenLegalLinks.swift in Sources */,
 				BE2374539EE478AA4F5117E3 /* ReminderSetupView.swift in Sources */,
 				0EFF8DAA8068086F9F1A4EC4 /* ReminderStyleView.swift in Sources */,
 				58B702598516EB1AC8295C3B /* RemindersSection.swift in Sources */,
@@ -604,13 +633,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = Ben/Info.plist;
+				MARKETING_VERSION = 1.0;
+				REVENUECAT_API_KEY = "";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukelongworth.Ben;
+				PRODUCT_BUNDLE_IDENTIFIER = com.repertoirestudio.Ben;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -651,7 +683,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4CGY239475;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -669,6 +701,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				CURRENT_PROJECT_VERSION = 1;
+				REVENUECAT_API_KEY = "";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -690,7 +725,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukelongworth.BenUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.repertoirestudio.BenUITests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Ben;
@@ -707,7 +742,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukelongworth.BenUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.repertoirestudio.BenUITests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Ben;
@@ -749,7 +784,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 4CGY239475;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -761,6 +796,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				CURRENT_PROJECT_VERSION = 1;
+				REVENUECAT_API_KEY = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -776,13 +814,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = Ben/Info.plist;
+				MARKETING_VERSION = 1.0;
+				REVENUECAT_API_KEY = "";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukelongworth.Ben;
+				PRODUCT_BUNDLE_IDENTIFIER = com.repertoirestudio.Ben;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -798,7 +839,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukelongworth.BenTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.repertoirestudio.BenTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ben.app/Ben";
@@ -815,7 +856,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lukelongworth.BenTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.repertoirestudio.BenTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ben.app/Ben";
@@ -862,6 +903,26 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C1A2B3D4E5F60718293A4B0A /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.43.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C1A2B3D4E5F60718293A4B0B /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C1A2B3D4E5F60718293A4B0A /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+/* End XCSwiftPackageProductDependency section */
+
 	};
 	rootObject = D3F1AF2B0E7BCE65B30FA84A /* Project object */;
 }
