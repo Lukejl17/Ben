@@ -9,15 +9,20 @@ enum RevenueCatConfig {
     static let annualProductID = "com.repertoirestudio.Ben.pro.yearly"
     static let monthlyProductID = "com.repertoirestudio.Ben.pro.monthly"
 
-    /// HUMAN: RevenueCat API key — set `REVENUECAT_API_KEY` in Xcode build
-    /// settings or copy `Secrets.xcconfig.example` to gitignored `Secrets.xcconfig`.
-    /// Never commit `appl_` / `test_` keys.
+    /// Public SDK keys from the Ben RevenueCat project. These ship in the app
+    /// binary by design. The secret API key stays in the RevenueCat dashboard.
+    #if DEBUG
+    static let publicAPIKey = "test_gFiejDuyEqiMmhPUOIgOvtqFqzg"
+    #else
+    static let publicAPIKey = "appl_WDkpoJXREbCyPnslnpnkJGUFnvP"
+    #endif
+
     static var resolvedAPIKey: String {
         if let plist = Bundle.main.object(forInfoDictionaryKey: "REVENUECAT_API_KEY") as? String {
             let trimmed = plist.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmed.isEmpty, !trimmed.hasPrefix("$(") { return trimmed }
         }
-        return ""
+        return publicAPIKey
     }
 
     static var isConfigured: Bool { !resolvedAPIKey.isEmpty }
