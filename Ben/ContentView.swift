@@ -4,6 +4,7 @@ struct ContentView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(NotificationRouter.self) private var notificationRouter
+    @Environment(\.services) private var services
 
     init() {
         // UI-test hook: a clean run every launch.
@@ -36,6 +37,19 @@ struct ContentView: View {
             guard requested, !hasCompletedOnboarding else { return }
             notificationRouter.resumeUploadRequested = false
             coordinator.advance(to: .upload)
+        }
+        .task {
+            await services.subscriptions.refresh()
+            TrialEntitlementEffects.apply(
+                state: services.subscriptions.state(),
+                scheduler: services.scheduler
+            )
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .benSubscriptionDidChange)) { _ in
+            TrialEntitlementEffects.apply(
+                state: services.subscriptions.state(),
+                scheduler: services.scheduler
+            )
         }
         // UI-test hook for the dark-mode screenshot pass.
         .preferredColorScheme(

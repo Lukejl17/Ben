@@ -3,12 +3,7 @@ import SwiftUI
 /// Create or sign in to a Ben account — unlocks sync, backup, and the
 /// email-in address. Stub providers today; real SDKs are HUMAN-gated.
 struct AccountSheet: View {
-    @Environment(\.services) private var services
-    @Environment(\.dismiss) private var dismiss
     var onSignedIn: ((BenAccount) -> Void)?
-
-    @State private var isWorking = false
-    @State private var errorLine: String?
 
     var body: some View {
         ScrollView {
@@ -31,23 +26,16 @@ struct AccountSheet: View {
                 benefitRow(symbol: "lock.fill", fill: .amber, iconColor: .onAmber,
                            title: "Still yours", detail: "You pay for Ben, so your data is never the product.")
 
-                if let errorLine {
-                    Text(errorLine)
-                        .font(.benMeta)
-                        .foregroundStyle(Color.statusLateFg)
-                }
-
                 VStack(spacing: 10) {
-                    providerButton(
-                        title: "Continue with Apple", systemImage: "applelogo", provider: .apple
-                    )
-                    providerButton(
-                        title: "Continue with Google", systemImage: "g.circle.fill", provider: .google
-                    )
+                    Text("Account sign-in isn't on this build. Sign in with Apple isn't entitled yet, so there's nothing to tap.")
+                        .font(.benMeta)
+                        .foregroundStyle(Color.forestInk.opacity(0.6))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
                 }
                 .padding(.top, 8)
 
-                Text("No passwords, no spam. Signing in creates your Ben account.")
+                Text("No passwords, no spam. Sign-in lands when Apple entitles it.")
                     .font(.benMeta)
                     .foregroundStyle(Color.forestInk.opacity(0.5))
                     .frame(maxWidth: .infinity)
@@ -55,13 +43,6 @@ struct AccountSheet: View {
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
-        }
-        .overlay {
-            if isWorking {
-                ProgressView()
-                    .controlSize(.large)
-                    .tint(.chartreuse)
-            }
         }
         .benSheetClose()
     }
@@ -86,30 +67,7 @@ struct AccountSheet: View {
         .benRowSurface(radius: 22)
     }
 
-    /// HUMAN: swap StubAccountService internals for ASAuthorization (Apple,
-    /// needs the Sign in with Apple capability) and GoogleSignIn SDK (needs
-    /// an OAuth client ID). These buttons and the flow stay unchanged.
-    private func providerButton(
-        title: String, systemImage: String, provider: BenAccount.Provider
-    ) -> some View {
-        BenSecondaryButton(title: title, systemImage: systemImage) {
-            guard !isWorking else { return }
-            isWorking = true
-            errorLine = nil
-            let accounts = services.accounts
-            let analytics = services.analytics
-            Task {
-                do {
-                    let account = try await accounts.signIn(with: provider)
-                    analytics.track(.accountCreated)
-                    onSignedIn?(account)
-                    dismiss()
-                } catch {
-                    errorLine = error.localizedDescription
-                }
-                isWorking = false
-            }
-        }
-        .accessibilityIdentifier(title)
-    }
+    // HUMAN: Sign in with Apple entitlement + Google Sign-In SDK are still
+    // gated. Do not show Continue with Apple / Google until then, and do not
+    // fake an account.
 }

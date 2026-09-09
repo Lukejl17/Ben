@@ -218,16 +218,16 @@ final class ScreenshotTests: XCTestCase {
         snap(app, "settings-export")
         app.swipeDown(velocity: .fast)
 
-        // Email-in (signed out) → account sheet → signed in
+        // Email-in (signed out) → account sheet (sign-in hidden until SIWA)
         XCTAssertTrue(app.buttons["Email bills in"].waitForExistence(timeout: 5))
         app.buttons["Email bills in"].tap()
         XCTAssertTrue(app.buttons["Set up my address"].waitForExistence(timeout: 5))
         snap(app, "settings-emailin-signedout")
         app.buttons["Set up my address"].tap()
-        XCTAssertTrue(app.buttons["Continue with Apple"].waitForExistence(timeout: 5))
+        XCTAssertTrue(
+            app.staticTexts["Account sign-in isn't on this build. Sign in with Apple isn't entitled yet, so there's nothing to tap."]
+                .waitForExistence(timeout: 5)
+        )
         snap(app, "settings-account-sheet")
-        app.buttons["Continue with Apple"].tap()
-        XCTAssertTrue(app.buttons["Copy address"].waitForExistence(timeout: 5))
-        snap(app, "settings-emailin-signedin")
     }
 }

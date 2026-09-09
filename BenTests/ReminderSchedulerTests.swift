@@ -149,4 +149,37 @@ struct ReminderSchedulerTests {
         )
         #expect(body == "Ben here — Sydney Water is due 24 July.")
     }
+
+    @Test func preChargeTwoDaysBeforeLandsOnDayFiveAtNine() {
+        let trigger = TrialChargeReminder.triggerDate(
+            daysBeforeEnd: 2, from: date(13, hour: 10), now: date(13, hour: 10), calendar: calendar, hour: 9
+        )
+        #expect(trigger == date(18, hour: 9))
+    }
+
+    @Test func preChargeOneDayBeforeLandsOnDaySix() {
+        let trigger = TrialChargeReminder.triggerDate(
+            daysBeforeEnd: 1, from: date(13), now: date(13), calendar: calendar, hour: 9
+        )
+        #expect(trigger == date(19, hour: 9))
+    }
+
+    @Test func preChargeDropsWhenAlreadyPassed() {
+        let trigger = TrialChargeReminder.triggerDate(
+            daysBeforeEnd: 2, from: date(13), now: date(19), calendar: calendar, hour: 9
+        )
+        #expect(trigger == nil)
+    }
+
+    @Test func preChargeCopyIsFactual() {
+        #expect(
+            TrialChargeReminder.body(daysBeforeEnd: 2)
+                == "Ben here — the trial ends in 2 days. Cancel in Settings if you don't want to continue."
+        )
+        #expect(
+            TrialChargeReminder.body(daysBeforeEnd: 1)
+                == "Ben here — the trial ends tomorrow. Cancel in Settings if you don't want to continue."
+        )
+    }
 }
+

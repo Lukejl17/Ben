@@ -11,7 +11,6 @@ struct BillDetailView: View {
     @State private var showRecurrence = false
     @State private var showReminderOverride = false
     @State private var askCadenceAfterPaid = false
-    @State private var showConfetti = false
 
     var body: some View {
         ScrollView {
@@ -147,15 +146,10 @@ struct BillDetailView: View {
                     .padding(.bottom, 12)
             }
         }
-        .overlay {
-            if showConfetti {
-                ConfettiBurst()
-            }
-        }
         .benSheetClose()
     }
 
-    /// Paid is a small win — confetti, a success haptic, then the cadence ask.
+    /// Paid: cancel reminders, a success haptic, then the cadence ask. No confetti.
     private func markPaid() {
         bill.paidAt = .now
         services.scheduler.cancel(identifiers: bill.notificationIDs)
@@ -163,15 +157,10 @@ struct BillDetailView: View {
         bill.hasNotification = false
         try? modelContext.save()
         UINotificationFeedbackGenerator().notificationOccurred(.success)
-        withAnimation { showConfetti = true }
-        Task {
-            try? await Task.sleep(for: .seconds(1.15))
-            // The natural moment to ask about cadence — once.
-            if bill.recurrence == BillRecurrence.none.rawValue {
-                askCadenceAfterPaid = true
-            } else {
-                dismiss()
-            }
+        if bill.recurrence == BillRecurrence.none.rawValue {
+            askCadenceAfterPaid = true
+        } else {
+            dismiss()
         }
     }
 }

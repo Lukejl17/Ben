@@ -1,0 +1,77 @@
+{
+  "identifier" : "BenProducts",
+  "nonRenewingSubscriptions" : [],
+  "products" : [],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "ben_pro_group",
+      "localizations" : [
+        {
+          "description" : "Calm bill reminders.",
+          "displayName" : "Ben Pro",
+          "locale" : "en_AU"
+        }
+      ],
+      "name" : "Ben Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "49.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "ben_pro_annual_internal",
+          "introductoryOffer" : {
+            "displayPrice" : "0",
+            "internalID" : "ben_pro_annual_intro",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "A year of calm bill reminders.",
+              "displayName" : "Ben Pro Annual",
+              "locale" : "en_AU"
+            }
+          ],
+          "productID" : "com.repertoirestudio.Ben.pro.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual",
+          "subscriptionGroupID" : "ben_pro_group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : []
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "5.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "ben_pro_monthly_internal",
+          "localizations" : [
+            {
+              "description" : "Month to month, cancel anytime.",
+              "displayName" : "Ben Pro Monthly",
+              "locale" : "en_AU"
+            }
+          ],
+          "productID" : "com.repertoirestudio.Ben.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly",
+          "subscriptionGroupID" : "ben_pro_group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : []
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

@@ -3,9 +3,6 @@ import SwiftUI
 /// S8 — you're set. Calm text, no celebration.
 struct SetStateView: View {
     @Environment(OnboardingCoordinator.self) private var coordinator
-    @Environment(\.services) private var services
-    @State private var accountSaved = false
-    @State private var showAccountSheet = false
 
     private var bill: Bill? { coordinator.confirmedBill }
 
@@ -69,35 +66,9 @@ struct SetStateView: View {
                 .font(.benMeta)
                 .foregroundStyle(Color.forestInk.opacity(0.5))
         } cta: {
-            if !accountSaved {
-                BenSecondaryButton(
-                    title: "Create a free account",
-                    systemImage: "person.crop.circle.badge.plus"
-                ) {
-                    showAccountSheet = true
-                }
-                Text("Backs up your bills and settings if you change phones. Optional.")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.55))
-                    .frame(maxWidth: .infinity)
-            } else {
-                Text("Setup saved to your account.")
-                    .font(.benMeta)
-                    .foregroundStyle(Color.forestInk.opacity(0.65))
-                    .frame(maxWidth: .infinity)
-            }
-
             BenPrimaryButton(title: "Continue") {
                 coordinator.advance(to: .commit)
             }
-        }
-        .sheet(isPresented: $showAccountSheet) {
-            AccountSheet { _ in
-                accountSaved = true
-            }
-            .presentationDetents([.large])
-            .presentationCornerRadius(28)
-            .presentationBackground(Color.forestBottom)
         }
     }
 

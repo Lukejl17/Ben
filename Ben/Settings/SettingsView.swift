@@ -175,9 +175,9 @@ struct SettingsView: View {
             days == 1 ? "Trial — last day" : "Trial — \(days) days left",
             "Full access. Cancel anytime in one tap."
         )
+        case .subscribed: ("Ben Pro", "Full access. Manage in your Apple ID subscriptions.")
         case .lapsed: ("Trial ended", "Bills stay visible; reminders are off.")
         }
-        // HUMAN: RevenueCat — replace with live entitlement + manage link.
         return VStack(alignment: .leading, spacing: 2) {
             BenEyebrow(text: "Subscription", color: Color.forestInk.opacity(0.55))
             Text(line.0)
