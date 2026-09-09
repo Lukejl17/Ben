@@ -4,12 +4,11 @@ Pre-seeded — these need Luke, not Claude:
 
 - [x] Apple Developer account + DEVELOPMENT_TEAM in project.yml (device builds / TestFlight)
   Team `4CGY239475` (Repertoire Studio). Bundle ID `com.repertoirestudio.Ben`.
-- [ ] Sign in with Apple capability + entitlement (S8 account save is hidden until then)
-- [ ] RevenueCat **API key at archive time** — SDK is wired; do not commit keys.
-      Copy `Secrets.xcconfig.example` → `Secrets.xcconfig` (gitignored) and paste the
-      Apple public SDK key (`appl_…`). Or set `REVENUECAT_API_KEY` in Xcode build settings.
+- [ ] Sign in with Apple capability + entitlement (account buttons stay hidden until then)
+- [x] RevenueCat public SDK key in the app (Test Store in Debug, Apple `appl_` in Release).
       Products: `com.repertoirestudio.Ben.pro.yearly` / `.monthly`, entitlement `ben_pro`.
-- [ ] App Store Connect products: annual US$49.99 / monthly US$5.99, 7-day intro trial
+- [ ] App Store Connect: yearly US$49.99 with 7-day free trial, monthly US$5.99, if they are not already live
+- [ ] Upload the next build to TestFlight from a Mac (Product > Archive). This Linux agent cannot do that.
 - [ ] PostHog project + API key → replace LocalAnalytics
 - [ ] Email forwarding ingestion backend (S10 forwarding address is display-only)
 - [ ] Ben's illustration (clay + ink palette, one calm expression, ≤44pt — replaces SF Symbol placeholder)

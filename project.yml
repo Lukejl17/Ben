@@ -14,9 +14,6 @@ settings:
     DEVELOPMENT_TEAM: "4CGY239475"  # Repertoire Studio Pty Ltd
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
-    # HUMAN: RevenueCat API key — set locally, never commit. Empty means purchases
-    # throw notConfigured until Luke pastes the appl_ key into Secrets.xcconfig.
-    REVENUECAT_API_KEY: ""
 targets:
   Ben:
     type: application
