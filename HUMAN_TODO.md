@@ -58,3 +58,10 @@ Added 19 Jul 2026 (Firebase + email-in production build):
 - [ ] App Store Connect: the US$69.99 anchor behind "FREE TRIAL + 29% OFF" must be a genuine standing price (App Review and the ACCC both check was-prices).
 - [ ] Wire Restore purchase (RevenueCat restore), Privacy Policy and T&Cs URLs on the offer screen (currently no-ops).
 - [ ] Source the fee-comparison figures (credit card ~$30, utility ~$15, telco ~$15) properly before ads go live; the $119 Finder yearly average is already cited.
+
+## Engineer agent (Lola handoff)
+
+- [ ] Invite the **Ben Support** Slack bot to `#ben-engineering-support-tickets` (`/invite @Ben Support`). Without this, Lola cannot post `ENGINEER_HANDOFF` and Engineer never wakes.
+- [ ] After deploy, run `npx wrangler d1 execute ben-support-tickets --file=schema-engineer.sql --remote` once if D1 already existed.
+- [ ] For Engineer to verify iOS builds: start a Cursor self-hosted worker on a Mac with Xcode 26+ (`cursor worker start`) and keep it connected. Cloud Linux VMs cannot run `xcodebuild`.
+
