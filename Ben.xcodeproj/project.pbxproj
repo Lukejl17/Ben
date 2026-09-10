@@ -9,11 +9,13 @@
 /* Begin PBXBuildFile section */
 		010EAE7CA74E583E5504C5CF /* Figtree-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0EB85E914FDAF24118261013 /* Figtree-OFL.txt */; };
 		08165EF101103878DD9D1922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFA0C4864C4E68D071A3E3E1 /* GoogleService-Info.plist */; };
+		08963F6074767C93F5045538 /* RevenueCatSubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D932FBB6C5C8E8912FA3EBB9 /* RevenueCatSubscriptionService.swift */; };
 		0C23B4D09C1AB3317F7E0CF6 /* LiveActivityPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127CDDDDDEAD00B60CFCC9B8 /* LiveActivityPolicyTests.swift */; };
 		0D64BDEC7E1257CFB8C1A0BD /* NotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */; };
 		0EFF8DAA8068086F9F1A4EC4 /* ReminderStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992D3AAAD100AE4EBFCBFA41 /* ReminderStyleView.swift */; };
 		0F637FC6FA78E72B563B376B /* InstallmentSplitSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F675022B57E929716FFAC418 /* InstallmentSplitSheet.swift */; };
 		12203E1D44D1FD626A7FF6CC /* InterviewViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C55F74B507145DEF5BCCB9F /* InterviewViews.swift */; };
+		129FBB98F8D15A89D8CAA5D6 /* SubscriptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F44E5E715A1DA2349E712FF0 /* SubscriptionController.swift */; };
 		13B2FE3003C8B6800F35EF84 /* LocalAccountSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD01A3B78A4F107098ED50 /* LocalAccountSession.swift */; };
 		15916B09963465496E88A1FF /* BillCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D653B3B22406BC54F1F235F /* BillCategory.swift */; };
 		1A59B790D20C78506934A32B /* InstallmentSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF353C097B4F9CC01738BA6E /* InstallmentSplitter.swift */; };
@@ -63,6 +65,7 @@
 		6445D6286C3B9BF72F793618 /* AddBillDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = E641C46D03C05D69E76D5A32 /* AddBillDial.swift */; };
 		6751B634CAB2658CD7A47843 /* PaymentApprovalFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3288753C14422D2CE2EBB9A4 /* PaymentApprovalFields.swift */; };
 		6A5C0714C7497A99E7266308 /* BillDocumentImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2105670C56C26E9A5ABE7948 /* BillDocumentImage.swift */; };
+		6AA389CA17B1B16F8F849B41 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F74A8C64AF7892ADD8827E36 /* RevenueCat */; };
 		6CF9AFD7C4E657043F50410D /* IntentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA80A2E4EC074A63F77B8FB /* IntentView.swift */; };
 		6E6325C97725B0530643010F /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633D0752B06B1ED76E3AFB27 /* OnboardingCoordinator.swift */; };
 		6EBF5D2863D4F4ECC3FBD993 /* BenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FE0778C4F862592E060A1C /* BenUITests.swift */; };
@@ -244,6 +247,7 @@
 		D1FEB6A681D22FBFC5617414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D5F2CCEE2A9C323E66090979 /* BenComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenComponents.swift; sourceTree = "<group>"; };
 		D853ACCC7A4596D8497D055A /* ReminderSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSetupView.swift; sourceTree = "<group>"; };
+		D932FBB6C5C8E8912FA3EBB9 /* RevenueCatSubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatSubscriptionService.swift; sourceTree = "<group>"; };
 		D9744BD8828BD4119D2EC87F /* CaptureExtractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureExtractView.swift; sourceTree = "<group>"; };
 		DA72EE4D249FE8E4C433C9B2 /* ExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSheet.swift; sourceTree = "<group>"; };
 		DA9D7FB21DDBD8046995E0ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -260,6 +264,7 @@
 		F1EF49DAB576B55EF2DCD5DD /* NotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRouter.swift; sourceTree = "<group>"; };
 		F2F66AAE2BD688E561016374 /* FirebaseAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAccountService.swift; sourceTree = "<group>"; };
 		F382FD8D205142C78D09142F /* WelcomeGreetingReel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeGreetingReel.swift; sourceTree = "<group>"; };
+		F44E5E715A1DA2349E712FF0 /* SubscriptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionController.swift; sourceTree = "<group>"; };
 		F536126BA06D59B1DC3B13FA /* Baloo2-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-Variable.ttf"; sourceTree = "<group>"; };
 		F56833A66BB0AF77CFE00E5C /* DemoScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoScanView.swift; sourceTree = "<group>"; };
 		F5A73E72637A952F057D3FA2 /* BenProviderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenProviderButton.swift; sourceTree = "<group>"; };
@@ -290,6 +295,7 @@
 			files = (
 				4E0B01485618E49223C9AD65 /* FirebaseAuth in Frameworks */,
 				50FD5F7B106808CCD9655EB2 /* GoogleSignIn in Frameworks */,
+				6AA389CA17B1B16F8F849B41 /* RevenueCat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,7 +514,9 @@
 				9680FB75DCD09A1EF814B503 /* PaymentDetails.swift */,
 				385C99E139D5FDE478173D1F /* PendingEmailMonitor.swift */,
 				A3FE7C86E066B7A77F16EA65 /* ReminderScheduler.swift */,
+				D932FBB6C5C8E8912FA3EBB9 /* RevenueCatSubscriptionService.swift */,
 				E9069EEDC762F738D1DD7364 /* Subscription.swift */,
+				F44E5E715A1DA2349E712FF0 /* SubscriptionController.swift */,
 				2841117AF82C3AB361A867C2 /* VisionBillParser.swift */,
 			);
 			path = Services;
@@ -599,6 +607,7 @@
 			packageProductDependencies = (
 				1E893B039B4A7A3718F47CFE /* FirebaseAuth */,
 				E7E9CAE8D822F4E9FCC5077E /* GoogleSignIn */,
+				F74A8C64AF7892ADD8827E36 /* RevenueCat */,
 			);
 			productName = Ben;
 			productReference = 50A75E32DF28C87EAF49B530 /* Ben.app */;
@@ -678,6 +687,7 @@
 			packageReferences = (
 				23CA07F625C76D2FD0560196 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				D780C549C461102C158A6601 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				8F26252391790BD2F5E18998 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 158E7D901E4856F17A23C2E4 /* Products */;
@@ -788,12 +798,14 @@
 				BE2374539EE478AA4F5117E3 /* ReminderSetupView.swift in Sources */,
 				0EFF8DAA8068086F9F1A4EC4 /* ReminderStyleView.swift in Sources */,
 				58B702598516EB1AC8295C3B /* RemindersSection.swift in Sources */,
+				08963F6074767C93F5045538 /* RevenueCatSubscriptionService.swift in Sources */,
 				5A6856D9469E98148A5A4CB8 /* SecondBillLockedInView.swift in Sources */,
 				7000A84DFA998DCD5EA766F6 /* SecondBillView.swift in Sources */,
 				34A9472DB1200218BF595538 /* SetStateView.swift in Sources */,
 				70FC58F578C03E6C91AEB130 /* SettingsView.swift in Sources */,
 				9FE7AF576C8809ADDB4A43B7 /* SignInView.swift in Sources */,
 				C83F2969FBB5DDCE18516427 /* Subscription.swift in Sources */,
+				129FBB98F8D15A89D8CAA5D6 /* SubscriptionController.swift in Sources */,
 				562C91F66D13F6E04C1C5A42 /* UploadBillView.swift in Sources */,
 				84F36372710AD65AE4F81D66 /* VisionBillParser.swift in Sources */,
 				89989FC04BA0EB0292C0F08E /* WelcomeGreeting.swift in Sources */,
@@ -930,6 +942,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 4CGY239475;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -949,6 +962,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1042,6 +1056,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4CGY239475;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1055,6 +1070,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1177,6 +1193,14 @@
 				minimumVersion = 12.16.0;
 			};
 		};
+		8F26252391790BD2F5E18998 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.43.0;
+			};
+		};
 		D780C549C461102C158A6601 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -1197,6 +1221,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D780C549C461102C158A6601 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		F74A8C64AF7892ADD8827E36 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F26252391790BD2F5E18998 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
