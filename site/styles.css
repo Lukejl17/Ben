@@ -1,0 +1,114 @@
+:root {
+  --forest-top: #25401c;
+  --forest-bottom: #1b3015;
+  --glow-warm: #3e6b2e;
+  --chartreuse: #d3e97a;
+  --on-chartreuse: #22361b;
+  --cream: #faf3e3;
+  --on-cream: #293223;
+  --on-cream-strong: #2f4a26;
+  --on-cream-muted: #6b6b57;
+  --eyebrow: #5e7a3a;
+  --forest-ink: #f8f1de;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  font-family: Figtree, system-ui, sans-serif;
+  color: var(--forest-ink);
+  background:
+    radial-gradient(circle at 85% -10%, color-mix(in srgb, var(--glow-warm) 55%, transparent), transparent 50%),
+    radial-gradient(circle at 10% 110%, color-mix(in srgb, #173014 80%, transparent), transparent 45%),
+    linear-gradient(165deg, var(--forest-top), var(--forest-bottom));
+  background-attachment: fixed;
+  line-height: 1.55;
+}
+
+a { color: inherit; }
+nav a { color: var(--chartreuse); text-decoration: none; }
+nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 4px; }
+
+.wrap {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+.eyebrow {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chartreuse);
+  margin: 0 0 0.5rem;
+}
+
+h1 {
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  line-height: 1.15;
+  color: var(--chartreuse);
+  margin: 0 0 1rem;
+}
+
+h2 {
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--on-cream-strong);
+  margin: 1.5rem 0 0.4rem;
+}
+
+.lede {
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: #efe8d2;
+  margin: 0 0 1.5rem;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.1rem;
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 2.25rem;
+}
+
+.card {
+  background: var(--cream);
+  color: var(--on-cream);
+  border-radius: 28px;
+  padding: 1.5rem 1.4rem 1.7rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.card p { margin: 0 0 0.85rem; }
+.card p:last-child { margin-bottom: 0; }
+.card a { color: var(--on-cream-strong); }
+
+.cta {
+  display: inline-block;
+  margin-top: 0.4rem;
+  background: var(--chartreuse);
+  color: var(--on-chartreuse);
+  font-family: "Baloo 2", sans-serif;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+}
+
+.meta {
+  margin-top: 1.75rem;
+  color: color-mix(in srgb, var(--forest-ink) 50%, transparent);
+  font-size: 0.85rem;
+}
+
+.muted { color: var(--on-cream-muted); font-size: 0.92rem; }
