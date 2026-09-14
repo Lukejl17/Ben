@@ -6,8 +6,15 @@ import RevenueCat
 /// Product IDs — must match App Store Connect + RevenueCat.
 enum RevenueCatConfig {
     static let entitlementID = "ben_pro"
+    /// App Store Connect product IDs (Release / TestFlight).
     static let annualProductID = "com.repertoirestudio.Ben.pro.yearly"
     static let monthlyProductID = "com.repertoirestudio.Ben.pro.monthly"
+    /// RevenueCat Test Store product IDs (Debug `test_` SDK key).
+    static let testStoreAnnualProductID = "ben_pro_annual"
+    static let testStoreMonthlyProductID = "ben_pro_monthly"
+
+    static let annualProductIDs: Set<String> = [annualProductID, testStoreAnnualProductID]
+    static let monthlyProductIDs: Set<String> = [monthlyProductID, testStoreMonthlyProductID]
 
     /// Public SDK keys from the Ben RevenueCat project. These ship in the app
     /// binary by design. The secret API key stays in the RevenueCat dashboard.
@@ -172,16 +179,16 @@ final class RevenueCatSubscriptionService: NSObject, SubscriptionService, Purcha
         }
         let packages = current.availablePackages
         let annual = current.annual
-            ?? packages.first { $0.storeProduct.productIdentifier == RevenueCatConfig.annualProductID }
+            ?? packages.first { RevenueCatConfig.annualProductIDs.contains($0.storeProduct.productIdentifier) }
             ?? packages.first { $0.packageType == .annual }
             ?? offerings.all.values.flatMap(\.availablePackages).first {
-                $0.storeProduct.productIdentifier == RevenueCatConfig.annualProductID
+                RevenueCatConfig.annualProductIDs.contains($0.storeProduct.productIdentifier)
             }
         let monthly = current.monthly
-            ?? packages.first { $0.storeProduct.productIdentifier == RevenueCatConfig.monthlyProductID }
+            ?? packages.first { RevenueCatConfig.monthlyProductIDs.contains($0.storeProduct.productIdentifier) }
             ?? packages.first { $0.packageType == .monthly }
             ?? offerings.all.values.flatMap(\.availablePackages).first {
-                $0.storeProduct.productIdentifier == RevenueCatConfig.monthlyProductID
+                RevenueCatConfig.monthlyProductIDs.contains($0.storeProduct.productIdentifier)
             }
         let nextPricing = Self.pricing(annual: annual, monthly: monthly)
         snapshot.withLock {

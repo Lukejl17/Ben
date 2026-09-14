@@ -87,6 +87,8 @@ struct SubscriptionTests {
         #expect(RevenueCatConfig.annualProductID == "com.repertoirestudio.Ben.pro.yearly")
         #expect(RevenueCatConfig.monthlyProductID == "com.repertoirestudio.Ben.pro.monthly")
         #expect(RevenueCatConfig.entitlementID == "ben_pro")
+        #expect(RevenueCatConfig.annualProductIDs.contains("ben_pro_annual"))
+        #expect(RevenueCatConfig.monthlyProductIDs.contains("ben_pro_monthly"))
     }
 
     @Test func entitlementMappingTrialCountsRemainingDays() {

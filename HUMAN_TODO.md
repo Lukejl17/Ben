@@ -7,8 +7,8 @@ Pre-seeded — these need Luke, not Claude:
 - [ ] Sign in with Apple capability + entitlement (account buttons stay hidden until then)
 - [x] RevenueCat public SDK key in the app (Test Store in Debug, Apple `appl_` in Release).
       Products: `com.repertoirestudio.Ben.pro.yearly` / `.monthly`, entitlement `ben_pro`.
-- [ ] RevenueCat dashboard: confirm a **Current** offering includes `com.repertoirestudio.Ben.pro.yearly` and `.monthly` attached to entitlement `ben_pro`. Empty/missing current offering is why the paywall shows "Couldn't load plans just now".
-- [ ] App Store Connect: yearly US$49.99 with 7-day free trial, monthly US$5.99, if they are not already live
+- [x] RevenueCat Current offering `default` checked via API: Release (`appl_`) has the right App Store product IDs; Debug Test Store (`test_`) uses `ben_pro_annual` / `ben_pro_monthly` (app now accepts both).
+- [ ] App Store Connect: yearly US$49.99 with 7-day free trial, monthly US$5.99, if they are not already cleared for sale (Release/TestFlight still needs live ASC products).
 - [ ] Upload the next build to TestFlight from a Mac (Product > Archive). This Linux agent cannot do that.
 - [ ] PostHog project + API key → replace LocalAnalytics
 - [ ] Email forwarding ingestion backend (S10 forwarding address is display-only)
