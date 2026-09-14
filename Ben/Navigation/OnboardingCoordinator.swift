@@ -93,4 +93,23 @@ final class OnboardingCoordinator {
         uploadMethod = .photo
         step = .upload
     }
+
+    /// Reloads interview answers from disk so the paywall recap still works
+    /// after a process kill or a lapsed-trial return.
+    func restoreAttributes() {
+        let snapshot = OnboardingAttributes.loadSnapshot()
+        if let moment = snapshot.moment { intent = moment }
+        if !snapshot.sources.isEmpty { sources = snapshot.sources }
+        if let volume = snapshot.volume { self.volume = volume }
+        if let lateFees = snapshot.lateFees { self.lateFees = lateFees }
+        if let feeling = snapshot.feeling { self.feeling = feeling }
+        if let style = snapshot.reminderStyle { reminderStyle = style }
+        if snapshot.committed { committed = true }
+    }
+
+    /// Jumps straight to the multi-step paywall for a returning non-converter.
+    func beginWinbackPaywall() {
+        restoreAttributes()
+        step = .paywall
+    }
 }

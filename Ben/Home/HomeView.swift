@@ -13,6 +13,7 @@ struct HomeView: View {
     @State private var detailBill: Bill?
     @State private var fabExpanded = false
     @State private var showEmailIn = false
+    @State private var showWinbackPaywall = false
 
     // MARK: Derived
 
@@ -148,6 +149,13 @@ struct HomeView: View {
                 .presentationCornerRadius(28)
                 .presentationBackground(Color.forestBottom)
         }
+        .fullScreenCover(isPresented: $showWinbackPaywall) {
+            PaywallView(mode: .winback) {
+                showWinbackPaywall = false
+            }
+            .environment(coordinator)
+            .environment(\.services, services)
+        }
         .sheet(isPresented: $showEmailIn) {
             EmailInSheet()
                 .presentationDetents([.large])
@@ -189,12 +197,26 @@ struct HomeView: View {
                 )
 
                 if case .lapsed = services.subscriptions.state() {
-                    Text("Your trial has ended — bills stay visible here, reminders are off.")
-                        .font(.benMeta)
-                        .foregroundStyle(Color.forestInk.opacity(0.65))
-                        .padding(14)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .benRowSurface(radius: 20)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Your trial has ended. Bills stay visible here; reminders are off.")
+                            .font(.benMeta)
+                            .foregroundStyle(Color.forestInk.opacity(0.65))
+                        Button {
+                            coordinator.beginWinbackPaywall()
+                            showWinbackPaywall = true
+                        } label: {
+                            Text("See plans again")
+                                .font(.benLabel)
+                                .foregroundStyle(Color.onChartreuse)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color.chartreuse, in: Capsule())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .benRowSurface(radius: 20)
                 }
 
                 ForEach(sections, id: \.title) { section in

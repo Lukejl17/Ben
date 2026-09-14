@@ -156,4 +156,20 @@ struct OnboardingAttributes {
     static func load(defaults: UserDefaults = .standard) -> [String: String] {
         defaults.dictionary(forKey: storageKey) as? [String: String] ?? [:]
     }
+
+    /// Rebuilds a typed snapshot from the flat dictionary (for paywall return visits).
+    static func loadSnapshot(defaults: UserDefaults = .standard) -> Snapshot {
+        let attrs = load(defaults: defaults)
+        var snapshot = Snapshot()
+        if let raw = attrs["moment"] { snapshot.moment = IntentContext(rawValue: raw) }
+        if let raw = attrs["bill_sources"], !raw.isEmpty {
+            snapshot.sources = Set(raw.split(separator: ",").compactMap { BillSource(rawValue: String($0)) })
+        }
+        if let raw = attrs["bills_per_month"] { snapshot.volume = BillVolume(rawValue: raw) }
+        if let raw = attrs["late_fees"] { snapshot.lateFees = LateFeeHistory(rawValue: raw) }
+        if let raw = attrs["bill_feeling"] { snapshot.feeling = BillFeeling(rawValue: raw) }
+        if let raw = attrs["reminder_style"] { snapshot.reminderStyle = ReminderStyle(rawValue: raw) }
+        snapshot.committed = attrs["commitment_made"] == "true"
+        return snapshot
+    }
 }

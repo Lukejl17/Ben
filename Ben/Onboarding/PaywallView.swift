@@ -3,6 +3,15 @@ import SwiftUI
 /// S9 — hard paywall. Three pages, honesty offsets throughout.
 /// Continuing requires starting the trial; declining is view-only mode.
 struct PaywallView: View {
+    enum Mode {
+        case onboarding
+        /// Returning user whose trial lapsed without converting.
+        case winback
+    }
+
+    var mode: Mode = .onboarding
+    var onFinished: (() -> Void)?
+
     @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
 
@@ -14,6 +23,8 @@ struct PaywallView: View {
     @State private var abandonmentTracked = false
     @State private var isBusy = false
     @State private var errorLine: String?
+    @State private var pricing: PlanPricing = .fallback
+    @State private var plansReady = false
 
     var body: some View {
         ZStack {
@@ -43,11 +54,25 @@ struct PaywallView: View {
                             .foregroundStyle(Color.forestInk.opacity(0.7))
                             .multilineTextAlignment(.center)
                     }
-                    BenPrimaryButton(title: isBusy ? "Working…" : "Start my 7-day trial") { startTrial() }
+                                        if !plansReady && errorLine == nil {
+                        Text(SubscriptionError.offeringsUnavailable.errorDescription ?? "")
+                            .font(.benMeta)
+                            .foregroundStyle(Color.forestInk.opacity(0.7))
+                            .multilineTextAlignment(.center)
+                    }
+                    BenPrimaryButton(
+                        title: isBusy ? "Working…" : (plansReady ? "Start my 7-day trial" : "Try loading plans again")
+                    ) {
+                        if plansReady {
+                            startTrial()
+                        } else {
+                            Task { await reloadPlans() }
+                        }
+                    }
                         .disabled(isBusy)
                     Text(yearlySelected
-                         ? "\(services.subscriptions.pricing.annualPrice)/yr after the trial · cancel anytime in one tap"
-                         : "\(services.subscriptions.pricing.monthlyPrice)/mo after the trial · cancel anytime in one tap")
+                         ? "\(pricing.annualPrice)/yr after the trial · cancel anytime in one tap"
+                         : "\(pricing.monthlyPrice)/mo after the trial · cancel anytime in one tap")
                         .font(.benMeta)
                         .foregroundStyle(Color.forestInk.opacity(0.5))
                     PaywallLegalRow(onRestore: restorePurchases)
@@ -65,8 +90,16 @@ struct PaywallView: View {
                 .ignoresSafeArea()
             }
         }
-        .onAppear { trackPage(0) }
-        .task { await services.subscriptions.refresh() }
+        .onAppear {
+            page = 0
+            coordinator.restoreAttributes()
+            trackPage(0)
+            syncPricing()
+        }
+        .task { await reloadPlans() }
+        .onReceive(NotificationCenter.default.publisher(for: .benSubscriptionDidChange)) { _ in
+            syncPricing()
+        }
         .onChange(of: page) { _, newPage in trackPage(newPage) }
         .onChange(of: scenePhase) { _, phase in
             // Hard paywall: the only way out without a trial is leaving the app.
@@ -194,15 +227,15 @@ struct PaywallView: View {
 
                 PriceCard(
                     plan: .init(title: "Yearly", badge: "Best value",
-                                price: services.subscriptions.pricing.annualPrice,
+                                price: pricing.annualPrice,
                                 cadence: "/yr",
-                                detail: "≈ \(services.subscriptions.pricing.annualPerMonth) a month"),
+                                detail: "≈ \(pricing.annualPerMonth) a month"),
                     selected: yearlySelected
                 ) { yearlySelected = true }
 
                 PriceCard(
                     plan: .init(title: "Monthly", badge: nil,
-                                price: services.subscriptions.pricing.monthlyPrice,
+                                price: pricing.monthlyPrice,
                                 cadence: "/mo", detail: "Cancel anytime"),
                     selected: !yearlySelected
                 ) { yearlySelected = false }
@@ -308,9 +341,31 @@ struct PaywallView: View {
     private func finishEntitledStart() async {
         await services.scheduler.schedulePreChargeReminder(daysBeforeEnd: reminderDaysBeforeEnd)
         services.analytics.track(.trialStarted)
-        coordinator.advance(to: .secondBill)
+        switch mode {
+        case .onboarding:
+            coordinator.advance(to: .secondBill)
+        case .winback:
+            onFinished?()
+        }
+    }
+
+    @MainActor
+    private func syncPricing() {
+        pricing = services.subscriptions.pricing
+        plansReady = services.subscriptions.plansReady
+    }
+
+    @MainActor
+    private func reloadPlans() async {
+        errorLine = nil
+        await services.subscriptions.refresh()
+        syncPricing()
+        if !plansReady {
+            errorLine = SubscriptionError.offeringsUnavailable.errorDescription
+        }
     }
 }
+
 
 /// Restore plus privacy, terms, and support. Quiet, at the thumb.
 struct PaywallLegalRow: View {

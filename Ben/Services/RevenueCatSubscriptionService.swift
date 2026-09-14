@@ -40,6 +40,7 @@ final class RevenueCatSubscriptionService: NSObject, SubscriptionService, Purcha
         var cachedAnnual: Package?
         var cachedMonthly: Package?
         var cachedPricing: PlanPricing = .fallback
+        var plansReady = false
     }
 
     private let snapshot = OSAllocatedUnfairLock(initialState: Snapshot())
@@ -48,6 +49,10 @@ final class RevenueCatSubscriptionService: NSObject, SubscriptionService, Purcha
 
     var pricing: PlanPricing {
         snapshot.withLock { $0.cachedPricing }
+    }
+
+    var plansReady: Bool {
+        snapshot.withLock { $0.plansReady }
     }
 
     init(defaults: UserDefaults = .standard, calendar: Calendar = .current) {
@@ -145,24 +150,45 @@ final class RevenueCatSubscriptionService: NSObject, SubscriptionService, Purcha
         do {
             let offerings = try await Purchases.shared.offerings()
             cache(offerings)
+            if !snapshot.withLock({ $0.plansReady }) {
+                logger.error("offerings returned no matching packages (current missing or product IDs mismatch)")
+            }
         } catch {
             logger.error("offerings failed: \(error.localizedDescription, privacy: .public)")
+            snapshot.withLock { $0.plansReady = false }
+            notify()
         }
     }
 
     private func cache(_ offerings: Offerings) {
-        guard let current = offerings.current else { return }
+        // Fall back across offerings if "current" isn't flagged in the dashboard.
+        let current = offerings.current
+            ?? offerings.all["default"]
+            ?? offerings.all.values.first
+        guard let current else {
+            snapshot.withLock { $0.plansReady = false }
+            notify()
+            return
+        }
+        let packages = current.availablePackages
         let annual = current.annual
-            ?? current.availablePackages.first { $0.storeProduct.productIdentifier == RevenueCatConfig.annualProductID }
-            ?? current.availablePackages.first { $0.packageType == .annual }
+            ?? packages.first { $0.storeProduct.productIdentifier == RevenueCatConfig.annualProductID }
+            ?? packages.first { $0.packageType == .annual }
+            ?? offerings.all.values.flatMap(\.availablePackages).first {
+                $0.storeProduct.productIdentifier == RevenueCatConfig.annualProductID
+            }
         let monthly = current.monthly
-            ?? current.availablePackages.first { $0.storeProduct.productIdentifier == RevenueCatConfig.monthlyProductID }
-            ?? current.availablePackages.first { $0.packageType == .monthly }
+            ?? packages.first { $0.storeProduct.productIdentifier == RevenueCatConfig.monthlyProductID }
+            ?? packages.first { $0.packageType == .monthly }
+            ?? offerings.all.values.flatMap(\.availablePackages).first {
+                $0.storeProduct.productIdentifier == RevenueCatConfig.monthlyProductID
+            }
         let nextPricing = Self.pricing(annual: annual, monthly: monthly)
         snapshot.withLock {
             $0.cachedAnnual = annual
             $0.cachedMonthly = monthly
             $0.cachedPricing = nextPricing
+            $0.plansReady = annual != nil || monthly != nil
         }
         notify()
     }
@@ -190,7 +216,11 @@ final class RevenueCatSubscriptionService: NSObject, SubscriptionService, Purcha
             case .monthly: state.cachedMonthly
             }
         }
-        guard let match else { throw SubscriptionError.packageMissing }
+        guard let match else {
+            throw snapshot.withLock({ $0.plansReady })
+                ? SubscriptionError.packageMissing
+                : SubscriptionError.offeringsUnavailable
+        }
         return match
     }
 
