@@ -115,6 +115,8 @@ protocol SubscriptionService: AnyObject, Sendable {
     var preChargeReminderDaysBeforeEnd: Int? { get }
     var isEntitled: Bool { get }
     var pricing: PlanPricing { get }
+    /// True once offerings have returned at least one purchasable package.
+    var plansReady: Bool { get }
     /// RevenueCat needs a CustomerInfo round-trip; the stub already knows locally.
     var usesRemoteEntitlements: Bool { get }
 
@@ -130,6 +132,7 @@ extension SubscriptionService {
     func state() -> TrialState { state(now: .now) }
     var usesRemoteEntitlements: Bool { false }
     var pricing: PlanPricing { .fallback }
+    var plansReady: Bool { true }
     var isEntitled: Bool { state().isEntitled }
 }
 
@@ -172,6 +175,7 @@ final class StubSubscriptionService: SubscriptionService, @unchecked Sendable {
     var isEntitled: Bool { state().isEntitled }
     var pricing: PlanPricing { .fallback }
     var usesRemoteEntitlements: Bool { false }
+    var plansReady: Bool { true }
 
     var preChargeReminderDaysBeforeEnd: Int? {
         defaults.object(forKey: reminderDayKey) as? Int

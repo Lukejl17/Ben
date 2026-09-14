@@ -3,6 +3,7 @@ import SwiftUI
 /// Settings — the account hub. Widget-first: account card, subscription
 /// widget, tool rows, quiet app info.
 struct SettingsView: View {
+    @Environment(OnboardingCoordinator.self) private var coordinator
     @Environment(\.services) private var services
 
     private enum Sheet: String, Identifiable {
@@ -12,6 +13,7 @@ struct SettingsView: View {
 
     @State private var account: BenAccount?
     @State private var activeSheet: Sheet?
+    @State private var showWinbackPaywall = false
 
     private var appVersion: String {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
@@ -101,6 +103,14 @@ struct SettingsView: View {
             .presentationCornerRadius(28)
             .presentationBackground(Color.forestBottom)
         }
+
+        .fullScreenCover(isPresented: $showWinbackPaywall) {
+            PaywallView(mode: .winback) {
+                showWinbackPaywall = false
+            }
+            .environment(coordinator)
+            .environment(\.services, services)
+        }
     }
 
     // MARK: Widgets
@@ -178,15 +188,31 @@ struct SettingsView: View {
         case .subscribed: ("Ben Pro", "Full access. Manage in your Apple ID subscriptions.")
         case .lapsed: ("Trial ended", "Bills stay visible; reminders are off.")
         }
-        return VStack(alignment: .leading, spacing: 2) {
-            BenEyebrow(text: "Subscription", color: Color.forestInk.opacity(0.55))
-            Text(line.0)
-                .font(.benCardTitle)
-                .foregroundStyle(Color.forestInk)
-                .padding(.top, 4)
-            Text(line.1)
-                .font(.benMeta)
-                .foregroundStyle(Color.forestInk.opacity(0.6))
+        return VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                BenEyebrow(text: "Subscription", color: Color.forestInk.opacity(0.55))
+                Text(line.0)
+                    .font(.benCardTitle)
+                    .foregroundStyle(Color.forestInk)
+                    .padding(.top, 4)
+                Text(line.1)
+                    .font(.benMeta)
+                    .foregroundStyle(Color.forestInk.opacity(0.6))
+            }
+            if case .lapsed = services.subscriptions.state() {
+                Button {
+                    coordinator.beginWinbackPaywall()
+                    showWinbackPaywall = true
+                } label: {
+                    Text("See plans again")
+                        .font(.benLabel)
+                        .foregroundStyle(Color.onChartreuse)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color.chartreuse, in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
