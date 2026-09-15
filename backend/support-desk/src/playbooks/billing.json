@@ -1,0 +1,19 @@
+{
+  "id": "billing",
+  "title": "Billing and subscription",
+  "keywords": [
+    "subscription",
+    "billing",
+    "charge",
+    "charged",
+    "payment",
+    "invoice",
+    "receipt",
+    "price",
+    "plan",
+    "renew",
+    "renewal"
+  ],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for writing in about billing.\n\nBen is a subscription app with a free trial. You can see your plan, renewal date, and manage your subscription in the App Store under Settings → Apple ID → Subscriptions.\n\nIf something on a charge does not look right, a screenshot of the App Store receipt page helps us check it against what Apple shows on our side.\n\nIf you would like us to look into a specific charge, reply with the date and amount and we will follow up.\n\nKind regards,\nBen support"
+}

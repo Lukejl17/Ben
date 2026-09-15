@@ -1,0 +1,15 @@
+{
+  "id": "refund-trial",
+  "title": "Refund and free trial",
+  "keywords": [
+    "refund",
+    "trial",
+    "free trial",
+    "money back",
+    "cancel subscription",
+    "cancellation",
+    "unsubscribe"
+  ],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for writing about your trial or a refund.\n\nSubscriptions and refunds are handled by Apple through the App Store. You can manage or cancel your subscription under Settings → Apple ID → Subscriptions. For a refund request, Apple's reportaproblem.apple.com page is the usual path.\n\nIf you were charged after a trial and did not intend to continue, cancelling in Subscriptions stops future renewals. Apple decides refund eligibility on their side.\n\nIf you tell us what happened (dates help), we can note it on our end even though Apple processes the payment.\n\nKind regards,\nBen support"
+}

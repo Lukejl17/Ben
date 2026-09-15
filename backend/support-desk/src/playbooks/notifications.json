@@ -1,0 +1,17 @@
+{
+  "id": "notifications",
+  "title": "Notifications and reminders",
+  "keywords": [
+    "notification",
+    "notifications",
+    "reminder",
+    "reminders",
+    "alert",
+    "alerts",
+    "notify",
+    "due date",
+    "push"
+  ],
+  "subject": "Re: {original_subject}",
+  "body": "Hi{from_name_greeting},\n\nThanks for writing about notifications.\n\nBen sends a small number of local reminders before a bill is due. You choose the timing when you confirm each bill, and you can change it later on the bill's detail screen.\n\nIf reminders are not appearing, check that notifications are allowed for Ben in iOS Settings → Notifications → Ben, and that Focus modes are not silencing them.\n\nIf something still seems off, let us know which bill and what you expected to see.\n\nKind regards,\nBen support"
+}
