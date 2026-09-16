@@ -1,6 +1,7 @@
 {
   "id": "bug-report",
   "title": "Bug or something broken",
+  "escalate_to_engineer": true,
   "keywords": [
     "bug",
     "broken",

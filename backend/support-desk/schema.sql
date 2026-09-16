@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS tickets (
   -- pending | approved | sent | dismissed | pending_edit
   slack_channel       TEXT,
   slack_message_ts    TEXT,
+  engineer_channel    TEXT,                       -- #ben-engineering-support-tickets
+  engineer_message_ts TEXT,                       -- set once; prevents duplicate handoffs
   created_at          INTEGER NOT NULL,
   updated_at          INTEGER NOT NULL
 );

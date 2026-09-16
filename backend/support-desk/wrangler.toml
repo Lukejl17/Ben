@@ -26,3 +26,4 @@ database_id = "00000000-0000-0000-0000-000000000000" # HUMAN: replace after `wra
 #   SLACK_CHANNEL_ID        channel id for #ben-support (e.g. C0123...)
 [vars]
 SUPPORT_FROM_EMAIL = "support@benandbill.app"
+ENGINEER_CHANNEL_ID = "C0C0CAR1P9S"

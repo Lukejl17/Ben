@@ -4,11 +4,18 @@
 //
 // Routes:
 //   POST /inbound?secret=...     Postmark inbound webhook
-//   POST /slack/interactions     Slack interactive components (Approve / Reject)
+//   POST /slack/interactions     Slack interactive components (Approve / Reject / Send to Engineer)
 
 import { inboundSearchText, matchPlaybook, renderDraft } from "./playbooks.js";
+import { formatEngineerHandoff, shouldEscalateToEngineer } from "./handoff.js";
 import { sendSupportReply } from "./postmark.js";
-import { postTicketMessage, updateTicketMessage, verifySlackSignature } from "./slack.js";
+import {
+  postEngineerHandoff,
+  postTicketMessage,
+  postThreadNote,
+  updateTicketMessage,
+  verifySlackSignature,
+} from "./slack.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -130,11 +137,17 @@ async function handleInbound(message, env) {
         )
         .bind(slack.channel, slack.ts, nowSeconds(), ticketId)
         .run();
+      ticket.slack_channel = slack.channel;
+      ticket.slack_message_ts = slack.ts;
     } catch (error) {
       console.log(
         JSON.stringify({ level: "warn", message: "slack post failed", detail: String(error) })
       );
     }
+  }
+
+  if (shouldEscalateToEngineer(playbook)) {
+    await escalateToEngineer(ticket, env, { manual: false });
   }
 
   return json({ status: "ok", ticket_id: ticketId, playbook_id: playbook.id }, 200);
@@ -158,6 +171,11 @@ async function handleSlackInteraction(rawBody, env) {
     .first();
 
   if (!ticket) return json({ ok: true });
+
+  if (actionId === "escalate_engineer") {
+    const result = await escalateToEngineer(ticket, env, { manual: true });
+    return json({ ok: true, status: result.status });
+  }
 
   if (ticket.status !== "pending" && ticket.status !== "pending_edit") {
     return json({ ok: true, status: ticket.status });
@@ -219,6 +237,75 @@ async function handleSlackInteraction(rawBody, env) {
   }
 
   return json({ ok: true });
+}
+
+// ---- Engineer handoff --------------------------------------------------------
+
+async function escalateToEngineer(ticket, env, { manual }) {
+  if (ticket.engineer_message_ts) {
+    return { status: "already_escalated" };
+  }
+  if (!env.SLACK_BOT_TOKEN || !env.ENGINEER_CHANNEL_ID) {
+    console.log(JSON.stringify({ level: "warn", message: "engineer channel not configured" }));
+    return { status: "skipped" };
+  }
+
+  const text = formatEngineerHandoff(ticket, { manual });
+
+  try {
+    const posted = await postEngineerHandoff({
+      botToken: env.SLACK_BOT_TOKEN,
+      channelId: env.ENGINEER_CHANNEL_ID,
+      text,
+    });
+
+    try {
+      await env.TICKETS
+        .prepare(
+          "UPDATE tickets SET engineer_channel = ?, engineer_message_ts = ?, updated_at = ? WHERE id = ?"
+        )
+        .bind(posted.channel, posted.ts, nowSeconds(), ticket.id)
+        .run();
+    } catch (error) {
+      console.log(
+        JSON.stringify({
+          level: "warn",
+          message: "engineer handoff columns missing; run schema-engineer.sql",
+          detail: String(error),
+        })
+      );
+    }
+
+    if (ticket.slack_channel && ticket.slack_message_ts) {
+      try {
+        await postThreadNote({
+          botToken: env.SLACK_BOT_TOKEN,
+          channel: ticket.slack_channel,
+          threadTs: ticket.slack_message_ts,
+          text: `Lola · support — sent to Engineer (\`${ticket.id}\`).`,
+        });
+      } catch (error) {
+        console.log(
+          JSON.stringify({
+            level: "warn",
+            message: "engineer thread note failed",
+            detail: String(error),
+          })
+        );
+      }
+    }
+
+    return { status: "escalated" };
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        level: "warn",
+        message: "engineer handoff failed",
+        detail: String(error),
+      })
+    );
+    return { status: "failed" };
+  }
 }
 
 // ---- Helpers -----------------------------------------------------------------

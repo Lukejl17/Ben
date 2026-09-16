@@ -14,11 +14,13 @@ support@benandbill.app (Postmark inbound)
         ▼
 POST /inbound?secret=…  →  match playbook  →  D1 ticket (pending)
         │
-        ▼
-Slack #ben-support (Approve / Reject buttons)
+        ├─ Slack #ben-support (Approve / Reject / Send to Engineer)
+        │     ├─ Approve → Postmark outbound API → customer
+        │     └─ Reject  → ticket status dismissed
         │
-        ├─ Approve → Postmark outbound API → customer
-        └─ Reject  → ticket status dismissed
+        └─ bug-report playbook (or Send to Engineer)
+              ▼
+         #ben-engineering-support-tickets  (ENGINEER_HANDOFF)
 ```
 
 ## Prerequisites
@@ -48,6 +50,12 @@ npx wrangler login   # or set CLOUDFLARE_API_TOKEN
    npx wrangler d1 execute ben-support-tickets --file=schema.sql --remote
    ```
 
+   If the D1 database already existed before Engineer handoff:
+
+   ```bash
+   npx wrangler d1 execute ben-support-tickets --file=schema-engineer.sql --remote
+   ```
+
 3. **Sync playbooks** (bundled into the worker at deploy time)
 
    ```bash
@@ -67,6 +75,8 @@ npx wrangler login   # or set CLOUDFLARE_API_TOKEN
    ```
 
    `SUPPORT_FROM_EMAIL` defaults to `support@benandbill.app` in `wrangler.toml` `[vars]`.
+   `ENGINEER_CHANNEL_ID` defaults to `#ben-engineering-support-tickets` (`C0C0CAR1P9S`).
+   Invite the **Ben Support** Slack bot to that channel or Engineer handoff posts will fail.
 
 5. **Deploy**
 
@@ -95,7 +105,7 @@ Save `WEBHOOK_SECRET` locally as `.webhook-secret.local` (gitignored).
 |-------|------|---------|
 | `GET /health` | none | Liveness check |
 | `POST /inbound?secret=…` | `WEBHOOK_SECRET` query param | Postmark inbound → playbook draft → D1 + Slack |
-| `POST /slack/interactions` | Slack signing secret | Approve sends reply; Reject dismisses ticket |
+| `POST /slack/interactions` | Slack signing secret | Approve / Reject / Send to Engineer |
 
 ## Local testing
 
